@@ -56,8 +56,11 @@ docker run --rm --network=none \
 Goose, Python, Java или локальная среда разработки. Ожидаемый вызов лаунчера:
 `goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
 
-Удалённый Actions пока не запускался: у локального Git нет подключённого GitHub
-remote. Успех Windows-сборки и запуска на пользовательской Windows 10 ещё не подтверждён.
+Приватный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
+Код загружен в `main`. Первый Actions run зарегистрирован, но GitHub не выделил
+runners из-за платежей/лимита расходов аккаунта. Шаги сборки не выполнялись,
+Windows-артефактов нет. [Точный результат и условия продолжения](docs/github-ci.md).
+Запуск на пользовательской Windows 10 ещё не подтверждён.
 
 ## Документация
 
@@ -66,6 +69,7 @@ remote. Успех Windows-сборки и запуска на пользова�
 - [Облачное окружение и графические проверки](docs/cloud.md)
 - [Результаты этапа 1](docs/stage-1-results.md)
 - [Результаты графического этапа](docs/stage-2-results.md)
+- [GitHub и статус CI](docs/github-ci.md)
 - [Лицензии](THIRD_PARTY_NOTICES.md)
 
 Проект не является официальным продуктом Minecraft и не связан с Mojang/Microsoft.
