@@ -3,9 +3,9 @@ import os;
 import core.core;
 
 fn usage() {
-    print("GooseCraft 0.1.0-stage1 (headless bootstrap)");
-    print("usage: goosecraft-client --headless [--ticks N] | --version | --help");
-    print("No graphical client is implemented yet.");
+    print("GooseCraft 0.2.0-stage2 (headless harness)");
+    print("usage: goosecraft-headless --headless [--ticks N] | --version | --help");
+    print("Graphical client: goosecraft-client.");
 }
 
 fn invalid_args() {
@@ -18,7 +18,7 @@ fn main() {
     if argv.len == 1 { usage(); return; }
     if argv.len == 2 && argv[1] == "--help" { usage(); return; }
     if argv.len == 2 && argv[1] == "--version" {
-        print("GooseCraft 0.1.0-stage1");
+        print("GooseCraft 0.2.0-stage2");
         return;
     }
     if argv[1] != "--headless" { invalid_args(); }

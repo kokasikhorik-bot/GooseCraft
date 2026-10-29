@@ -1,4 +1,4 @@
-name: Native headless builds
+name: Native builds and rendering
 on:
   push:
   pull_request:
@@ -25,14 +25,34 @@ jobs:
           architecture: x64
       - name: Install pinned build helper
         run: python -m pip install -r tools/requirements.txt
-      - name: Build pinned Goose (no GUI packages)
-        run: python tools/bootstrap.py --jobs 2
+      - name: Build pinned Goose and fetch optional graphics sources
+        run: python tools/bootstrap.py --jobs 2 ${{ runner.os == 'Windows' && '--graphics' || '' }}
+      - name: Compile graphical Windows client without opening a window
+        if: runner.os == 'Windows'
+        run: python tools/project.py render-build
       - name: Build and test without a display
         run: python tools/project.py test
       - name: Prepare native distribution
-        run: python tools/project.py package
+        run: python tools/project.py package ${{ runner.os == 'Windows' && '--graphics' || '' }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: goosecraft-${{ matrix.os }}-x64-${{ github.sha }}
           path: dist/*
+          if-no-files-found: error
+  graphics:
+    name: Linux / software Vulkan and X11
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build pinned graphics environment
+        run: docker build --target graphics -f .devcontainer/Dockerfile -t goosecraft-graphics .
+      - name: Render offscreen and in an Xvfb window with networking disabled
+        run: |
+          mkdir -p graphics-results
+          docker run --rm --network=none --mount "type=bind,src=$PWD/graphics-results,dst=/results" goosecraft-graphics python tools/project.py render-test --evidence /results
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: graphics-evidence-${{ github.sha }}
+          path: graphics-results/
           if-no-files-found: error

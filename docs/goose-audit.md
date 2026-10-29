@@ -11,7 +11,7 @@
   `CMakeLists.txt`, `stdlib/os.goose`, `stdlib/std.goose`, `src/blessed.txt`.
 - Для графики изучен настоящий
   [samples/27_gfx_cube.goose](https://github.com/aardappel/goose/blob/cce94b919d27458856ae2685974049eac78debcf/samples/27_gfx_cube.goose)
-  и разделы stdlib. Этот пример в нашей сессии не запускался.
+  и разделы stdlib. Upstream-пример не запускался; на этапе 2 проверен собственный рендерер (stage-2-results.md).
 - [Horizon README](https://github.com/horizon-rust/horizon/blob/7ebf7d26cbe58d65ef873767c639f144dc403554/README.md)
   и `launcher/README.md`, commit `7ebf7d26cbe58d65ef873767c639f144dc403554`.
   Только архитектурный ориентир: отдельный launcher, клиент, headless-ядро,
@@ -36,8 +36,8 @@ GitHub API `/repos/aardappel/goose/releases/latest` на момент иссле
 | Файлы, время, argv | `stdlib/os.goose` | argv и stderr проверены; остальные API пока не тестировались |
 | C ABI | `extern fn`, `export fn`, sidecar `.build` | Изучено, собственный FFI не понадобился и не тестировался |
 | Потоки | `thread_fn`, отдельные data stacks, typed queues; нужен native build | Изучено, не тестировалось |
-| Графика | goose_gfx, SDL3 GPU, шейдеры через `embed_shader`; Windows D3D12, Vulkan, macOS Metal | Изучено, в текущую сборку не включено; ни окно, ни GPU не проверены |
-| UI/звук/физика | Отдельные goose_gfx/goose_physics packages | Не подключены и не проверены |
+| Графика | goose_gfx, SDL3 GPU, шейдеры через `embed_shader`; Windows D3D12, Vulkan, macOS Metal | Этап 2: нативный собственный рендерер проверен на software Vulkan, offscreen и X11 в Xvfb |
+| UI/звук/физика | Отдельные goose_gfx/goose_physics packages | UI/audio archives строятся в составе gfx, API не используется; physics не подключён |
 | Windows x64 | Есть upstream CI, MSVC и готовые compiler releases | Создан наш workflow; его реального запуска пока нет |
 
 ## Модель памяти и архитектурные следствия
@@ -68,3 +68,12 @@ Goose — не Go. Это whole-program компилятор в C, без обы
    `maybe-uninitialized`. Компилятор собрался, тесты прошли; это не утверждение,
    что предупреждения исправлены или полный upstream suite выполнен.
 4. Goose сейчас Apache-2.0, Horizon — MIT. Полные тексты сохранены отдельно.
+
+## Дополнение этапа 2
+
+Реальные `gfx::open`, `open_headless`, `vertex_buffer`, `index_buffer`,
+`pipeline`, `begin_screen`, `draw_indexed`, `uniforms`, `frame`, `flush`,
+`read_pixels`, `screenshot` и `driver` взяты из pinned gfx.goose, а не придуманы.
+Собственные шейдеры прошли compile-time `embed_shader`; выполнен Vulkan-рендеринг.
+Проверка платформ и ограничения описаны в [stage-2-results.md](stage-2-results.md).
+GUI на Windows из успешного Linux-теста не выводится.

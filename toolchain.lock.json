@@ -11,5 +11,13 @@
       "repository": "https://github.com/horizon-rust/horizon.git",
       "commit": "7ebf7d26cbe58d65ef873767c639f144dc403554"
     }
+  },
+  "graphics": {
+    "repository": "https://github.com/aardappel/goose_gfx.git",
+    "commit": "6cfa3dec2ef2a6cb19ee71548b38151094e947bd",
+    "submodules": {
+      "third_party/SDL": "fa2c02bb6e21974a89ea9824bc53c9932abe5f9c",
+      "third_party/nuklear": "9f7750296f176e506c2b24ff55bc24495e2db750"
+    }
   }
 }

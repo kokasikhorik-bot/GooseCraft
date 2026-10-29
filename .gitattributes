@@ -3,3 +3,4 @@
 # Preserve upstream license text and real tool output verbatim.
 licenses/*.txt -whitespace
 docs/validation/*.log -whitespace
+docs/validation/**/*.log -whitespace

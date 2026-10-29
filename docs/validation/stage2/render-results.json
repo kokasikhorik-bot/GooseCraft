@@ -1,0 +1,38 @@
+{
+  "empty": {
+    "mode": "offscreen",
+    "driver": "vulkan",
+    "frames": 3,
+    "width": 640,
+    "height": 480,
+    "vertices": 0,
+    "indices": 0,
+    "colored_pixels": 0,
+    "misuse_count": 0,
+    "png_sha256": "966f32a058dd3c33d7f0d35b98ed20dc6cc4b792726923261931483a1a6d2549"
+  },
+  "offscreen": {
+    "mode": "offscreen",
+    "driver": "vulkan",
+    "frames": 3,
+    "width": 640,
+    "height": 480,
+    "vertices": 2480,
+    "indices": 3720,
+    "colored_pixels": 49857,
+    "misuse_count": 0,
+    "png_sha256": "0700e39a7fce92ff408fda50c6d60f5a102ccf30cb1632d4241d997a6b01dc78"
+  },
+  "window": {
+    "mode": "window",
+    "driver": "vulkan",
+    "frames": 3,
+    "width": 640,
+    "height": 480,
+    "vertices": 2480,
+    "indices": 3720,
+    "colored_pixels": 49857,
+    "misuse_count": 0,
+    "png_sha256": "0700e39a7fce92ff408fda50c6d60f5a102ccf30cb1632d4241d997a6b01dc78"
+  }
+}

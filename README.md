@@ -1,55 +1,71 @@
 # GooseCraft
 
-Нативный клиент на Goose, разрабатываемый полностью в облаке для Windows 10 x64.
-Цель — самостоятельная реализация поведения Minecraft Java Edition с отдельным
-лаунчером. Текущий этап **0.1.0-stage1 — проверка инструментария и headless-основа**.
-Играбельного прототипа, графики, сетевого протокола и совместимости миров ещё нет.
+Самостоятельный нативный клиент на Goose для Windows 10 x64, разрабатываемый
+полностью в Codex Cloud. Цель — реализация поведения Minecraft Java Edition
+с отдельным лаунчером. Текущий этап **0.2.0-stage2 — графическая основа**:
+тестовый voxel-мир, мешер и рендерер. Играбельного прототипа, движения игрока,
+коллизий, сетевого протокола и совместимости миров ещё нет.
 
-## Что уже есть
+## Компоненты
 
-- Закреплённый Goose, собранный из исходников, без графических пакетов.
-- Самостоятельный нативный клиент: тестовый чанк 16³, слой из 256 блоков и счётчик шагов.
-- Goose-тесты блоков и симуляции; проверки TinyCC и нативной сборки, release и debug.
-- Начальный Windows-лаунчер `goosecraft.cmd`: запускает соседний клиент, передаёт
-  аргументы и возвращает его код завершения. Графического интерфейса пока нет.
-- GitHub Actions для Linux и Windows x64 с артефактами. Workflow создан, но
-  удалённый запуск из этой сессии не выполнен: GitHub-репозиторий не подключён.
+- `goosecraft-client`: графическая сцена 640×480, собственные цвета и два столбика
+  на плоском чанке. Escape закрывает окно. GLSL-шейдеры преобразуют вершины и цвет;
+  мир, построение геометрии и управление рендерером написаны на Goose.
+- `goosecraft-headless`: независимый консольный тестовый клиент без SDL и GPU.
+- `goosecraft.cmd`: Windows-лаунчер. По умолчанию открывает графический клиент;
+  с первым аргументом `--headless` запускает headless-клиент и передаёт ему аргументы.
+- Python используется только для сборки, проверок и упаковки. Оригинальный
+  Minecraft, Horizon и JVM не запускаются. Minecraft-ресурсов в поставке нет.
 
-Вся логика клиента — в `src/*.goose` и `src/core/*.goose`. Python обслуживает
-только сборку и проверки. Java, оригинальный Minecraft и Horizon не запускаются.
+## Проверки в облаке
 
-## Работа в Codex Cloud
-
-Пользователю пока ничего не нужно устанавливать на Windows. Команды ниже
-выполняются разработчиком в облаке с Git, C/C++20-компилятором, Python и make:
+Пользователю пока ничего не требуется устанавливать на Windows.
+На существующем облачном x64-хосте с Git, Python, make и C/C++20-компилятором:
 
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install -r tools/requirements.txt
 .venv/bin/python tools/bootstrap.py --jobs 2
 .venv/bin/python tools/project.py test
-.venv/bin/python tools/project.py package
-./build/goosecraft-client --headless --ticks 20
+./build/goosecraft-headless --headless --ticks 20
 ```
-
-Ожидаемый вывод клиента:
 
 ```json
 {"mode":"headless","ticks":20,"solid_blocks":256}
 ```
 
-Сценарии `bootstrap.py` и `project.py` работают также на Windows с `python` из
-GitHub Actions. Windows-сборка использует MSVC установленного runner. После
-подключения репозитория каждый push/PR запускает `.github/workflows/build.yml`.
-Артефакт содержит клиент, `.cmd`-лаунчер, исходные лицензии и сведения о версии;
-для запуска будущей Windows-сборки Goose, Python и Java не понадобятся.
+Для графики в облачном Docker:
+
+```sh
+docker build --target graphics -f .devcontainer/Dockerfile -t goosecraft-graphics .
+mkdir -p graphics-results
+docker run --rm --network=none \
+  --mount "type=bind,src=$PWD/graphics-results,dst=/results" \
+  goosecraft-graphics python tools/project.py render-test --evidence /results
+```
+
+Если облако использует дополнительный proxy CA, добавьте к `docker build`
+`--secret id=proxy_ca,src=/etc/ssl/certs/ca-certificates.crt`.
+Тест использует Mesa lavapipe и Xvfb; физическая видеокарта не требуется.
+Обычный Docker build без `--target graphics` сохраняет отдельное headless-окружение.
+
+## Windows-сборки
+
+[Workflow](.github/workflows/build.yml) готовит Windows x64 артефакт с обоими
+исполняемыми файлами, лаунчером и лицензиями. Для запуска сборки не нужны
+Goose, Python, Java или локальная среда разработки. Ожидаемый вызов лаунчера:
+`goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
+
+Удалённый Actions пока не запускался: у локального Git нет подключённого GitHub
+remote. Успех Windows-сборки и запуска на пользовательской Windows 10 ещё не подтверждён.
 
 ## Документация
 
 - [Архитектура и этапы](docs/architecture.md)
-- [Проверка Goose и источники API](docs/goose-audit.md)
-- [Облачное окружение](docs/cloud.md)
+- [Аудит компилятора](docs/goose-audit.md)
+- [Облачное окружение и графические проверки](docs/cloud.md)
 - [Результаты этапа 1](docs/stage-1-results.md)
+- [Результаты графического этапа](docs/stage-2-results.md)
 - [Лицензии](THIRD_PARTY_NOTICES.md)
 
 Проект не является официальным продуктом Minecraft и не связан с Mojang/Microsoft.
