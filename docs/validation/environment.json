@@ -1,0 +1,14 @@
+{
+  "date_utc": "2026-10-29",
+  "system": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "architecture": "x86_64",
+  "python": "3.12.14",
+  "gcc": "14.2.0",
+  "git": "git version 2.52.0",
+  "goose": "goose cce94b919d27458856ae2685974049eac78debcf (runtime f2981814a754)",
+  "binary": "build/goosecraft-client: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=a497772ae11ffaea7ca702924b47b913fca9bf05, for GNU/Linux 3.2.0, not stripped",
+  "native_dependencies": "linux-vdso.so.1 (0x00007f95c4285000)\n\tlibc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f95c4057000)\n\t/lib64/ld-linux-x86-64.so.2 (0x00007f95c4287000)",
+  "display": "DISPLAY and WAYLAND_DISPLAY removed by test runner",
+  "windows_actions_run": false,
+  "gui_run": false
+}

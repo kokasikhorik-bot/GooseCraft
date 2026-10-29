@@ -1,0 +1,44 @@
+Looking in links: /workspace/scratch/goosecraft-verified-wheels
+Processing /workspace/scratch/goosecraft-verified-wheels/cmake-3.31.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (from -r tools/requirements.txt (line 3))
+Installing collected packages: cmake
+Successfully installed cmake-3.31.6
++ git -C /workspace/GooseCraft/.cache/upstream/goose checkout --detach cce94b919d27458856ae2685974049eac78debcf
+HEAD is now at cce94b91 Prototype a hosted runtime for the embedded JIT
++ /workspace/GooseCraft/.venv/bin/python -m cmake -S /workspace/GooseCraft/.cache/upstream/goose -B /workspace/GooseCraft/.cache/toolchain/build -DCMAKE_BUILD_TYPE=Release -DGOOSE_BUILTIN_LIBS= -DGOOSE_VERSION=cce94b919d27458856ae2685974049eac78debcf
+-- libtcc: TinyCC 0.9.28rc backend for x86_64
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/GooseCraft/.cache/toolchain/build
++ /workspace/GooseCraft/.venv/bin/python -m cmake --build /workspace/GooseCraft/.cache/toolchain/build --config Release --parallel 2
+[  4%] Linking C static library libgoose_shaderc.a
+[  4%] Built target goose_version
+[  9%] Built target goose_shaderc
+[ 13%] Linking C static library libtcc.a
+[ 18%] Built target libtcc
+[ 22%] Linking C executable tcc/tcc
+[ 27%] Built target tcc_driver
+[ 36%] tcc lib/libtcc1.c
+[ 36%] tcc lib/dsohandle.c
+[ 40%] tcc lib/va_list.c
+[ 45%] tcc lib/stdatomic.c
+[ 50%] tcc lib/atomic.S
+[ 54%] tcc lib/builtin.c
+[ 59%] tcc lib/alloca.S
+[ 63%] tcc lib/alloca-bt.S
+[ 68%] tcc lib/runmain.c
+[ 72%] tcc -ar libtcc1.a
+[ 72%] Built target tcc_runtime
+[ 77%] Linking CXX executable goose
+[100%] Built target goose
++ /workspace/GooseCraft/.cache/toolchain/build/goose version
+goose cce94b919d27458856ae2685974049eac78debcf (runtime f2981814a754)
++ /workspace/GooseCraft/.cache/toolchain/build/goose toolchain
+C compiler:   gcc 14.2.0, found on PATH
+              /usr/bin/cc
+C++ compiler: /usr/bin/g++
+style:        cc
+id:           gcc-14.2.0-a920ca84
+cmake:       /home/agent/.local/bin/cmake (3.31.6)
+git:         /usr/local/bin/git (2.52.0)
+built in:     no packages
+GOOSE_HOME:   /home/agent/.goose

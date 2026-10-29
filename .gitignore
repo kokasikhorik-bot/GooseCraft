@@ -1,0 +1,10 @@
+.cache/
+.venv/
+build/
+dist/
+__pycache__/
+*.pyc
+# Game data and user-specific credentials must stay outside Git.
+.local/
+.minecraft/
+*.jar

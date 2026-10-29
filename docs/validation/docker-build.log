@@ -1,0 +1,234 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.03kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12.14-bookworm@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 117B done
+#3 DONE 0.0s
+
+#4 [stage-0 1/8] FROM docker.io/library/python:3.12.14-bookworm@sha256:c90be507635af19768837aa7eeb2f4ce89a74d62962a335497b9df8edfb7f19d
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 28.63kB done
+#5 DONE 0.0s
+
+#6 [stage-0 2/8] WORKDIR /work
+#6 CACHED
+
+#7 [stage-0 3/8] COPY tools/requirements.txt /tmp/goosecraft-requirements.txt
+#7 DONE 0.7s
+
+#8 [stage-0 4/8] RUN --mount=type=secret,id=proxy_ca     if [ -f /run/secrets/proxy_ca ]; then       PIP_CERT=/run/secrets/proxy_ca python -m pip install --no-cache-dir -r /tmp/goosecraft-requirements.txt;     else       python -m pip install --no-cache-dir -r /tmp/goosecraft-requirements.txt;     fi
+#8 2.822 Collecting cmake==3.31.6 (from -r /tmp/goosecraft-requirements.txt (line 3))
+#8 3.499   Downloading cmake-3.31.6-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (27.8 MB)
+#8 10.40      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 27.8/27.8 MB 4.2 MB/s eta 0:00:00
+#8 10.43 Installing collected packages: cmake
+#8 10.88 Successfully installed cmake-3.31.6
+#8 10.88 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#8 11.82 
+#8 11.82 [notice] A new release of pip is available: 25.0.1 -> 26.2.2
+#8 11.82 [notice] To update, run: pip install --upgrade pip
+#8 DONE 11.9s
+
+#9 [stage-0 5/8] COPY tools/bootstrap.py tools/bootstrap.py
+#9 DONE 2.7s
+
+#10 [stage-0 6/8] COPY toolchain.lock.json toolchain.lock.json
+#10 DONE 3.1s
+
+#11 [stage-0 7/8] RUN --mount=type=secret,id=proxy_ca     if [ -f /run/secrets/proxy_ca ]; then       GIT_SSL_CAINFO=/run/secrets/proxy_ca python tools/bootstrap.py --jobs 2;     else       python tools/bootstrap.py --jobs 2;     fi
+#11 2.309 + git init /work/.cache/upstream/goose
+#11 2.310 hint: Using 'master' as the name for the initial branch. This default branch name
+#11 2.310 hint: is subject to change. To configure the initial branch name to use in all
+#11 2.310 hint: of your new repositories, which will suppress this warning, call:
+#11 2.310 hint: 
+#11 2.310 hint: 	git config --global init.defaultBranch <name>
+#11 2.310 hint: 
+#11 2.310 hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+#11 2.310 hint: 'development'. The just-created branch can be renamed via this command:
+#11 2.310 hint: 
+#11 2.310 hint: 	git branch -m <name>
+#11 2.311 Initialized empty Git repository in /work/.cache/upstream/goose/.git/
+#11 2.313 + git -C /work/.cache/upstream/goose remote add origin https://github.com/aardappel/goose.git
+#11 2.316 + git -C /work/.cache/upstream/goose fetch --depth 1 origin cce94b919d27458856ae2685974049eac78debcf
+#11 11.10 From https://github.com/aardappel/goose
+#11 11.10  * branch            cce94b919d27458856ae2685974049eac78debcf -> FETCH_HEAD
+#11 11.10 + git -C /work/.cache/upstream/goose checkout --detach cce94b919d27458856ae2685974049eac78debcf
+#11 11.21 HEAD is now at cce94b9 Prototype a hosted runtime for the embedded JIT
+#11 11.26 + /usr/local/bin/python -m cmake -S /work/.cache/upstream/goose -B /work/.cache/toolchain/build -DCMAKE_BUILD_TYPE=Release -DGOOSE_BUILTIN_LIBS= -DGOOSE_VERSION=cce94b919d27458856ae2685974049eac78debcf
+#11 11.72 -- The C compiler identification is GNU 12.2.0
+#11 12.18 -- The CXX compiler identification is GNU 12.2.0
+#11 12.18 -- Detecting C compiler ABI info
+#11 12.21 -- Detecting C compiler ABI info - done
+#11 12.22 -- Check for working C compiler: /usr/bin/cc - skipped
+#11 12.22 -- Detecting C compile features
+#11 12.22 -- Detecting C compile features - done
+#11 12.23 -- Detecting CXX compiler ABI info
+#11 12.26 -- Detecting CXX compiler ABI info - done
+#11 12.27 -- Check for working CXX compiler: /usr/bin/c++ - skipped
+#11 12.27 -- Detecting CXX compile features
+#11 12.27 -- Detecting CXX compile features - done
+#11 12.28 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+#11 12.31 -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+#11 12.31 -- Found Threads: TRUE
+#11 12.31 -- libtcc: TinyCC 0.9.28rc backend for x86_64
+#11 12.32 -- Configuring done (1.0s)
+#11 12.32 -- Generating done (0.0s)
+#11 12.33 -- Build files have been written to: /work/.cache/toolchain/build
+#11 12.33 + /usr/local/bin/python -m cmake --build /work/.cache/toolchain/build --config Release --parallel 2
+#11 12.42 [  4%] Building C object CMakeFiles/goose_shaderc.dir/src/shaderc.c.o
+#11 12.42 [  9%] Building C object CMakeFiles/libtcc.dir/third_party/tinycc/libtcc.c.o
+#11 16.10 [ 13%] Linking C static library libgoose_shaderc.a
+#11 16.11 [ 13%] Built target goose_shaderc
+#11 16.12 [ 13%] Built target goose_version
+#11 17.83 [ 18%] Linking C static library libtcc.a
+#11 17.84 [ 18%] Built target libtcc
+#11 17.84 [ 22%] Building C object CMakeFiles/tcc_driver.dir/third_party/tinycc/tcc.c.o
+#11 17.99 [ 27%] Linking C executable tcc/tcc
+#11 18.00 [ 27%] Built target tcc_driver
+#11 18.01 [ 31%] tcc lib/dsohandle.c
+#11 18.01 [ 36%] tcc lib/libtcc1.c
+#11 18.01 [ 45%] tcc lib/va_list.c
+#11 18.01 [ 45%] tcc lib/stdatomic.c
+#11 18.01 [ 50%] tcc lib/atomic.S
+#11 18.01 [ 54%] tcc lib/builtin.c
+#11 18.02 [ 59%] tcc lib/alloca.S
+#11 18.02 [ 63%] tcc lib/alloca-bt.S
+#11 18.02 [ 68%] tcc lib/runmain.c
+#11 18.02 [ 72%] tcc -ar libtcc1.a
+#11 18.02 [ 72%] Built target tcc_runtime
+#11 18.03 [ 77%] Building CXX object CMakeFiles/goose.dir/src/main.cpp.o
+#11 18.03 [ 81%] Building CXX object CMakeFiles/goose.dir/src/process.cpp.o
+#11 18.91 [ 86%] Building CXX object CMakeFiles/goose.dir/src/version.cpp.o
+#11 18.92 [ 90%] Building CXX object CMakeFiles/goose.dir/src/progress.cpp.o
+#11 19.89 [ 95%] Building C object CMakeFiles/goose.dir/src/jit_runtime.c.o
+#11 19.93 In file included from /work/.cache/upstream/goose/src/jit_runtime.c:19:
+#11 19.93 /work/.cache/upstream/goose/src/runtime/runtime_impl.h: In function ‘gs_end’:
+#11 19.93 /work/.cache/upstream/goose/src/runtime/runtime_impl.h:595:1: warning: ‘noreturn’ function does return
+#11 19.93   595 | }
+#11 19.93       | ^
+#11 19.94 In file included from /work/.cache/upstream/goose/src/jit_runtime.c:21:
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h: At top level:
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:183:16: warning: ‘gs_ctz’ defined but not used [-Wunused-function]
+#11 19.94   183 | static int64_t gs_ctz(uint64_t x) {
+#11 19.94       |                ^~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:167:16: warning: ‘gs_clz’ defined but not used [-Wunused-function]
+#11 19.94   167 | static int64_t gs_clz(uint64_t x) {
+#11 19.94       |                ^~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:153:16: warning: ‘gs_popcount’ defined but not used [-Wunused-function]
+#11 19.94   153 | static int64_t gs_popcount(uint64_t x) {
+#11 19.94       |                ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:143:16: warning: ‘gs_find_pair’ defined but not used [-Wunused-function]
+#11 19.94   143 | static int64_t gs_find_pair(sl_u8 s, const void *a, int64_t d, const void *b) {
+#11 19.94       |                ^~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:142:16: warning: ‘gs_find_any’ defined but not used [-Wunused-function]
+#11 19.94   142 | static int64_t gs_find_any(sl_u8 s, const void *set) { return gs_scan_any(s.data, s.len, set); }
+#11 19.94       |                ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:91:14: warning: ‘gs_mul_addf’ defined but not used [-Wunused-function]
+#11 19.94    91 | static float gs_mul_addf(float x, float y, float z) {
+#11 19.94       |              ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:88:15: warning: ‘gs_mul_add’ defined but not used [-Wunused-function]
+#11 19.94    88 | static double gs_mul_add(double x, double y, double z) {
+#11 19.94       |               ^~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:61:14: warning: ‘gs_sqrtf’ defined but not used [-Wunused-function]
+#11 19.94    61 | static float gs_sqrtf(float x) { return sqrtf(x); }
+#11 19.94       |              ^~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:60:15: warning: ‘gs_sqrt’ defined but not used [-Wunused-function]
+#11 19.94    60 | static double gs_sqrt(double x) { return sqrt(x); }
+#11 19.94       |               ^~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:39:16: warning: ‘gs_ffi_bytes’ defined but not used [-Wunused-function]
+#11 19.94    39 | static uint8_t gs_ffi_bytes(uint64_t p, int64_t n, gs_rref out) {
+#11 19.94       |                ^~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_ext.h:33:16: warning: ‘gs_ffi_cstr’ defined but not used [-Wunused-function]
+#11 19.94    33 | static uint8_t gs_ffi_cstr(uint64_t p, gs_rref out) {
+#11 19.94       |                ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_impl.h:578:25: warning: ‘gs_park’ defined but not used [-Wunused-function]
+#11 19.94   578 | static GS_NORETURN void gs_park(void) {
+#11 19.94       |                         ^~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime_impl.h:574:12: warning: ‘gs_end_first’ defined but not used [-Wunused-function]
+#11 19.94   574 | static int gs_end_first(void) {
+#11 19.94       |            ^~~~~~~~~~~~
+#11 19.94 In file included from /work/.cache/upstream/goose/src/jit_runtime.c:18:
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:1191:12: warning: ‘gs_is_le’ defined but not used [-Wunused-function]
+#11 19.94  1191 | static int gs_is_le(void) {
+#11 19.94       |            ^~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:1170:16: warning: ‘gs_zig_check’ defined but not used [-Wunused-function]
+#11 19.94  1170 | static int64_t gs_zig_check(const uint8_t *p, const uint8_t *end, int64_t *out) {
+#11 19.94       |                ^~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:1136:16: warning: ‘gs_zig_write’ defined but not used [-Wunused-function]
+#11 19.94  1136 | static int64_t gs_zig_write(uint8_t *p, int64_t v) {
+#11 19.94       |                ^~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:1131:16: warning: ‘gs_zig_read’ defined but not used [-Wunused-function]
+#11 19.94  1131 | static int64_t gs_zig_read(const uint8_t *p) {
+#11 19.94       |                ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:1114:28: warning: ‘gs_uleb_size_slow’ defined but not used [-Wunused-function]
+#11 19.94  1114 | static GS_NOINLINE int64_t gs_uleb_size_slow(const uint8_t *p) {
+#11 19.94       |                            ^~~~~~~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:1110:28: warning: ‘gs_uleb_read_slow’ defined but not used [-Wunused-function]
+#11 19.94  1110 | static GS_NOINLINE int64_t gs_uleb_read_slow(const uint8_t *p) {
+#11 19.94       |                            ^~~~~~~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:833:16: warning: ‘gs_f2iwrap’ defined but not used [-Wunused-function]
+#11 19.94   833 | static int64_t gs_f2iwrap(double d) {
+#11 19.94       |                ^~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:813:17: warning: ‘gs_divu32_q’ defined but not used [-Wunused-function]
+#11 19.94   813 | static uint32_t gs_divu32_q(uint32_t x, uint32_t magic, uint8_t more) {
+#11 19.94       |                 ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:792:17: warning: ‘gs_divu32_gen’ defined but not used [-Wunused-function]
+#11 19.94   792 | static uint32_t gs_divu32_gen(uint32_t d, uint8_t *more) {
+#11 19.94       |                 ^~~~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:775:17: warning: ‘gs_divu_q’ defined but not used [-Wunused-function]
+#11 19.94   775 | static uint64_t gs_divu_q(uint64_t x, uint64_t magic, uint8_t more) {
+#11 19.94       |                 ^~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:749:17: warning: ‘gs_divu_gen’ defined but not used [-Wunused-function]
+#11 19.94   749 | static uint64_t gs_divu_gen(uint64_t d, uint8_t *more) {
+#11 19.94       |                 ^~~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:485:12: warning: ‘gs_memeq’ defined but not used [-Wunused-function]
+#11 19.94   485 | static int gs_memeq(const void *a, const void *b, size_t n) {
+#11 19.94       |            ^~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:466:13: warning: ‘gs_memmove’ defined but not used [-Wunused-function]
+#11 19.94   466 | static void gs_memmove(void *dst, const void *src, size_t n) {
+#11 19.94       |             ^~~~~~~~~~
+#11 19.94 /work/.cache/upstream/goose/src/runtime/runtime.h:426:17: warning: ‘gs_bytemask’ defined but not used [-Wunused-function]
+#11 19.94   426 | static uint64_t gs_bytemask(int64_t k) {
+#11 19.94       |                 ^~~~~~~~~~~
+#11 20.87 In file included from /work/.cache/upstream/goose/src/main.cpp:29:
+#11 20.87 /work/.cache/upstream/goose/src/codegen.h: In constructor ‘goose::CodeGen::CodeGen(goose::Ast&, std::string_view, const std::vector<std::__cxx11::basic_string<char> >&, bool, bool, int64_t)’:
+#11 20.87 /work/.cache/upstream/goose/src/codegen.h:1523:20: warning: unused variable ‘n’ [-Wunused-variable]
+#11 20.87  1523 |             size_t n = 0;
+#11 20.87       |                    ^
+#11 20.91 In file included from /work/.cache/upstream/goose/src/main.cpp:30:
+#11 20.91 /work/.cache/upstream/goose/src/codegen_types.h: In member function ‘void goose::CodeGen::EmitDefaultInto(const std::string&, goose::TypeExpr*)’:
+#11 20.91 /work/.cache/upstream/goose/src/codegen_types.h:1233:66: warning: unused parameter ‘t’ [-Wunused-parameter]
+#11 20.91  1233 | inline void CodeGen::EmitDefaultInto(const string &lv, TypeExpr *t) {
+#11 20.91       |                                                        ~~~~~~~~~~^
+#11 92.88 [100%] Linking CXX executable goose
+#11 92.95 [100%] Built target goose
+#11 92.96 + /work/.cache/toolchain/build/goose version
+#11 92.96 goose cce94b919d27458856ae2685974049eac78debcf (runtime f2981814a754)
+#11 92.96 + /work/.cache/toolchain/build/goose toolchain
+#11 93.03 C compiler:   gcc 12.2.0, found on PATH
+#11 93.03               /usr/bin/cc
+#11 93.03 C++ compiler: /usr/bin/g++
+#11 93.03 style:        cc
+#11 93.03 id:           gcc-12.2.0-a920ca84
+#11 93.03 cmake:       /usr/local/bin/cmake (3.31.6)
+#11 93.03 git:         /usr/bin/git (2.39.5)
+#11 93.03 built in:     no packages
+#11 93.03 GOOSE_HOME:   /root/.goose
+#11 DONE 93.1s
+
+#12 [stage-0 8/8] COPY . .
+#12 DONE 1.1s
+
+#13 exporting to image
+#13 exporting layers
+#13 exporting layers 1.5s done
+#13 writing image sha256:14a07257aa257b02714d166c3aaa33c85c89dcef40fb899a379359d1b70afb6f done
+#13 naming to docker.io/library/goosecraft-stage1 done
+#13 DONE 1.5s

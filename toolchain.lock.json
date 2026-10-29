@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "goose": {
+    "repository": "https://github.com/aardappel/goose.git",
+    "commit": "cce94b919d27458856ae2685974049eac78debcf",
+    "builtin_libs": ""
+  },
+  "cmake": "3.31.6",
+  "reference_only": {
+    "horizon": {
+      "repository": "https://github.com/horizon-rust/horizon.git",
+      "commit": "7ebf7d26cbe58d65ef873767c639f144dc403554"
+    }
+  }
+}
