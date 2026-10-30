@@ -105,4 +105,16 @@ terrain-region остаётся 9-чанковым для историческо
 страницы с явными координатами/seed. GCW v2 пока хранит весь конечный мир;
 seed не записан, поэтому изменение модели сохранения потребует новой версии
 и явной стратегии переноса. Подробности — [roadmap](roadmap.md).
-Итог Windows CI публикуется в [github-ci.md](github-ci.md).
+Все три jobs [GitHub Actions 41067598493](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493)
+для source `8fe4fae2dc7e507d088d3825ff0f2d743707b22c` завершились success:
+Windows native/JIT/CLI, Linux и 98 графических сценариев.
+[Windows ZIP 0.8](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983396786)
+создан; окно Windows по-прежнему не проверено. Метаданные, digest и границы
+подтверждения сохранены в [github-ci.md](github-ci.md).
+
+Локальная Linux-поставка собрана из уже проверенных native outputs без повторной
+компиляции. Из `/tmp` выполнены headless `--version` и graphical `--help` без GUI;
+хеши обоих программ совпали с тестовыми, 12 лицензий совпали побайтно.
+BUILD-INFO сообщает 0.8.0, source `8fe4fae`, GCW [1,2] и profiling schema 1;
+миров и debug-программ нет. [Проверка состава](validation/large/package-results.json)
+не заменяет проверку Windows ZIP.

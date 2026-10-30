@@ -1,6 +1,53 @@
-# GitHub: успешный CI GooseCraft 0.7 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.8 — 2026-10-30
 
-## Профилирование 0.7
+## Большой конечный мир 0.8
+
+[Run 41067598493](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493)
+для `8fe4fae2dc7e507d088d3825ff0f2d743707b22c` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графики, UTF-8 PE manifests, десять suites TinyCC/native release/debug, growable владельцы и независимость copy, GCW v1/v2, дальние стыки/геометрия/движение, восемь независимых world vectors, profiling, Unicode I/O, CLI/cmd.exe, два benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | Десять suites, владельцы/GCW v1/v2/world vectors, профиль/процентили, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 98 сценариев: прежние 84 проверки плюс размеры 25/49/81, large window/debug/reference, GCW v2 F5/reopen, far replay за X=32, профили 9/81 чанка |
+
+**[Windows ZIP 0.8](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983396786)**:
+`goosecraft-windows-2022-x64-8fe4fae2dc7e507d088d3825ff0f2d743707b22c`,
+4 037 496 байт. Workflow упаковал release graphical/headless клиент,
+`.cmd`-лаунчер, лицензии, документы и BUILD-INFO с world formats [1,2],
+generator 1 и profiling schema 1. Миры и debug EXE не предусмотрены упаковкой.
+[Первый запуск](first-play.md), [размер, память и проверки](large-world-results.md).
+
+SHA-256 ZIP по GitHub API:
+`c23bde253b17acdacf9fb84dfd259cf5fa1cd57fcfed370360b7e5eff52b965a`.
+Хранение по API до `2027-01-28T13:57:34Z`, если артефакт не удалят раньше.
+Windows ZIP локально не скачивался и не хешировался. PE manifests извлекались
+SDK mt.exe внутри Windows job. Для Actions artifact в браузере может
+потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983226828): 5 461 байт, mesh/stitch без GUI.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983576378): 5 654 байта.
+- [Graphics/profile evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12984315802): 792 511 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983646262): 2 796 460 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41067598493.json)
+сохранены без credentials. Новые обычные миры имеют 81 чанк, старые сохраняют
+размер; GCW v1 не мигрирует автоматически. Все чанки и меши пока резидентны.
+Сети Minecraft Java Edition ещё нет; преимущество над Minecraft не измерено.
+
+Windows job проверил native/JIT, файловое I/O, manifest и лаунчер, окно
+**не открывалось**. Builder — Windows Server 2022; Windows 10/физический GPU
+ещё не проверены. UTF-8 argv использует manifest Windows 10 1903+.
+Графический CI — Linux Mesa/lavapipe/Xvfb, без физических устройств.
+Профили измеряют CPU wall с ожиданиями, без GPU timestamps/FPS/RSS totals.
+
+Проверенный source — `8fe4fae`. Итоговый docs-only commit с `[skip ci]`
+меняет только документы/evidence. Документы внутри ZIP отражают момент сборки;
+актуальный итог CI и ссылки находятся в этом файле.
+
+## Профилирование 0.7 (предыдущая версия)
 
 [Run 41059622515](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515)
 для `f8e6576a07c191fcaa61dfe9960c6bdcb3282d56` завершился **success**.

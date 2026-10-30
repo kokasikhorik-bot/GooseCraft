@@ -1,0 +1,30 @@
+{
+  "source_commit": "8fe4fae2dc7e507d088d3825ff0f2d743707b22c",
+  "build_info": {
+    "client_version": "GooseCraft 0.8.0",
+    "source_commit": "8fe4fae2dc7e507d088d3825ff0f2d743707b22c",
+    "source_dirty": null,
+    "ci_url": null,
+    "target": "linux-x64",
+    "graphics": true,
+    "world_format": 2,
+    "world_formats": [
+      1,
+      2
+    ],
+    "terrain_generator": 1,
+    "profiling_schema": 1
+  },
+  "execution_cwd": "/tmp",
+  "headless_version_checked": true,
+  "graphics_help_checked_without_opening_gui": true,
+  "matching_license_files": 12,
+  "release_binaries_match_tested_outputs": true,
+  "no_world_files": true,
+  "no_debug_binaries": true,
+  "scope": "Linux package assembled from already tested native outputs using project.package(True); not the Windows artifact ZIP",
+  "binaries": {
+    "goosecraft-client": "11109fe0744d4c1fe19b9817df30e6dc84103152dc492055e70b26d25773c9d7",
+    "goosecraft-headless": "f00c04b6fb7c8ac7ff5f2eaa15003d14a87575c92df8e388c278292c21c2c74b"
+  }
+}

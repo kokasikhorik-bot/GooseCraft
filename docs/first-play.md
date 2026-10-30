@@ -1,10 +1,10 @@
 # Первый запуск GooseCraft 0.8 на Windows 10 x64
 
-Предыдущая опубликованная [Windows x64 ZIP 0.7](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978751839),
-успешный CI #41059622515, source `f8e6576`.
-[Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md). В 0.5 мир расширен до девяти чанков и появился файл
-сохранения. В 0.6 новые миры получают рельеф по seed; старые сохранения
-сохраняют свои блоки. Старые 0.3/0.4 имели только временный одночанковый мир.
+[Windows x64 ZIP 0.8](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983396786),
+Windows job CI #41067598493 завершился успешно, source `8fe4fae`.
+[Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md).
+В 0.8 новый обычный мир расширен до 81 чанка; старые сохранения сохраняют
+прежние блоки и размер. Генератор рельефа v1 не изменён.
 Для скачивания Actions artifact может потребоваться вход в GitHub.
 Для UTF-8 аргументов путей используется app manifest Windows 10 1903+.
 Проверенный builder — Windows Server 2022; пользовательская Windows 10 GUI
@@ -42,7 +42,7 @@
 Существующие сохранения остаются прежнего размера: обновление их не расширяет.
 Можно ходить и редактировать через стыки без дополнительных действий.
 Нет Minecraft-текстур, серверов,
-инвентаря, крафта и загрузки существующих миров.
+инвентаря, крафта и импорта миров Minecraft.
 
 ## Сохранение
 

@@ -113,8 +113,9 @@ Goose, Python, Java или локальная среда разработки. �
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
 Готовые ZIP публикуются в [GitHub Actions](https://github.com/kokasikhorik-bot/GooseCraft/actions/workflows/build.yml).
-Предыдущая версия 0.7: [успешный CI #41059622515](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515),
-[Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978751839).
+Версия 0.8: [CI #41067598493](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493),
+[Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41067598493/artifacts/12983396786),
+проверенный source `8fe4fae`.
 Выберите успешный run нужной версии и артефакт `goosecraft-windows-2022-x64-...`.
 Поставка содержит `BUILD-INFO.json` с версией, source SHA и ссылкой на её CI.
 Подтверждённые результаты и текущая ссылка на Windows ZIP находятся в
