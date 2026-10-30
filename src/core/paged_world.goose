@@ -28,6 +28,10 @@ fn active(map: Paged&, at: i64) -> bool {
 }
 fn chunk_x(map: Paged&, at: i64) -> i64 { at % width(map.radius) - max(map.radius, 1) }
 fn chunk_z(map: Paged&, at: i64) -> i64 { at / width(map.radius) - max(map.radius, 1) }
+fn chunk_y(map: Paged&, at: i64) -> i64 { 0 }
+fn lower_y(map: Paged&) -> i64 { 0 }
+fn upper_y(map: Paged&) -> i64 { 16 }
+fn view_height(map: Paged&) -> f32 { 0.0 }
 fn lower(map: Paged&) -> i64 { -map.radius * 16 }
 fn upper(map: Paged&) -> i64 { (map.radius + 1) * 16 }
 fn contains(map: Paged&, x: i64, y: i64, z: i64) -> bool {

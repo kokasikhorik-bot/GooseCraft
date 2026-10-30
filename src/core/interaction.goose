@@ -62,7 +62,7 @@ fn place<T>(chunk: T&, hit: Hit, position: float3, material: u8) -> bool {
     if abs(hit.normal.x) + abs(hit.normal.y) + abs(hit.normal.z) != 1 { return false; }
     let cell = hit.cell + hit.normal;
     if cell.x < world::lower(chunk) || cell.x >= world::upper(chunk) || cell.z < world::lower(chunk) ||
-       cell.z >= world::upper(chunk) || cell.y < 0 || cell.y >= 16 { return false; }
+       cell.z >= world::upper(chunk) || cell.y < world::lower_y(chunk) || cell.y >= world::upper_y(chunk) { return false; }
     if world::get(chunk, cell.x, cell.y, cell.z) != 0 { return false; }
     if player::overlaps_cell(position, cell.x, cell.y, cell.z) { return false; }
     return world::set(chunk, cell.x, cell.y, cell.z, material);

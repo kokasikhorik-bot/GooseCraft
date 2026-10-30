@@ -21,7 +21,7 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.13.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.14.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
@@ -35,7 +35,8 @@ fn main() {
             print("Diagnostics: --prefetch-delay-ms 0..100 delays the worker; --page-delay-ms 0..20 delays each page preparation.");
             print("Diagnostics: --paging-replay walks farther before returning; default 680 frames.");
             print("Diagnostics: --retain-meshes keeps all GPU meshes but draws the same mesh-radius window; --stream-replay walks out and respawns.");
-            print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.");
+            print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1-9 slot; E creative inventory.");
+            print("--tall-world FILE enables a separate GCW v4 world, Y -16..47; fully resident sections, no automatic migration.");
             print("Escape pauses; click/Enter resumes; R respawns; F5 saves; F10 quits and saves.");
             print("Default world: user profile / GooseCraft/worlds/default-v1.gcw. Player position is not saved.");
             print("New worlds: terrain v1, seed 12345. --seed applies only to a new world; existing saves are preserved.");
@@ -104,11 +105,12 @@ fn main() {
         else if flag == "--single-chunk" { options.single = true; }
         else if flag == "--view-away" { options.away = true; }
         else if flag == "--no-save" { no_save = true; }
-        else if flag == "--world" || flag == "--paged-world" {
+        else if flag == "--world" || flag == "--paged-world" || flag == "--tall-world" {
             if i + 1 >= argv.len || world_path.len > 0 { abort_args(); }
             i++; world_path.append(argv[i]);
             if world_path.len == 0 { abort_args(); }
             options.paged = flag == "--paged-world";
+            options.tall = flag == "--tall-world";
         }
         else if flag == "--profile" {
             if i + 1 >= argv.len || profile_path.len > 0 { abort_args(); }
@@ -159,13 +161,14 @@ fn main() {
     if options.preview && options.mesh_radius != 0 { abort_args(); }
     if options.retain_meshes && options.mesh_radius == 0 { abort_args(); }
     if options.paged && (options.mesh_radius < 1 || options.mesh_radius > 2 || options.preview || options.demo || options.empty || options.single || options.retain_meshes) { abort_args(); }
+    if options.tall && (options.demo || options.empty || options.single || options.deferred_respawn) { abort_args(); }
     if !options.paged && (options.sync_paging || prefetch_delay_given || page_delay_given) { abort_args(); }
     if options.sync_paging && prefetch_delay_given { abort_args(); }
     if options.deferred_respawn && (!options.paged || options.sync_paging) { abort_args(); }
     // Page/index/lock names cannot collide with diagnostic outputs. New PNGs
     // also avoid accidental replacement of a user's existing diagnostic file.
-    if options.paged && output.len > 0 && (output.len < 4 || output[output.len - 4..] != ".png" || file_exists(output) || is_dir(output)) { abort_args(); }
-    if options.paged && profile_path.len > 0 && (profile_path.len < 5 || profile_path[profile_path.len - 5..] != ".json") { abort_args(); }
+    if (options.paged || options.tall) && output.len > 0 && (output.len < 4 || output[output.len - 4..] != ".png" || file_exists(output) || is_dir(output)) { abort_args(); }
+    if (options.paged || options.tall) && profile_path.len > 0 && (profile_path.len < 5 || profile_path[profile_path.len - 5..] != ".json") { abort_args(); }
     if output.len > 0 && output == world_path { abort_args(); }
     if options.offscreen && options.frames < 0 { options.frames = 3; }
     options.persistent = world_path.len > 0 || !(no_save || options.offscreen || options.preview || options.replay_input || options.single);

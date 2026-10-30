@@ -1,0 +1,43 @@
+{
+  "generator": 2,
+  "format": 4,
+  "min_y": -16,
+  "max_y_exclusive": 48,
+  "vectors": [
+    {
+      "seed": 0,
+      "radius": 0,
+      "bytes": 16432,
+      "solid_blocks": 10450,
+      "sha256": "f0aa7d5058a5758c856991ea52847472471e982d165fa025a2a4a5d8d243cdc3"
+    },
+    {
+      "seed": 1,
+      "radius": 1,
+      "bytes": 147504,
+      "solid_blocks": 102791,
+      "sha256": "05d8c3ea4b0a02ff96423c90a86d33201addeed5ab7bedf74f8c87cdf7ac0ed4"
+    },
+    {
+      "seed": 12345,
+      "radius": 1,
+      "bytes": 147504,
+      "solid_blocks": 112290,
+      "sha256": "45f500365c96c198fd2c0bfea40a82c8da0753ed106ef72894728b9485c8deaf"
+    },
+    {
+      "seed": 12345,
+      "radius": 4,
+      "bytes": 1327152,
+      "solid_blocks": 935241,
+      "sha256": "1b4a7f26bab32706ba162c6425f0f968ed3e68af6bfb8df5defe4abedcf3a7df"
+    },
+    {
+      "seed": 4294967295,
+      "radius": 2,
+      "bytes": 409648,
+      "solid_blocks": 283181,
+      "sha256": "b0935f7642a4f904419c4fc2754b2285300630d00acf058d724b3a6d4a9d4172"
+    }
+  ]
+}

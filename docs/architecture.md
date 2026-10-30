@@ -21,6 +21,8 @@ GooseCraft/
 │   │   ├── prefetch.goose    # native Goose worker, очереди limit 1, кеш 8 страниц
 │   │   ├── transfer.goose    # deferred R: preflight, commit, <=2 admissions/frame
 │   │   ├── inventory.goose   # creative hotbar 9, palette/swap/clear и общая hit layout
+│   │   ├── tall_world.goose  # full-resident columns × 4 sections, Y -16..47
+│   │   ├── tall_storage.goose # GCW v4, bounded validation и явный import v1/v2
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # GCW v1/v2, транзакционная загрузка и atomic save
@@ -205,6 +207,15 @@ mouse, останавливает look/tick/world edits, обнуляет accumu
 `interaction::place`. HUD cache key содержит отображаемую раскладку/курсор;
 при закрытом окне pointer не меняет key. Данные инвентаря сеансовые, storage
 v1/v2/v3 и generator остаются прежними. [Проверки](inventory-results.md).
+
+В 0.14 `world::Tall` хранит до 324 прежних Chunk payload в growable tail.
+Новый `chunk_y` и vertical bounds дополняют generic world interface: Halo теперь
+берёт global Y origin, GPU model translation включает Y, player/place используют
+границы конкретного backend. Vertical seam edit помечает соседнюю секцию.
+Существующие Chunk/Halo/greedy/stitch по-прежнему 16/18 по стороне. Renderer
+ready/wanted расширены 81→324; существующие Map/Paged payload и PageIndex не
+менялись. Tall payload не передаётся в worker: используются пустые generic adapters,
+CPU paging отсутствует, а save идёт в отдельный v4 codec. [Спецификация](tall-world-format.md).
 
 Сохранение — отдельный версионный кодек на Goose. Проверяет весь ввод до
 замены мира; GPU-данные восстанавливаются из блоков. F5 и штатный выход

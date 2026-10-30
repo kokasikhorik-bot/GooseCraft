@@ -37,6 +37,10 @@ fn create(radius: i64) -> Map {
 
 fn chunk_x(map: Map&, at: i64) -> i64 { at % width(map.radius) - max(map.radius, 1) }
 fn chunk_z(map: Map&, at: i64) -> i64 { at / width(map.radius) - max(map.radius, 1) }
+fn chunk_y(map: Map&, at: i64) -> i64 { 0 }
+fn lower_y(map: Map&) -> i64 { 0 }
+fn upper_y(map: Map&) -> i64 { 16 }
+fn view_height(map: Map&) -> f32 { 0.0 }
 
 // Local coordinates -1..16: a bounded snapshot for neighbor-aware meshing.
 struct Halo { blocks: u8[5832] = [0; 5832] }
@@ -67,6 +71,8 @@ fn sample(chunk: Chunk&, x: i64, y: i64, z: i64) -> u8 {
 
 fn lower(chunk: Chunk&) -> i64 { 0 }
 fn upper(chunk: Chunk&) -> i64 { 16 }
+fn lower_y(chunk: Chunk&) -> i64 { 0 }
+fn upper_y(chunk: Chunk&) -> i64 { 16 }
 
 // Goose / truncates, while % is Euclidean (never negative).
 fn chunk_coord(value: i64) -> i64 { div_euclid(value, 16) }
@@ -171,10 +177,11 @@ fn sample(halo: Halo&, x: i64, y: i64, z: i64) -> u8 { get(halo, x, y, z) }
 fn neighborhood<T>(map: T&, at: i64) -> Halo {
     assert(active(map, at));
     let ox = chunk_x(map, at) * 16;
+    let oy = chunk_y(map, at) * 16;
     let oz = chunk_z(map, at) * 16;
     var halo = Halo {};
     for y in -1..17 { for z in -1..17 { for x in -1..17 {
-        halo.blocks[(x + 1) + 18 * ((z + 1) + 18 * (y + 1))] = get(map, ox + x, y, oz + z);
+        halo.blocks[(x + 1) + 18 * ((z + 1) + 18 * (y + 1))] = get(map, ox + x, oy + y, oz + z);
     } } }
     return halo;
 }

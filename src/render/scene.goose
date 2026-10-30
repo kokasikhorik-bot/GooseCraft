@@ -21,6 +21,7 @@ struct Options {
     sync_paging: bool = false, prefetch_delay: i64 = 0, page_delay: i64 = 0,
     deferred_respawn: bool = false,
     inventory_replay: bool = false,
+    tall: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -32,6 +33,7 @@ fn run(options: Options) {
         write_stderr("profile path already exists; original file was not changed\n"); exit(7);
     }
     if options.paged { run_paged(options, startup_begin); return; }
+    if options.tall { run_tall(options, startup_begin); return; }
     var chunk = world::Map {};
     var loaded = false;
     if options.persistent {
@@ -89,7 +91,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.13.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.14.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -312,8 +314,9 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             if options.preview_view % 2 == 1 { eye.x = 16.0 - eye.x; }
             if options.preview_view >= 2 { eye.z = 16.0 - eye.z; }
         }
+        if preview { eye.y += world::view_height(chunk); }
         let target = if options.away { float3 { 96.0, 40.0, 96.0 } }
-                     else if preview { float3 { 8.0, 0.0, 8.0 } } else { eye + player::direction(state) };
+                     else if preview { float3 { 8.0, world::view_height(chunk), 8.0 } } else { eye + player::direction(state) };
         let camera = Camera { view_projection: gfx::mul(
             gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, max(192.0, 64.0 * (2 * chunk.radius + 1)) as! f32),
             gfx::look_at(eye, target, float3 { 0.0, 1.0, 0.0 })) };
@@ -441,6 +444,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             transfer_max_admitted: transition.max_admitted, transfer_phase: transition.phase,
             inventory_frames: inventory_frames, inventory_opens: inventory_opens, inventory_open: bag.opened,
             selected_slot: bag.selected + 1, selected_material: selected,
+            world_min_y: world::lower_y(chunk), world_max_y_exclusive: world::upper_y(chunk), sectioned: options.tall,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -469,7 +473,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
         ",\"hud_uploads\":", hud_uploads, ",\"hud_uploaded_bytes\":", hud_uploaded_bytes,
         ",\"outline_uploads\":", outline_uploads,
         ",\"terrain_generated\":", generated,
-        ",\"terrain_seed\":", seed_report, ",\"terrain_generator\":", if generated { 1 } else { 0 });
+        ",\"terrain_seed\":", seed_report, ",\"terrain_generator\":", if generated { if options.tall { 2 } else { 1 } } else { 0 });
     let gameplay_report = str(",\"interactive\":", !preview, ",\"replay\":", replay_input,
         ",\"ticks\":", state.ticks, ",\"breaks\":", broken, ",\"places\":", placed,
         ",\"remeshes\":", remeshes, ",\"solid_blocks\":", world::solid_count(chunk),
@@ -491,6 +495,8 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     }
     rebuild_report.append("]"); rebuild_report.append(pages::report(chunk));
     rebuild_report.append(prefetch::report(prepared_stats));
+    rebuild_report.append(str(",\"world_min_y\":", world::lower_y(chunk), ",\"world_max_y_exclusive\":", world::upper_y(chunk),
+        ",\"sectioned\":", options.tall));
     rebuild_report.append(str(",\"inventory_open\":", bag.opened, ",\"inventory_frames\":", inventory_frames,
         ",\"camera_yaw\":", state.yaw, ",\"camera_pitch\":", state.pitch,
         ",\"inventory_opens\":", inventory_opens, ",\"inventory_clicks\":", inventory_clicks,
@@ -541,4 +547,16 @@ fn run_paged(options: Options, startup_begin: i64) {
         write_stderr("paged startup I/O failed\n"); exit(8);
     }
     run_world(options, chunk, !fresh, fresh, if fresh { options.seed } else { -1 }, startup_begin);
+}
+
+fn run_tall(options: Options, startup_begin: i64) {
+    var map = world::Tall {}; var loaded = false;
+    if is_dir(options.world_path) { write_stderr("tall world requires a file\n"); exit(5); }
+    if file_exists(options.world_path) {
+        if options.seed_explicit { write_stderr("--seed requires a new tall world\n"); exit(2); }
+        if !tall_store::load(options.world_path, map) { write_stderr("invalid tall world; use explicit legacy import for v1/v2\n"); exit(5); }
+        if options.radius_explicit && options.radius != map.radius { write_stderr("existing tall radius differs\n"); exit(2); }
+        loaded = true;
+    } else { map = world::generate_tall(options.seed, options.radius); }
+    run_world(options, map, loaded, !loaded, if loaded { -1 } else { options.seed }, startup_begin);
 }

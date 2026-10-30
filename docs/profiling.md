@@ -182,6 +182,14 @@ loading, как прежде. Полный replay на 90 кадров даёт 
 focus-paused кадра, 116 fixed ticks. Видимая панель использует прежний HUD
 buffer 512 KiB, inventory state входит в cache key; idle HUD остаётся одним upload.
 
+В 0.14 `world_min_y`, `world_max_y_exclusive`, `sectioned` описывают vertical
+backend. В Tall `world_chunks`/resident/remesh означают секции 16³, не колонки;
+число колонок — chunks/4. `world_format=4`, block capacity до 1327104 байт.
+Число GPU-ready секций при mesh radius 2 может достигать 100; пустые sections
+не обязательно имеют выделенные buffers. Старые modes имеют min/max 0/16 и
+sectioned=false. Это нельзя выдавать за сравнение одинакового контента/расхода
+памяти с v3 paging: Tall сейчас полностью резидентный. Raw schema/columns прежние.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

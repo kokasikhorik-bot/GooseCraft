@@ -77,6 +77,7 @@ fn collect(map: world::Paged&, state: State&) {
     if got { accept(map, state, result); }
 }
 fn collect(map: world::Map&, state: State&) {}
+fn collect(map: world::Tall&, state: State&) {}
 
 fn submit(map: world::Paged&, state: State&) {
     if state.busy || state.worker < 0 { return; }
@@ -111,6 +112,7 @@ fn predict(map: world::Paged&, state: State&, x: f32, z: f32, mesh_radius: i64) 
     submit(map, state);
 }
 fn predict(map: world::Map&, state: State&, x: f32, z: f32, mesh_radius: i64) {}
+fn predict(map: world::Tall&, state: State&, x: f32, z: f32, mesh_radius: i64) {}
 
 fn stop(state: State&) {
     if state.worker < 0 { return; }

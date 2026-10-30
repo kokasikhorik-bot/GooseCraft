@@ -42,7 +42,7 @@ fn overlaps_cell(p: float3, x: i64, y: i64, z: i64) -> bool {
 }
 
 fn collides<T>(chunk: T&, p: float3) -> bool {
-    for y in clamp(floor(p.y) as i64, 0, 15)..clamp(floor(p.y + HEIGHT) as i64, 0, 15) + 1 {
+    for y in clamp(floor(p.y) as i64, world::lower_y(chunk), world::upper_y(chunk) - 1)..clamp(floor(p.y + HEIGHT) as i64, world::lower_y(chunk), world::upper_y(chunk) - 1) + 1 {
         for z in clamp(floor(p.z - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1)..clamp(floor(p.z + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) + 1 {
             for x in clamp(floor(p.x - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1)..clamp(floor(p.x + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) + 1 {
                 if world::get(chunk, x, y, z) != 0 && overlaps_cell(p, x, y, z) { return true; }
@@ -61,10 +61,10 @@ fn move_axis<T>(chunk: T&, state: State&, axis: i64, amount: f32) -> bool {
     if axis == 2 { p.z = clamp(p.z + amount, world::lower(chunk) + RADIUS, world::upper(chunk) - RADIUS); }
     var blocked = false;
     let lo = int3 { clamp(floor(p.x - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32,
-                    clamp(floor(p.y) as i64, 0, 15) as i32,
+                    clamp(floor(p.y) as i64, world::lower_y(chunk), world::upper_y(chunk) - 1) as i32,
                     clamp(floor(p.z - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32 };
     let hi = int3 { clamp(floor(p.x + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32,
-                    clamp(floor(p.y + HEIGHT) as i64, 0, 15) as i32,
+                    clamp(floor(p.y + HEIGHT) as i64, world::lower_y(chunk), world::upper_y(chunk) - 1) as i32,
                     clamp(floor(p.z + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32 };
     for y in lo.y..hi.y + 1 {
         for z in lo.z..hi.z + 1 {
@@ -108,6 +108,6 @@ fn tick<T>(chunk: T&, state: State&, input: Input) {
     let blocked = move_axis(chunk, state, 1, state.velocity_y * STEP);
     state.grounded = blocked && falling;
     if blocked { state.velocity_y = 0.0; }
-    if state.position.y < -8.0 { respawn(chunk, state); }
+    if state.position.y < world::lower_y(chunk) - 8.0 { respawn(chunk, state); }
     state.ticks++;
 }

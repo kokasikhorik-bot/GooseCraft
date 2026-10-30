@@ -73,7 +73,7 @@ fn rebuild_dirty<T>(map: T&, resident: residency::State&, caches: Cache[:], vert
 }
 
 fn origin<T>(map: T&, at: i64) -> float3 {
-    float3 { world::chunk_x(map, at) * 16, 0.0, world::chunk_z(map, at) * 16 }
+    float3 { world::chunk_x(map, at) * 16, world::chunk_y(map, at) * 16, world::chunk_z(map, at) * 16 }
 }
 
 fn stats(caches: Cache[:]) -> Stats {

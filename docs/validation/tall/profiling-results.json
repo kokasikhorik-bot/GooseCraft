@@ -1,0 +1,4431 @@
+{
+  "profiles": {
+    "timing-offscreen": {
+      "file": "profiles/timing-offscreen.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 30015,
+          "p50_ns": 34993,
+          "p95_ns": 178948,
+          "p99_ns": 357145,
+          "max_ns": 759037,
+          "mean_ns": 61116
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 801,
+          "p50_ns": 3135,
+          "p95_ns": 6940,
+          "p99_ns": 14922,
+          "max_ns": 42383,
+          "mean_ns": 3780
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5268,
+          "p50_ns": 5419,
+          "p95_ns": 6270,
+          "p99_ns": 23886,
+          "max_ns": 30165,
+          "mean_ns": 6033
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 50,
+          "p50_ns": 60,
+          "p95_ns": 110,
+          "p99_ns": 63375,
+          "max_ns": 83455,
+          "mean_ns": 1296
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 80,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 22935,
+          "p50_ns": 25728,
+          "p95_ns": 166549,
+          "p99_ns": 331417,
+          "max_ns": 720319,
+          "mean_ns": 49984
+        }
+      },
+      "collector_ns_total": 7101,
+      "loop_session_ns": 7357860,
+      "startup_ns": 19242218,
+      "tail_flush_ns": 152501699,
+      "exit_readback_ns": 5358655
+    },
+    "timing-window": {
+      "file": "profiles/timing-window.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 777645,
+          "p50_ns": 1934206,
+          "p95_ns": 3447063,
+          "p99_ns": 5945154,
+          "max_ns": 27365566,
+          "mean_ns": 2303933
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 15053,
+          "p50_ns": 1913356,
+          "p95_ns": 3237779,
+          "p99_ns": 5925845,
+          "max_ns": 26917304,
+          "mean_ns": 2264360
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5688,
+          "p50_ns": 6179,
+          "p95_ns": 9554,
+          "p99_ns": 21262,
+          "max_ns": 25478,
+          "mean_ns": 6913
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 80,
+          "p50_ns": 150,
+          "p95_ns": 391,
+          "p99_ns": 80481,
+          "max_ns": 117406,
+          "mean_ns": 1820
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 40,
+          "max_ns": 240,
+          "mean_ns": 22
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 5238,
+          "p50_ns": 15613,
+          "p95_ns": 127281,
+          "p99_ns": 431967,
+          "max_ns": 736253,
+          "mean_ns": 30816
+        }
+      },
+      "collector_ns_total": 15949,
+      "loop_session_ns": 276516994,
+      "startup_ns": 34111078,
+      "tail_flush_ns": 1150563,
+      "exit_readback_ns": 5441169
+    },
+    "timing-debug": {
+      "file": "profiles/timing-debug.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 35193,
+          "p50_ns": 40400,
+          "p95_ns": 253920,
+          "p99_ns": 1080489,
+          "max_ns": 1097454,
+          "mean_ns": 81170
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 831,
+          "p50_ns": 3074,
+          "p95_ns": 5869,
+          "p99_ns": 20812,
+          "max_ns": 29344,
+          "mean_ns": 3615
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 7661,
+          "p50_ns": 8873,
+          "p95_ns": 10035,
+          "p99_ns": 14913,
+          "max_ns": 28272,
+          "mean_ns": 9118
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 290,
+          "p50_ns": 310,
+          "p95_ns": 361,
+          "p99_ns": 838456,
+          "max_ns": 851034,
+          "mean_ns": 14394
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 40,
+          "max_ns": 180,
+          "mean_ns": 22
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 16665,
+          "p50_ns": 27982,
+          "p95_ns": 236615,
+          "p99_ns": 411326,
+          "max_ns": 737405,
+          "mean_ns": 54019
+        }
+      },
+      "collector_ns_total": 30696,
+      "loop_session_ns": 9785836,
+      "startup_ns": 23902689,
+      "tail_flush_ns": 149795636,
+      "exit_readback_ns": 7936617
+    },
+    "timing-reference": {
+      "file": "profiles/timing-reference.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 127621,
+          "p50_ns": 173520,
+          "p95_ns": 214541,
+          "p99_ns": 335773,
+          "max_ns": 733649,
+          "mean_ns": 183978
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 781,
+          "p50_ns": 3775,
+          "p95_ns": 8924,
+          "p99_ns": 13971,
+          "max_ns": 14151,
+          "mean_ns": 4095
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5288,
+          "p50_ns": 5498,
+          "p95_ns": 6270,
+          "p99_ns": 24807,
+          "max_ns": 25188,
+          "mean_ns": 6114
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 50,
+          "p50_ns": 70,
+          "p95_ns": 100,
+          "p99_ns": 67291,
+          "max_ns": 102924,
+          "mean_ns": 1495
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 116114,
+          "p50_ns": 163435,
+          "p95_ns": 200580,
+          "p99_ns": 326130,
+          "max_ns": 693669,
+          "mean_ns": 172254
+        }
+      },
+      "collector_ns_total": 7489,
+      "loop_session_ns": 22097687,
+      "startup_ns": 17106870,
+      "tail_flush_ns": 161343240,
+      "exit_readback_ns": 8956724
+    },
+    "timing-idle": {
+      "file": "profiles/timing-idle.json",
+      "seen": 180,
+      "retained": 150,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 150,
+          "min_ns": 2310881,
+          "p50_ns": 2679483,
+          "p95_ns": 5288951,
+          "p99_ns": 6746423,
+          "max_ns": 7372953,
+          "mean_ns": 3021420
+        },
+        "pump_ns": {
+          "count": 150,
+          "min_ns": 2285092,
+          "p50_ns": 2650549,
+          "p95_ns": 5261930,
+          "p99_ns": 6720084,
+          "max_ns": 7346043,
+          "mean_ns": 2989850
+        },
+        "game_ns": {
+          "count": 150,
+          "min_ns": 5679,
+          "p50_ns": 6180,
+          "p95_ns": 7220,
+          "p99_ns": 8433,
+          "max_ns": 8964,
+          "mean_ns": 6328
+        },
+        "mesh_ns": {
+          "count": 150,
+          "min_ns": 280,
+          "p50_ns": 321,
+          "p95_ns": 481,
+          "p99_ns": 751,
+          "max_ns": 891,
+          "mean_ns": 349
+        },
+        "save_ns": {
+          "count": 150,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 31,
+          "max_ns": 40,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 150,
+          "min_ns": 16325,
+          "p50_ns": 18518,
+          "p95_ns": 57646,
+          "p99_ns": 79079,
+          "max_ns": 197736,
+          "mean_ns": 24871
+        }
+      },
+      "collector_ns_total": 28761,
+      "loop_session_ns": 557934277,
+      "startup_ns": 44015427,
+      "tail_flush_ns": 1926906,
+      "exit_readback_ns": 0
+    },
+    "timing-short": {
+      "file": "profiles/timing-short.json",
+      "seen": 3,
+      "retained": 0,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 0,
+          "min_ns": 0,
+          "p50_ns": 0,
+          "p95_ns": 0,
+          "p99_ns": 0,
+          "max_ns": 0,
+          "mean_ns": 0
+        },
+        "pump_ns": {
+          "count": 0,
+          "min_ns": 0,
+          "p50_ns": 0,
+          "p95_ns": 0,
+          "p99_ns": 0,
+          "max_ns": 0,
+          "mean_ns": 0
+        },
+        "game_ns": {
+          "count": 0,
+          "min_ns": 0,
+          "p50_ns": 0,
+          "p95_ns": 0,
+          "p99_ns": 0,
+          "max_ns": 0,
+          "mean_ns": 0
+        },
+        "mesh_ns": {
+          "count": 0,
+          "min_ns": 0,
+          "p50_ns": 0,
+          "p95_ns": 0,
+          "p99_ns": 0,
+          "max_ns": 0,
+          "mean_ns": 0
+        },
+        "save_ns": {
+          "count": 0,
+          "min_ns": 0,
+          "p50_ns": 0,
+          "p95_ns": 0,
+          "p99_ns": 0,
+          "max_ns": 0,
+          "mean_ns": 0
+        },
+        "submit_ns": {
+          "count": 0,
+          "min_ns": 0,
+          "p50_ns": 0,
+          "p95_ns": 0,
+          "p99_ns": 0,
+          "max_ns": 0,
+          "mean_ns": 0
+        }
+      },
+      "collector_ns_total": 1121,
+      "loop_session_ns": 430465,
+      "startup_ns": 16278971,
+      "tail_flush_ns": 8086931,
+      "exit_readback_ns": 0
+    },
+    "timing-ring": {
+      "file": "profiles/timing-ring.json",
+      "seen": 1100,
+      "retained": 1024,
+      "overwritten": 73,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 31127,
+          "p50_ns": 67641,
+          "p95_ns": 103185,
+          "p99_ns": 144387,
+          "max_ns": 1191304,
+          "mean_ns": 69816
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 3235,
+          "p50_ns": 27141,
+          "p95_ns": 54812,
+          "p99_ns": 66940,
+          "max_ns": 142103,
+          "mean_ns": 29385
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 731,
+          "p50_ns": 1032,
+          "p95_ns": 1172,
+          "p99_ns": 1322,
+          "max_ns": 1612,
+          "mean_ns": 966
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 50,
+          "p50_ns": 81,
+          "p95_ns": 120,
+          "p99_ns": 161,
+          "max_ns": 351,
+          "mean_ns": 86
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 30,
+          "max_ns": 31,
+          "mean_ns": 21
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 16004,
+          "p50_ns": 37006,
+          "p95_ns": 55603,
+          "p99_ns": 92369,
+          "max_ns": 1186477,
+          "mean_ns": 39357
+        }
+      },
+      "collector_ns_total": 100981,
+      "loop_session_ns": 75203050,
+      "startup_ns": 16093799,
+      "tail_flush_ns": 1132756916,
+      "exit_readback_ns": 0
+    },
+    "timing-save": {
+      "file": "profiles/timing-save.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 24747,
+          "p50_ns": 34542,
+          "p95_ns": 177967,
+          "p99_ns": 900518,
+          "max_ns": 1854898,
+          "mean_ns": 74208
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 671,
+          "p50_ns": 2864,
+          "p95_ns": 5709,
+          "p99_ns": 22053,
+          "max_ns": 32939,
+          "mean_ns": 3622
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5288,
+          "p50_ns": 5418,
+          "p95_ns": 6870,
+          "p99_ns": 18888,
+          "max_ns": 25388,
+          "mean_ns": 5943
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 50,
+          "p50_ns": 60,
+          "p95_ns": 100,
+          "p99_ns": 65869,
+          "max_ns": 92709,
+          "mean_ns": 1389
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 380,
+          "p50_ns": 391,
+          "p95_ns": 421,
+          "p99_ns": 10756,
+          "max_ns": 1642840,
+          "mean_ns": 14166
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 10336,
+          "p50_ns": 25348,
+          "p95_ns": 170075,
+          "p99_ns": 656313,
+          "max_ns": 887249,
+          "mean_ns": 49085
+        }
+      },
+      "collector_ns_total": 7740,
+      "loop_session_ns": 8925137,
+      "startup_ns": 17180631,
+      "tail_flush_ns": 158657705,
+      "exit_readback_ns": 0
+    },
+    "timing-paused": {
+      "file": "profiles/timing-paused.json",
+      "seen": 110,
+      "retained": 110,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 110,
+          "min_ns": 23515,
+          "p50_ns": 33320,
+          "p95_ns": 198357,
+          "p99_ns": 218607,
+          "max_ns": 864705,
+          "mean_ns": 59592
+        },
+        "pump_ns": {
+          "count": 110,
+          "min_ns": 631,
+          "p50_ns": 2774,
+          "p95_ns": 9144,
+          "p99_ns": 15854,
+          "max_ns": 20301,
+          "mean_ns": 3326
+        },
+        "game_ns": {
+          "count": 110,
+          "min_ns": 671,
+          "p50_ns": 5759,
+          "p95_ns": 6640,
+          "p99_ns": 17646,
+          "max_ns": 24807,
+          "mean_ns": 5645
+        },
+        "mesh_ns": {
+          "count": 110,
+          "min_ns": 50,
+          "p50_ns": 60,
+          "p95_ns": 110,
+          "p99_ns": 41603,
+          "max_ns": 71747,
+          "mean_ns": 1104
+        },
+        "save_ns": {
+          "count": 110,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 110,
+          "min_ns": 16004,
+          "p50_ns": 24787,
+          "p95_ns": 190145,
+          "p99_ns": 201822,
+          "max_ns": 826678,
+          "mean_ns": 49495
+        }
+      },
+      "collector_ns_total": 6796,
+      "loop_session_ns": 6582117,
+      "startup_ns": 15541191,
+      "tail_flush_ns": 121920206,
+      "exit_readback_ns": 5663512
+    },
+    "large-timing-small": {
+      "file": "profiles/large-timing-small.json",
+      "seen": 180,
+      "retained": 150,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 150,
+          "min_ns": 1743952,
+          "p50_ns": 2136670,
+          "p95_ns": 5758955,
+          "p99_ns": 6477161,
+          "max_ns": 6726043,
+          "mean_ns": 2694415
+        },
+        "pump_ns": {
+          "count": 150,
+          "min_ns": 1722259,
+          "p50_ns": 2114607,
+          "p95_ns": 5724102,
+          "p99_ns": 6454126,
+          "max_ns": 6690740,
+          "mean_ns": 2669642
+        },
+        "game_ns": {
+          "count": 150,
+          "min_ns": 5479,
+          "p50_ns": 5759,
+          "p95_ns": 6410,
+          "p99_ns": 10145,
+          "max_ns": 22824,
+          "mean_ns": 5966
+        },
+        "mesh_ns": {
+          "count": 150,
+          "min_ns": 100,
+          "p50_ns": 130,
+          "p95_ns": 270,
+          "p99_ns": 411,
+          "max_ns": 1102,
+          "mean_ns": 160
+        },
+        "save_ns": {
+          "count": 150,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 40,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 150,
+          "min_ns": 14402,
+          "p50_ns": 16625,
+          "p95_ns": 21762,
+          "p99_ns": 53090,
+          "max_ns": 203234,
+          "mean_ns": 18624
+        }
+      },
+      "collector_ns_total": 19814,
+      "loop_session_ns": 493435350,
+      "startup_ns": 33633657,
+      "tail_flush_ns": 1187188,
+      "exit_readback_ns": 0
+    },
+    "large-timing-big": {
+      "file": "profiles/large-timing-big.json",
+      "seen": 180,
+      "retained": 150,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 150,
+          "min_ns": 2295638,
+          "p50_ns": 2850459,
+          "p95_ns": 3087333,
+          "p99_ns": 3215085,
+          "max_ns": 3647893,
+          "mean_ns": 2847989
+        },
+        "pump_ns": {
+          "count": 150,
+          "min_ns": 2268708,
+          "p50_ns": 2789718,
+          "p95_ns": 3033924,
+          "p99_ns": 3156467,
+          "max_ns": 3621093,
+          "mean_ns": 2792548
+        },
+        "game_ns": {
+          "count": 150,
+          "min_ns": 5769,
+          "p50_ns": 6350,
+          "p95_ns": 8693,
+          "p99_ns": 19389,
+          "max_ns": 19649,
+          "mean_ns": 6858
+        },
+        "mesh_ns": {
+          "count": 150,
+          "min_ns": 271,
+          "p50_ns": 391,
+          "p95_ns": 1002,
+          "p99_ns": 2513,
+          "max_ns": 2744,
+          "mean_ns": 502
+        },
+        "save_ns": {
+          "count": 150,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 150,
+          "min_ns": 17746,
+          "p50_ns": 54862,
+          "p95_ns": 77376,
+          "p99_ns": 115994,
+          "max_ns": 133430,
+          "mean_ns": 48060
+        }
+      },
+      "collector_ns_total": 41631,
+      "loop_session_ns": 560313455,
+      "startup_ns": 40910932,
+      "tail_flush_ns": 2051302,
+      "exit_readback_ns": 0
+    },
+    "large-travel": {
+      "file": "profiles/large-travel.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 41312,
+          "p50_ns": 47661,
+          "p95_ns": 227161,
+          "p99_ns": 650304,
+          "max_ns": 723033,
+          "mean_ns": 77441
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 811,
+          "p50_ns": 3154,
+          "p95_ns": 6139,
+          "p99_ns": 10626,
+          "max_ns": 114131,
+          "mean_ns": 4169
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5298,
+          "p50_ns": 5459,
+          "p95_ns": 6109,
+          "p99_ns": 19429,
+          "max_ns": 24467,
+          "mean_ns": 5891
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 200,
+          "p50_ns": 220,
+          "p95_ns": 270,
+          "p99_ns": 121542,
+          "max_ns": 370184,
+          "mean_ns": 4320
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 33059,
+          "p50_ns": 37987,
+          "p95_ns": 187501,
+          "p99_ns": 425256,
+          "max_ns": 692317,
+          "mean_ns": 63039
+        }
+      },
+      "collector_ns_total": 13363,
+      "loop_session_ns": 9326208,
+      "startup_ns": 24599417,
+      "tail_flush_ns": 201977003,
+      "exit_readback_ns": 5909610
+    },
+    "large-travel-window": {
+      "file": "profiles/large-travel-window.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 740289,
+          "p50_ns": 2406634,
+          "p95_ns": 3949505,
+          "p99_ns": 5920938,
+          "max_ns": 28086473,
+          "mean_ns": 2742872
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 18228,
+          "p50_ns": 2330445,
+          "p95_ns": 3653752,
+          "p99_ns": 5891584,
+          "max_ns": 27593495,
+          "mean_ns": 2678308
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5819,
+          "p50_ns": 6460,
+          "p95_ns": 12118,
+          "p99_ns": 22934,
+          "max_ns": 25067,
+          "mean_ns": 7568
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 280,
+          "p50_ns": 391,
+          "p95_ns": 1192,
+          "p99_ns": 149313,
+          "max_ns": 265618,
+          "mean_ns": 3955
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 15474,
+          "p50_ns": 33290,
+          "p95_ns": 158257,
+          "p99_ns": 474170,
+          "max_ns": 698035,
+          "mean_ns": 53018
+        }
+      },
+      "collector_ns_total": 26564,
+      "loop_session_ns": 329191893,
+      "startup_ns": 41505617,
+      "tail_flush_ns": 1681478,
+      "exit_readback_ns": 6227307
+    },
+    "cache-idle": {
+      "file": "profiles/cache-idle.json",
+      "seen": 180,
+      "retained": 150,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 150,
+          "min_ns": 1791203,
+          "p50_ns": 1889520,
+          "p95_ns": 2143380,
+          "p99_ns": 2323285,
+          "max_ns": 3098771,
+          "mean_ns": 1938071
+        },
+        "pump_ns": {
+          "count": 150,
+          "min_ns": 1773266,
+          "p50_ns": 1868378,
+          "p95_ns": 2114567,
+          "p99_ns": 2276645,
+          "max_ns": 3055516,
+          "mean_ns": 1914207
+        },
+        "game_ns": {
+          "count": 150,
+          "min_ns": 5629,
+          "p50_ns": 6380,
+          "p95_ns": 7471,
+          "p99_ns": 41312,
+          "max_ns": 49254,
+          "mean_ns": 7082
+        },
+        "mesh_ns": {
+          "count": 150,
+          "min_ns": 461,
+          "p50_ns": 641,
+          "p95_ns": 861,
+          "p99_ns": 2193,
+          "max_ns": 3796,
+          "mean_ns": 673
+        },
+        "save_ns": {
+          "count": 150,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 150,
+          "min_ns": 8583,
+          "p50_ns": 11948,
+          "p95_ns": 33711,
+          "p99_ns": 78357,
+          "max_ns": 211116,
+          "mean_ns": 16087
+        }
+      },
+      "collector_ns_total": 37295,
+      "loop_session_ns": 379723557,
+      "startup_ns": 39072914,
+      "tail_flush_ns": 1312516,
+      "exit_readback_ns": 0
+    },
+    "cache-idle-retained": {
+      "file": "profiles/cache-idle-retained.json",
+      "seen": 180,
+      "retained": 150,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 150,
+          "min_ns": 1674228,
+          "p50_ns": 1994197,
+          "p95_ns": 2371021,
+          "p99_ns": 3741394,
+          "max_ns": 3762535,
+          "mean_ns": 2048108
+        },
+        "pump_ns": {
+          "count": 150,
+          "min_ns": 1656772,
+          "p50_ns": 1966139,
+          "p95_ns": 2340185,
+          "p99_ns": 3721754,
+          "max_ns": 3741894,
+          "mean_ns": 2023860
+        },
+        "game_ns": {
+          "count": 150,
+          "min_ns": 5529,
+          "p50_ns": 6449,
+          "p95_ns": 9644,
+          "p99_ns": 19520,
+          "max_ns": 21022,
+          "mean_ns": 7157
+        },
+        "mesh_ns": {
+          "count": 150,
+          "min_ns": 270,
+          "p50_ns": 421,
+          "p95_ns": 701,
+          "p99_ns": 901,
+          "max_ns": 2463,
+          "mean_ns": 477
+        },
+        "save_ns": {
+          "count": 150,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 31,
+          "max_ns": 40,
+          "mean_ns": 21
+        },
+        "submit_ns": {
+          "count": 150,
+          "min_ns": 9404,
+          "p50_ns": 13189,
+          "p95_ns": 28693,
+          "p99_ns": 64326,
+          "max_ns": 105528,
+          "mean_ns": 16590
+        }
+      },
+      "collector_ns_total": 45522,
+      "loop_session_ns": 396391276,
+      "startup_ns": 40764666,
+      "tail_flush_ns": 1246797,
+      "exit_readback_ns": 0
+    },
+    "cache-far": {
+      "file": "profiles/cache-far.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 31247,
+          "p50_ns": 38027,
+          "p95_ns": 196304,
+          "p99_ns": 435652,
+          "max_ns": 724465,
+          "mean_ns": 66299
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 661,
+          "p50_ns": 3345,
+          "p95_ns": 5908,
+          "p99_ns": 12489,
+          "max_ns": 50185,
+          "mean_ns": 3903
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5257,
+          "p50_ns": 5428,
+          "p95_ns": 7511,
+          "p99_ns": 19509,
+          "max_ns": 20991,
+          "mean_ns": 5909
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 370,
+          "p50_ns": 381,
+          "p95_ns": 852,
+          "p99_ns": 191707,
+          "max_ns": 224987,
+          "mean_ns": 6954
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 20060,
+          "p50_ns": 28803,
+          "p95_ns": 171226,
+          "p99_ns": 361121,
+          "max_ns": 689502,
+          "mean_ns": 49511
+        }
+      },
+      "collector_ns_total": 13105,
+      "loop_session_ns": 7981173,
+      "startup_ns": 18642835,
+      "tail_flush_ns": 164190438,
+      "exit_readback_ns": 9284265
+    },
+    "cache-far-retained": {
+      "file": "profiles/cache-far-retained.json",
+      "seen": 120,
+      "retained": 120,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 120,
+          "min_ns": 34552,
+          "p50_ns": 38528,
+          "p95_ns": 202404,
+          "p99_ns": 663845,
+          "max_ns": 720289,
+          "mean_ns": 66342
+        },
+        "pump_ns": {
+          "count": 120,
+          "min_ns": 661,
+          "p50_ns": 3035,
+          "p95_ns": 5518,
+          "p99_ns": 11588,
+          "max_ns": 122444,
+          "mean_ns": 4188
+        },
+        "game_ns": {
+          "count": 120,
+          "min_ns": 5338,
+          "p50_ns": 5449,
+          "p95_ns": 6159,
+          "p99_ns": 24987,
+          "max_ns": 79119,
+          "mean_ns": 6507
+        },
+        "mesh_ns": {
+          "count": 120,
+          "min_ns": 200,
+          "p50_ns": 220,
+          "p95_ns": 250,
+          "p99_ns": 124907,
+          "max_ns": 381441,
+          "mean_ns": 4442
+        },
+        "save_ns": {
+          "count": 120,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 120,
+          "min_ns": 23265,
+          "p50_ns": 29244,
+          "p95_ns": 173250,
+          "p99_ns": 338878,
+          "max_ns": 682752,
+          "mean_ns": 51183
+        }
+      },
+      "collector_ns_total": 13016,
+      "loop_session_ns": 7986351,
+      "startup_ns": 24357629,
+      "tail_flush_ns": 170670857,
+      "exit_readback_ns": 6297542
+    },
+    "cache-stream": {
+      "file": "profiles/cache-stream.json",
+      "seen": 400,
+      "retained": 400,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 400,
+          "min_ns": 30195,
+          "p50_ns": 42714,
+          "p95_ns": 188402,
+          "p99_ns": 303935,
+          "max_ns": 767329,
+          "mean_ns": 61051
+        },
+        "pump_ns": {
+          "count": 400,
+          "min_ns": 761,
+          "p50_ns": 8733,
+          "p95_ns": 16585,
+          "p99_ns": 19540,
+          "max_ns": 32599,
+          "mean_ns": 8966
+        },
+        "game_ns": {
+          "count": 400,
+          "min_ns": 5348,
+          "p50_ns": 5469,
+          "p95_ns": 5688,
+          "p99_ns": 14171,
+          "max_ns": 64587,
+          "mean_ns": 5845
+        },
+        "mesh_ns": {
+          "count": 400,
+          "min_ns": 351,
+          "p50_ns": 371,
+          "p95_ns": 401,
+          "p99_ns": 213900,
+          "max_ns": 238107,
+          "mean_ns": 5075
+        },
+        "save_ns": {
+          "count": 400,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 400,
+          "min_ns": 13350,
+          "p50_ns": 27010,
+          "p95_ns": 170245,
+          "p99_ns": 209123,
+          "max_ns": 732377,
+          "mean_ns": 41145
+        }
+      },
+      "collector_ns_total": 42710,
+      "loop_session_ns": 24490058,
+      "startup_ns": 19736113,
+      "tail_flush_ns": 447786212,
+      "exit_readback_ns": 8948913
+    },
+    "cache-stream-window": {
+      "file": "profiles/cache-stream-window.json",
+      "seen": 400,
+      "retained": 400,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 400,
+          "min_ns": 722692,
+          "p50_ns": 1714478,
+          "p95_ns": 2038873,
+          "p99_ns": 2821746,
+          "max_ns": 27237503,
+          "mean_ns": 1790873
+        },
+        "pump_ns": {
+          "count": 400,
+          "min_ns": 8002,
+          "p50_ns": 1685445,
+          "p95_ns": 1993977,
+          "p99_ns": 2806964,
+          "max_ns": 26756082,
+          "mean_ns": 1756752
+        },
+        "game_ns": {
+          "count": 400,
+          "min_ns": 5618,
+          "p50_ns": 6049,
+          "p95_ns": 8152,
+          "p99_ns": 18818,
+          "max_ns": 56144,
+          "mean_ns": 6535
+        },
+        "mesh_ns": {
+          "count": 400,
+          "min_ns": 410,
+          "p50_ns": 541,
+          "p95_ns": 1182,
+          "p99_ns": 175923,
+          "max_ns": 218648,
+          "mean_ns": 4838
+        },
+        "save_ns": {
+          "count": 400,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 30,
+          "max_ns": 40,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 400,
+          "min_ns": 5308,
+          "p50_ns": 15373,
+          "p95_ns": 118968,
+          "p99_ns": 142173,
+          "max_ns": 657224,
+          "mean_ns": 22726
+        }
+      },
+      "collector_ns_total": 65083,
+      "loop_session_ns": 716468679,
+      "startup_ns": 36313620,
+      "tail_flush_ns": 1189101,
+      "exit_readback_ns": 5170423
+    },
+    "cache-stream-debug": {
+      "file": "profiles/cache-stream-debug.json",
+      "seen": 400,
+      "retained": 400,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 400,
+          "min_ns": 33700,
+          "p50_ns": 52188,
+          "p95_ns": 269083,
+          "p99_ns": 1808118,
+          "max_ns": 2044902,
+          "mean_ns": 111777
+        },
+        "pump_ns": {
+          "count": 400,
+          "min_ns": 741,
+          "p50_ns": 8603,
+          "p95_ns": 16325,
+          "p99_ns": 24597,
+          "max_ns": 31628,
+          "mean_ns": 8927
+        },
+        "game_ns": {
+          "count": 400,
+          "min_ns": 7882,
+          "p50_ns": 9214,
+          "p95_ns": 10236,
+          "p99_ns": 21412,
+          "max_ns": 28012,
+          "mean_ns": 9411
+        },
+        "mesh_ns": {
+          "count": 400,
+          "min_ns": 2624,
+          "p50_ns": 2735,
+          "p95_ns": 2835,
+          "p99_ns": 1749620,
+          "max_ns": 1801708,
+          "mean_ns": 43271
+        },
+        "save_ns": {
+          "count": 400,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 30,
+          "max_ns": 160,
+          "mean_ns": 21
+        },
+        "submit_ns": {
+          "count": 400,
+          "min_ns": 14472,
+          "p50_ns": 29895,
+          "p95_ns": 232408,
+          "p99_ns": 285848,
+          "max_ns": 748151,
+          "mean_ns": 50146
+        }
+      },
+      "collector_ns_total": 476817,
+      "loop_session_ns": 45222859,
+      "startup_ns": 29595534,
+      "tail_flush_ns": 460208011,
+      "exit_readback_ns": 11789968
+    },
+    "cache-stream-retained": {
+      "file": "profiles/cache-stream-retained.json",
+      "seen": 400,
+      "retained": 400,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 400,
+          "min_ns": 22654,
+          "p50_ns": 42113,
+          "p95_ns": 185748,
+          "p99_ns": 280350,
+          "max_ns": 1179006,
+          "mean_ns": 56208
+        },
+        "pump_ns": {
+          "count": 400,
+          "min_ns": 861,
+          "p50_ns": 8313,
+          "p95_ns": 15764,
+          "p99_ns": 30986,
+          "max_ns": 94502,
+          "mean_ns": 9228
+        },
+        "game_ns": {
+          "count": 400,
+          "min_ns": 5428,
+          "p50_ns": 5609,
+          "p95_ns": 5879,
+          "p99_ns": 10486,
+          "max_ns": 28973,
+          "mean_ns": 5825
+        },
+        "mesh_ns": {
+          "count": 400,
+          "min_ns": 200,
+          "p50_ns": 220,
+          "p95_ns": 250,
+          "p99_ns": 351,
+          "max_ns": 142634,
+          "mean_ns": 870
+        },
+        "save_ns": {
+          "count": 400,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 400,
+          "min_ns": 7912,
+          "p50_ns": 26781,
+          "p95_ns": 169023,
+          "p99_ns": 191337,
+          "max_ns": 1143463,
+          "mean_ns": 40263
+        }
+      },
+      "collector_ns_total": 42093,
+      "loop_session_ns": 22552946,
+      "startup_ns": 21444687,
+      "tail_flush_ns": 459861032,
+      "exit_readback_ns": 9202652
+    },
+    "cache-mid": {
+      "file": "profiles/cache-mid.json",
+      "seen": 340,
+      "retained": 340,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 340,
+          "min_ns": 22494,
+          "p50_ns": 40451,
+          "p95_ns": 188632,
+          "p99_ns": 305047,
+          "max_ns": 675071,
+          "mean_ns": 55956
+        },
+        "pump_ns": {
+          "count": 340,
+          "min_ns": 731,
+          "p50_ns": 7481,
+          "p95_ns": 13490,
+          "p99_ns": 24817,
+          "max_ns": 65068,
+          "mean_ns": 7823
+        },
+        "game_ns": {
+          "count": 340,
+          "min_ns": 5308,
+          "p50_ns": 5428,
+          "p95_ns": 5609,
+          "p99_ns": 9254,
+          "max_ns": 24397,
+          "mean_ns": 5585
+        },
+        "mesh_ns": {
+          "count": 340,
+          "min_ns": 350,
+          "p50_ns": 371,
+          "p95_ns": 410,
+          "p99_ns": 134551,
+          "max_ns": 217636,
+          "mean_ns": 2845
+        },
+        "save_ns": {
+          "count": 340,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 340,
+          "min_ns": 7582,
+          "p50_ns": 26339,
+          "p95_ns": 167762,
+          "p99_ns": 202082,
+          "max_ns": 638036,
+          "mean_ns": 39682
+        }
+      },
+      "collector_ns_total": 37041,
+      "loop_session_ns": 19088087,
+      "startup_ns": 17680084,
+      "tail_flush_ns": 420879737,
+      "exit_readback_ns": 8582734
+    },
+    "cache-mid-retained": {
+      "file": "profiles/cache-mid-retained.json",
+      "seen": 340,
+      "retained": 340,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 340,
+          "min_ns": 25017,
+          "p50_ns": 40530,
+          "p95_ns": 183935,
+          "p99_ns": 355522,
+          "max_ns": 742201,
+          "mean_ns": 56122
+        },
+        "pump_ns": {
+          "count": 340,
+          "min_ns": 831,
+          "p50_ns": 7211,
+          "p95_ns": 12959,
+          "p99_ns": 15954,
+          "max_ns": 93170,
+          "mean_ns": 7543
+        },
+        "game_ns": {
+          "count": 340,
+          "min_ns": 5288,
+          "p50_ns": 5409,
+          "p95_ns": 5558,
+          "p99_ns": 12850,
+          "max_ns": 23406,
+          "mean_ns": 5588
+        },
+        "mesh_ns": {
+          "count": 340,
+          "min_ns": 200,
+          "p50_ns": 220,
+          "p95_ns": 240,
+          "p99_ns": 1151,
+          "max_ns": 435753,
+          "mean_ns": 1909
+        },
+        "save_ns": {
+          "count": 340,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 340,
+          "min_ns": 14372,
+          "p50_ns": 26580,
+          "p95_ns": 166930,
+          "p99_ns": 195893,
+          "max_ns": 703183,
+          "mean_ns": 41062
+        }
+      },
+      "collector_ns_total": 36605,
+      "loop_session_ns": 19143741,
+      "startup_ns": 24397228,
+      "tail_flush_ns": 408637532,
+      "exit_readback_ns": 10300346
+    },
+    "pages-idle": {
+      "file": "profiles/pages-idle.json",
+      "seen": 180,
+      "retained": 150,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 150,
+          "min_ns": 1851974,
+          "p50_ns": 2107727,
+          "p95_ns": 2422077,
+          "p99_ns": 2965621,
+          "max_ns": 3369386,
+          "mean_ns": 2159468
+        },
+        "pump_ns": {
+          "count": 150,
+          "min_ns": 1834237,
+          "p50_ns": 2087447,
+          "p95_ns": 2399594,
+          "p99_ns": 2871550,
+          "max_ns": 3336056,
+          "mean_ns": 2134296
+        },
+        "game_ns": {
+          "count": 150,
+          "min_ns": 5829,
+          "p50_ns": 6390,
+          "p95_ns": 8983,
+          "p99_ns": 20080,
+          "max_ns": 20110,
+          "mean_ns": 6747
+        },
+        "mesh_ns": {
+          "count": 150,
+          "min_ns": 491,
+          "p50_ns": 671,
+          "p95_ns": 1172,
+          "p99_ns": 2905,
+          "max_ns": 3585,
+          "mean_ns": 742
+        },
+        "save_ns": {
+          "count": 150,
+          "min_ns": 380,
+          "p50_ns": 411,
+          "p95_ns": 471,
+          "p99_ns": 581,
+          "max_ns": 581,
+          "mean_ns": 416
+        },
+        "submit_ns": {
+          "count": 150,
+          "min_ns": 8032,
+          "p50_ns": 11006,
+          "p95_ns": 32809,
+          "p99_ns": 50165,
+          "max_ns": 69825,
+          "mean_ns": 17265
+        }
+      },
+      "collector_ns_total": 38510,
+      "loop_session_ns": 428188342,
+      "startup_ns": 44844191,
+      "tail_flush_ns": 1543491,
+      "exit_readback_ns": 0
+    },
+    "pages-route": {
+      "file": "profiles/pages-route.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 29414,
+          "p50_ns": 52108,
+          "p95_ns": 202964,
+          "p99_ns": 358877,
+          "max_ns": 1384053,
+          "mean_ns": 70540
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 931,
+          "p50_ns": 14442,
+          "p95_ns": 29785,
+          "p99_ns": 39099,
+          "max_ns": 81882,
+          "mean_ns": 15295
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5388,
+          "p50_ns": 5548,
+          "p95_ns": 5869,
+          "p99_ns": 19039,
+          "max_ns": 296003,
+          "mean_ns": 6290
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 321,
+          "p50_ns": 351,
+          "p95_ns": 401,
+          "p99_ns": 162353,
+          "max_ns": 274912,
+          "mean_ns": 3369
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 370,
+          "p50_ns": 390,
+          "p95_ns": 410,
+          "p99_ns": 521,
+          "max_ns": 1169812,
+          "mean_ns": 2138
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 12959,
+          "p50_ns": 28203,
+          "p95_ns": 176535,
+          "p99_ns": 204787,
+          "max_ns": 699257,
+          "mean_ns": 43446
+        }
+      },
+      "collector_ns_total": 71045,
+      "loop_session_ns": 48087419,
+      "startup_ns": 18973531,
+      "tail_flush_ns": 866445834,
+      "exit_readback_ns": 8625367
+    },
+    "pages-route-window": {
+      "file": "profiles/pages-route-window.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 730524,
+          "p50_ns": 1576832,
+          "p95_ns": 1946726,
+          "p99_ns": 2162309,
+          "max_ns": 26288441,
+          "mean_ns": 1609244
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 14522,
+          "p50_ns": 1548038,
+          "p95_ns": 1919675,
+          "p99_ns": 2092084,
+          "max_ns": 25884346,
+          "mean_ns": 1572957
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5698,
+          "p50_ns": 6690,
+          "p95_ns": 8192,
+          "p99_ns": 26089,
+          "max_ns": 338217,
+          "mean_ns": 7841
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 410,
+          "p50_ns": 581,
+          "p95_ns": 922,
+          "p99_ns": 153801,
+          "max_ns": 232098,
+          "mean_ns": 2990
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 361,
+          "p50_ns": 420,
+          "p95_ns": 461,
+          "p99_ns": 601,
+          "max_ns": 1374459,
+          "mean_ns": 2443
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 4567,
+          "p50_ns": 9544,
+          "p95_ns": 128843,
+          "p99_ns": 155573,
+          "max_ns": 679778,
+          "mean_ns": 23010
+        }
+      },
+      "collector_ns_total": 112389,
+      "loop_session_ns": 1094487771,
+      "startup_ns": 41294780,
+      "tail_flush_ns": 1302271,
+      "exit_readback_ns": 5609011
+    },
+    "pages-route-debug": {
+      "file": "profiles/pages-route-debug.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 34192,
+          "p50_ns": 76464,
+          "p95_ns": 352668,
+          "p99_ns": 1879255,
+          "max_ns": 6072464,
+          "mean_ns": 142075
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 711,
+          "p50_ns": 17596,
+          "p95_ns": 44416,
+          "p99_ns": 54922,
+          "max_ns": 206379,
+          "mean_ns": 19922
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 8403,
+          "p50_ns": 15594,
+          "p95_ns": 19860,
+          "p99_ns": 38608,
+          "max_ns": 3351370,
+          "mean_ns": 20269
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 3415,
+          "p50_ns": 5709,
+          "p95_ns": 7151,
+          "p99_ns": 1635199,
+          "max_ns": 2833203,
+          "mean_ns": 35922
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 400,
+          "p50_ns": 621,
+          "p95_ns": 731,
+          "p99_ns": 1122,
+          "max_ns": 1807667,
+          "mean_ns": 3332
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 14091,
+          "p50_ns": 38177,
+          "p95_ns": 294461,
+          "p99_ns": 352799,
+          "max_ns": 769733,
+          "mean_ns": 62628
+        }
+      },
+      "collector_ns_total": 1112766,
+      "loop_session_ns": 97839606,
+      "startup_ns": 36050587,
+      "tail_flush_ns": 584238663,
+      "exit_readback_ns": 11270169
+    },
+    "pages-route-legacy": {
+      "file": "profiles/pages-route-legacy.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 21612,
+          "p50_ns": 57416,
+          "p95_ns": 239058,
+          "p99_ns": 423895,
+          "max_ns": 2403209,
+          "mean_ns": 85385
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 671,
+          "p50_ns": 16485,
+          "p95_ns": 30666,
+          "p99_ns": 44176,
+          "max_ns": 123065,
+          "mean_ns": 16370
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5218,
+          "p50_ns": 7271,
+          "p95_ns": 8612,
+          "p99_ns": 25969,
+          "max_ns": 49895,
+          "mean_ns": 7222
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 340,
+          "p50_ns": 461,
+          "p95_ns": 611,
+          "p99_ns": 171126,
+          "max_ns": 325317,
+          "mean_ns": 3825
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 380,
+          "p50_ns": 520,
+          "p95_ns": 601,
+          "p99_ns": 791,
+          "max_ns": 2149179,
+          "mean_ns": 6642
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 5859,
+          "p50_ns": 33170,
+          "p95_ns": 201151,
+          "p99_ns": 324647,
+          "max_ns": 791485,
+          "mean_ns": 51325
+        }
+      },
+      "collector_ns_total": 104156,
+      "loop_session_ns": 58217279,
+      "startup_ns": 16957477,
+      "tail_flush_ns": 670240650,
+      "exit_readback_ns": 8675483
+    },
+    "pages-mid": {
+      "file": "profiles/pages-mid.json",
+      "seen": 600,
+      "retained": 600,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 600,
+          "min_ns": 27862,
+          "p50_ns": 47501,
+          "p95_ns": 201161,
+          "p99_ns": 264576,
+          "max_ns": 1471965,
+          "mean_ns": 66622
+        },
+        "pump_ns": {
+          "count": 600,
+          "min_ns": 742,
+          "p50_ns": 12138,
+          "p95_ns": 23986,
+          "p99_ns": 32479,
+          "max_ns": 94111,
+          "mean_ns": 12880
+        },
+        "game_ns": {
+          "count": 600,
+          "min_ns": 5418,
+          "p50_ns": 5558,
+          "p95_ns": 5878,
+          "p99_ns": 19499,
+          "max_ns": 46730,
+          "mean_ns": 5970
+        },
+        "mesh_ns": {
+          "count": 600,
+          "min_ns": 320,
+          "p50_ns": 341,
+          "p95_ns": 380,
+          "p99_ns": 1843,
+          "max_ns": 243474,
+          "mean_ns": 1850
+        },
+        "save_ns": {
+          "count": 600,
+          "min_ns": 371,
+          "p50_ns": 391,
+          "p95_ns": 401,
+          "p99_ns": 441,
+          "max_ns": 1278104,
+          "mean_ns": 2522
+        },
+        "submit_ns": {
+          "count": 600,
+          "min_ns": 11196,
+          "p50_ns": 27261,
+          "p95_ns": 174582,
+          "p99_ns": 225668,
+          "max_ns": 671736,
+          "mean_ns": 43398
+        }
+      },
+      "collector_ns_total": 77609,
+      "loop_session_ns": 40087887,
+      "startup_ns": 20019423,
+      "tail_flush_ns": 500943621,
+      "exit_readback_ns": 8145669
+    },
+    "pages-mid-legacy": {
+      "file": "profiles/pages-mid-legacy.json",
+      "seen": 600,
+      "retained": 600,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 600,
+          "min_ns": 27932,
+          "p50_ns": 48613,
+          "p95_ns": 211977,
+          "p99_ns": 325547,
+          "max_ns": 2263460,
+          "mean_ns": 75805
+        },
+        "pump_ns": {
+          "count": 600,
+          "min_ns": 771,
+          "p50_ns": 12418,
+          "p95_ns": 39499,
+          "p99_ns": 58037,
+          "max_ns": 128803,
+          "mean_ns": 15857
+        },
+        "game_ns": {
+          "count": 600,
+          "min_ns": 5268,
+          "p50_ns": 5448,
+          "p95_ns": 8853,
+          "p99_ns": 22704,
+          "max_ns": 226399,
+          "mean_ns": 6788
+        },
+        "mesh_ns": {
+          "count": 600,
+          "min_ns": 340,
+          "p50_ns": 371,
+          "p95_ns": 611,
+          "p99_ns": 2975,
+          "max_ns": 238277,
+          "mean_ns": 1870
+        },
+        "save_ns": {
+          "count": 600,
+          "min_ns": 380,
+          "p50_ns": 391,
+          "p95_ns": 561,
+          "p99_ns": 751,
+          "max_ns": 2072834,
+          "mean_ns": 3877
+        },
+        "submit_ns": {
+          "count": 600,
+          "min_ns": 10926,
+          "p50_ns": 27431,
+          "p95_ns": 179088,
+          "p99_ns": 266499,
+          "max_ns": 653128,
+          "mean_ns": 47411
+        }
+      },
+      "collector_ns_total": 72244,
+      "loop_session_ns": 45594515,
+      "startup_ns": 16468690,
+      "tail_flush_ns": 573260491,
+      "exit_readback_ns": 8148463
+    },
+    "pages-imported": {
+      "file": "profiles/pages-imported.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 28513,
+          "p50_ns": 50636,
+          "p95_ns": 198567,
+          "p99_ns": 316313,
+          "max_ns": 1605194,
+          "mean_ns": 68996
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 801,
+          "p50_ns": 13821,
+          "p95_ns": 27661,
+          "p99_ns": 43285,
+          "max_ns": 80580,
+          "mean_ns": 14712
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5358,
+          "p50_ns": 5548,
+          "p95_ns": 5869,
+          "p99_ns": 33430,
+          "max_ns": 541221,
+          "mean_ns": 6955
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 321,
+          "p50_ns": 350,
+          "p95_ns": 390,
+          "p99_ns": 198297,
+          "max_ns": 292318,
+          "mean_ns": 3561
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 371,
+          "p50_ns": 390,
+          "p95_ns": 410,
+          "p99_ns": 511,
+          "max_ns": 1412415,
+          "mean_ns": 2496
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 11978,
+          "p50_ns": 27021,
+          "p95_ns": 171557,
+          "p99_ns": 211226,
+          "max_ns": 706448,
+          "mean_ns": 41271
+        }
+      },
+      "collector_ns_total": 69628,
+      "loop_session_ns": 47030846,
+      "startup_ns": 18322246,
+      "tail_flush_ns": 863568010,
+      "exit_readback_ns": 9126809
+    },
+    "prefetch-sync": {
+      "file": "profiles/prefetch-sync.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 20591,
+          "p50_ns": 48833,
+          "p95_ns": 198377,
+          "p99_ns": 301722,
+          "max_ns": 1734177,
+          "mean_ns": 65785
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 741,
+          "p50_ns": 13981,
+          "p95_ns": 27241,
+          "p99_ns": 31387,
+          "max_ns": 49184,
+          "mean_ns": 14346
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5278,
+          "p50_ns": 5468,
+          "p95_ns": 5669,
+          "p99_ns": 18788,
+          "max_ns": 346088,
+          "mean_ns": 6265
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 321,
+          "p50_ns": 341,
+          "p95_ns": 371,
+          "p99_ns": 151447,
+          "max_ns": 292608,
+          "mean_ns": 3333
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 370,
+          "p50_ns": 391,
+          "p95_ns": 401,
+          "p99_ns": 431,
+          "max_ns": 1525775,
+          "mean_ns": 2636
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 5188,
+          "p50_ns": 26880,
+          "p95_ns": 171067,
+          "p99_ns": 197906,
+          "max_ns": 653800,
+          "mean_ns": 39204
+        }
+      },
+      "collector_ns_total": 67734,
+      "loop_session_ns": 44839485,
+      "startup_ns": 17945511,
+      "tail_flush_ns": 862926618,
+      "exit_readback_ns": 8937525
+    },
+    "prefetch-imported-sync": {
+      "file": "profiles/prefetch-imported-sync.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 22574,
+          "p50_ns": 49844,
+          "p95_ns": 198708,
+          "p99_ns": 315412,
+          "max_ns": 1595639,
+          "mean_ns": 67290
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 691,
+          "p50_ns": 13811,
+          "p95_ns": 26991,
+          "p99_ns": 42934,
+          "max_ns": 64867,
+          "mean_ns": 14516
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5328,
+          "p50_ns": 5488,
+          "p95_ns": 5708,
+          "p99_ns": 13911,
+          "max_ns": 671956,
+          "mean_ns": 6960
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 321,
+          "p50_ns": 350,
+          "p95_ns": 380,
+          "p99_ns": 149054,
+          "max_ns": 275583,
+          "mean_ns": 3394
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 370,
+          "p50_ns": 390,
+          "p95_ns": 400,
+          "p99_ns": 451,
+          "max_ns": 1400598,
+          "mean_ns": 2470
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 8673,
+          "p50_ns": 27091,
+          "p95_ns": 173339,
+          "p99_ns": 187081,
+          "max_ns": 639267,
+          "mean_ns": 39948
+        }
+      },
+      "collector_ns_total": 69551,
+      "loop_session_ns": 45866262,
+      "startup_ns": 16622900,
+      "tail_flush_ns": 838160024,
+      "exit_readback_ns": 8745358
+    },
+    "prefetch-latency": {
+      "file": "profiles/prefetch-latency.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 918025,
+          "p50_ns": 1659085,
+          "p95_ns": 1935729,
+          "p99_ns": 3429326,
+          "max_ns": 64642273,
+          "mean_ns": 1821554
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 14491,
+          "p50_ns": 1627096,
+          "p95_ns": 1879906,
+          "p99_ns": 2743369,
+          "max_ns": 25514663,
+          "mean_ns": 1695387
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5958,
+          "p50_ns": 6600,
+          "p95_ns": 8443,
+          "p99_ns": 25157,
+          "max_ns": 62711621,
+          "mean_ns": 99232
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 400,
+          "p50_ns": 661,
+          "p95_ns": 991,
+          "p99_ns": 162464,
+          "max_ns": 249654,
+          "mean_ns": 3342
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 390,
+          "p50_ns": 431,
+          "p95_ns": 481,
+          "p99_ns": 881,
+          "max_ns": 1321620,
+          "mean_ns": 2387
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 5558,
+          "p50_ns": 8543,
+          "p95_ns": 121702,
+          "p99_ns": 158097,
+          "max_ns": 868131,
+          "mean_ns": 21204
+        }
+      },
+      "collector_ns_total": 134784,
+      "loop_session_ns": 1238878281,
+      "startup_ns": 143435619,
+      "tail_flush_ns": 749522,
+      "exit_readback_ns": 5319647
+    },
+    "prefetch-latency-sync": {
+      "file": "profiles/prefetch-latency-sync.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 834630,
+          "p50_ns": 1371334,
+          "p95_ns": 2019855,
+          "p99_ns": 2440075,
+          "max_ns": 81548963,
+          "mean_ns": 1723552
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 13090,
+          "p50_ns": 1339306,
+          "p95_ns": 1985163,
+          "p99_ns": 2072894,
+          "max_ns": 26268632,
+          "mean_ns": 1545239
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5738,
+          "p50_ns": 6330,
+          "p95_ns": 7431,
+          "p99_ns": 22935,
+          "max_ns": 79373796,
+          "mean_ns": 154197
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 400,
+          "p50_ns": 511,
+          "p95_ns": 841,
+          "p99_ns": 144937,
+          "max_ns": 207170,
+          "mean_ns": 2816
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 380,
+          "p50_ns": 421,
+          "p95_ns": 461,
+          "p99_ns": 621,
+          "max_ns": 1413417,
+          "mean_ns": 2505
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 5538,
+          "p50_ns": 7441,
+          "p95_ns": 117807,
+          "p99_ns": 149093,
+          "max_ns": 796983,
+          "mean_ns": 18793
+        }
+      },
+      "collector_ns_total": 108795,
+      "loop_session_ns": 1172199523,
+      "startup_ns": 138521794,
+      "tail_flush_ns": 1122371,
+      "exit_readback_ns": 5745255
+    },
+    "prefetch-delayed": {
+      "file": "profiles/prefetch-delayed.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 24316,
+          "p50_ns": 51076,
+          "p95_ns": 204917,
+          "p99_ns": 362863,
+          "max_ns": 1880456,
+          "mean_ns": 71084
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 691,
+          "p50_ns": 13760,
+          "p95_ns": 28343,
+          "p99_ns": 42403,
+          "max_ns": 54963,
+          "mean_ns": 14793
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5348,
+          "p50_ns": 5518,
+          "p95_ns": 5989,
+          "p99_ns": 20631,
+          "max_ns": 316995,
+          "mean_ns": 6364
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 320,
+          "p50_ns": 350,
+          "p95_ns": 440,
+          "p99_ns": 157366,
+          "max_ns": 372838,
+          "mean_ns": 3751
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 360,
+          "p50_ns": 371,
+          "p95_ns": 401,
+          "p99_ns": 581,
+          "max_ns": 1662259,
+          "mean_ns": 2869
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 11507,
+          "p50_ns": 27201,
+          "p95_ns": 175713,
+          "p99_ns": 223455,
+          "max_ns": 676173,
+          "mean_ns": 43304
+        }
+      },
+      "collector_ns_total": 89713,
+      "loop_session_ns": 48469742,
+      "startup_ns": 18372511,
+      "tail_flush_ns": 946112841,
+      "exit_readback_ns": 8775744
+    },
+    "prefetch-quit": {
+      "file": "profiles/prefetch-quit.json",
+      "seen": 15,
+      "retained": 15,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 15,
+          "min_ns": 22214,
+          "p50_ns": 37887,
+          "p95_ns": 709823,
+          "p99_ns": 709823,
+          "max_ns": 709823,
+          "mean_ns": 155245
+        },
+        "pump_ns": {
+          "count": 15,
+          "min_ns": 701,
+          "p50_ns": 952,
+          "p95_ns": 13300,
+          "p99_ns": 13300,
+          "max_ns": 13300,
+          "mean_ns": 2489
+        },
+        "game_ns": {
+          "count": 15,
+          "min_ns": 5358,
+          "p50_ns": 5668,
+          "p95_ns": 39479,
+          "p99_ns": 39479,
+          "max_ns": 39479,
+          "mean_ns": 8568
+        },
+        "mesh_ns": {
+          "count": 15,
+          "min_ns": 340,
+          "p50_ns": 381,
+          "p95_ns": 162193,
+          "p99_ns": 162193,
+          "max_ns": 162193,
+          "mean_ns": 20096
+        },
+        "save_ns": {
+          "count": 15,
+          "min_ns": 390,
+          "p50_ns": 400,
+          "p95_ns": 601,
+          "p99_ns": 601,
+          "max_ns": 601,
+          "mean_ns": 423
+        },
+        "submit_ns": {
+          "count": 15,
+          "min_ns": 15293,
+          "p50_ns": 30526,
+          "p95_ns": 655381,
+          "p99_ns": 655381,
+          "max_ns": 655381,
+          "mean_ns": 123667
+        }
+      },
+      "collector_ns_total": 2663,
+      "loop_session_ns": 2338271,
+      "startup_ns": 19044087,
+      "tail_flush_ns": 22270224,
+      "exit_readback_ns": 6084783
+    },
+    "fallback-file-delayed": {
+      "file": "profiles/fallback-file-delayed.json",
+      "seen": 680,
+      "retained": 680,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 680,
+          "min_ns": 19790,
+          "p50_ns": 49424,
+          "p95_ns": 198908,
+          "p99_ns": 316484,
+          "max_ns": 1518584,
+          "mean_ns": 67923
+        },
+        "pump_ns": {
+          "count": 680,
+          "min_ns": 681,
+          "p50_ns": 13791,
+          "p95_ns": 27842,
+          "p99_ns": 38318,
+          "max_ns": 47281,
+          "mean_ns": 14537
+        },
+        "game_ns": {
+          "count": 680,
+          "min_ns": 5408,
+          "p50_ns": 5618,
+          "p95_ns": 5879,
+          "p99_ns": 23445,
+          "max_ns": 530354,
+          "mean_ns": 6858
+        },
+        "mesh_ns": {
+          "count": 680,
+          "min_ns": 320,
+          "p50_ns": 350,
+          "p95_ns": 391,
+          "p99_ns": 159248,
+          "max_ns": 299008,
+          "mean_ns": 3361
+        },
+        "save_ns": {
+          "count": 680,
+          "min_ns": 370,
+          "p50_ns": 390,
+          "p95_ns": 401,
+          "p99_ns": 501,
+          "max_ns": 1335160,
+          "mean_ns": 2352
+        },
+        "submit_ns": {
+          "count": 680,
+          "min_ns": 5368,
+          "p50_ns": 26880,
+          "p95_ns": 171557,
+          "p99_ns": 195252,
+          "max_ns": 715993,
+          "mean_ns": 40813
+        }
+      },
+      "collector_ns_total": 70440,
+      "loop_session_ns": 46298600,
+      "startup_ns": 17847915,
+      "tail_flush_ns": 781719570,
+      "exit_readback_ns": 8218899
+    },
+    "transfer-window": {
+      "file": "profiles/transfer-window.json",
+      "seen": 1100,
+      "retained": 1024,
+      "overwritten": 76,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 1123352,
+          "p50_ns": 1560587,
+          "p95_ns": 1890281,
+          "p99_ns": 2584311,
+          "max_ns": 5469852,
+          "mean_ns": 1551898
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 1110313,
+          "p50_ns": 1526356,
+          "p95_ns": 1729580,
+          "p99_ns": 2090390,
+          "max_ns": 5449161,
+          "mean_ns": 1493111
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5808,
+          "p50_ns": 6360,
+          "p95_ns": 10336,
+          "p99_ns": 1076643,
+          "max_ns": 1081790,
+          "mean_ns": 41134
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 120,
+          "p50_ns": 490,
+          "p95_ns": 761,
+          "p99_ns": 2484,
+          "max_ns": 209794,
+          "mean_ns": 1541
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 361,
+          "p50_ns": 401,
+          "p95_ns": 451,
+          "p99_ns": 510,
+          "max_ns": 1764723,
+          "mean_ns": 2159
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 4296,
+          "p50_ns": 7161,
+          "p95_ns": 27652,
+          "p99_ns": 138677,
+          "max_ns": 186329,
+          "mean_ns": 13951
+        }
+      },
+      "collector_ns_total": 188755,
+      "loop_session_ns": 1735658542,
+      "startup_ns": 40644407,
+      "tail_flush_ns": 741160,
+      "exit_readback_ns": 5082883
+    },
+    "transfer-window-reference": {
+      "file": "profiles/transfer-window-reference.json",
+      "seen": 1067,
+      "retained": 1024,
+      "overwritten": 43,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 1210002,
+          "p50_ns": 1771824,
+          "p95_ns": 2022971,
+          "p99_ns": 2337452,
+          "max_ns": 4016522,
+          "mean_ns": 1741679
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 1196823,
+          "p50_ns": 1743621,
+          "p95_ns": 1951764,
+          "p99_ns": 2262509,
+          "max_ns": 3981309,
+          "mean_ns": 1710747
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5718,
+          "p50_ns": 6159,
+          "p95_ns": 8803,
+          "p99_ns": 18738,
+          "max_ns": 707751,
+          "mean_ns": 7378
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 381,
+          "p50_ns": 491,
+          "p95_ns": 891,
+          "p99_ns": 3044,
+          "max_ns": 230245,
+          "mean_ns": 1667
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 371,
+          "p50_ns": 411,
+          "p95_ns": 581,
+          "p99_ns": 671,
+          "max_ns": 1665564,
+          "mean_ns": 2058
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 5358,
+          "p50_ns": 16225,
+          "p95_ns": 48863,
+          "p99_ns": 140881,
+          "max_ns": 222584,
+          "mean_ns": 19828
+        }
+      },
+      "collector_ns_total": 157291,
+      "loop_session_ns": 1901606362,
+      "startup_ns": 35437589,
+      "tail_flush_ns": 719808,
+      "exit_readback_ns": 5319219
+    },
+    "transfer-offscreen": {
+      "file": "profiles/transfer-offscreen.json",
+      "seen": 1100,
+      "retained": 1024,
+      "overwritten": 76,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 22744,
+          "p50_ns": 64426,
+          "p95_ns": 245778,
+          "p99_ns": 1214099,
+          "max_ns": 1755340,
+          "mean_ns": 120763
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 3645,
+          "p50_ns": 25167,
+          "p95_ns": 70786,
+          "p99_ns": 88052,
+          "max_ns": 275393,
+          "mean_ns": 32569
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5438,
+          "p50_ns": 5949,
+          "p95_ns": 9744,
+          "p99_ns": 1093108,
+          "max_ns": 1387078,
+          "mean_ns": 42589
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 131,
+          "p50_ns": 380,
+          "p95_ns": 611,
+          "p99_ns": 1372,
+          "max_ns": 339648,
+          "mean_ns": 2078
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 380,
+          "p50_ns": 410,
+          "p95_ns": 591,
+          "p99_ns": 862,
+          "max_ns": 1537544,
+          "mean_ns": 2020
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 6250,
+          "p50_ns": 28923,
+          "p95_ns": 172198,
+          "p99_ns": 210034,
+          "max_ns": 449368,
+          "mean_ns": 41505
+        }
+      },
+      "collector_ns_total": 162842,
+      "loop_session_ns": 129260412,
+      "startup_ns": 16810505,
+      "tail_flush_ns": 850389152,
+      "exit_readback_ns": 8826634
+    },
+    "transfer-offscreen-reference": {
+      "file": "profiles/transfer-offscreen-reference.json",
+      "seen": 1067,
+      "retained": 1024,
+      "overwritten": 43,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 21081,
+          "p50_ns": 59990,
+          "p95_ns": 183434,
+          "p99_ns": 227461,
+          "max_ns": 1944072,
+          "mean_ns": 70756
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 2393,
+          "p50_ns": 23455,
+          "p95_ns": 50756,
+          "p99_ns": 63555,
+          "max_ns": 148683,
+          "mean_ns": 25249
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5288,
+          "p50_ns": 5458,
+          "p95_ns": 5809,
+          "p99_ns": 19149,
+          "max_ns": 720309,
+          "mean_ns": 6390
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 330,
+          "p50_ns": 351,
+          "p95_ns": 400,
+          "p99_ns": 571,
+          "max_ns": 283605,
+          "mean_ns": 1883
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 370,
+          "p50_ns": 390,
+          "p95_ns": 410,
+          "p99_ns": 480,
+          "max_ns": 1749180,
+          "mean_ns": 2118
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 5458,
+          "p50_ns": 27862,
+          "p95_ns": 74913,
+          "p99_ns": 186340,
+          "max_ns": 298427,
+          "mean_ns": 35113
+        }
+      },
+      "collector_ns_total": 112991,
+      "loop_session_ns": 76349396,
+      "startup_ns": 17627645,
+      "tail_flush_ns": 1264753896,
+      "exit_readback_ns": 8867104
+    },
+    "transfer-debug": {
+      "file": "profiles/transfer-debug.json",
+      "seen": 1100,
+      "retained": 1024,
+      "overwritten": 76,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 29744,
+          "p50_ns": 70956,
+          "p95_ns": 376985,
+          "p99_ns": 1294489,
+          "max_ns": 2426946,
+          "mean_ns": 137486
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 3405,
+          "p50_ns": 24787,
+          "p95_ns": 51517,
+          "p99_ns": 96274,
+          "max_ns": 443374,
+          "mean_ns": 27576
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 9024,
+          "p50_ns": 9965,
+          "p95_ns": 18597,
+          "p99_ns": 1124204,
+          "max_ns": 1560478,
+          "mean_ns": 47297
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 1152,
+          "p50_ns": 3725,
+          "p95_ns": 3916,
+          "p99_ns": 7952,
+          "max_ns": 1965635,
+          "mean_ns": 14182
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 400,
+          "p50_ns": 421,
+          "p95_ns": 441,
+          "p99_ns": 571,
+          "max_ns": 1604544,
+          "mean_ns": 2007
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 8462,
+          "p50_ns": 30445,
+          "p95_ns": 226149,
+          "p99_ns": 263956,
+          "max_ns": 2323141,
+          "mean_ns": 46423
+        }
+      },
+      "collector_ns_total": 1341478,
+      "loop_session_ns": 153680903,
+      "startup_ns": 25943379,
+      "tail_flush_ns": 1106244889,
+      "exit_readback_ns": 11830414
+    },
+    "transfer-debug-reference": {
+      "file": "profiles/transfer-debug-reference.json",
+      "seen": 1067,
+      "retained": 1024,
+      "overwritten": 43,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 20832,
+          "p50_ns": 60320,
+          "p95_ns": 189284,
+          "p99_ns": 342123,
+          "max_ns": 2292004,
+          "mean_ns": 75983
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 2303,
+          "p50_ns": 22744,
+          "p95_ns": 51077,
+          "p99_ns": 63555,
+          "max_ns": 269755,
+          "mean_ns": 25474
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5308,
+          "p50_ns": 5468,
+          "p95_ns": 5668,
+          "p99_ns": 18037,
+          "max_ns": 685136,
+          "mean_ns": 6294
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 330,
+          "p50_ns": 360,
+          "p95_ns": 391,
+          "p99_ns": 521,
+          "max_ns": 293359,
+          "mean_ns": 1901
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 370,
+          "p50_ns": 391,
+          "p95_ns": 411,
+          "p99_ns": 421,
+          "max_ns": 2103812,
+          "mean_ns": 2445
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 5138,
+          "p50_ns": 27781,
+          "p95_ns": 162794,
+          "p99_ns": 287321,
+          "max_ns": 510054,
+          "mean_ns": 39867
+        }
+      },
+      "collector_ns_total": 113519,
+      "loop_session_ns": 81690428,
+      "startup_ns": 16514927,
+      "tail_flush_ns": 1296978069,
+      "exit_readback_ns": 9262041
+    },
+    "transfer-latency": {
+      "file": "profiles/transfer-latency.json",
+      "seen": 1100,
+      "retained": 1024,
+      "overwritten": 76,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 1174829,
+          "p50_ns": 1312898,
+          "p95_ns": 1792244,
+          "p99_ns": 2421126,
+          "max_ns": 3038226,
+          "mean_ns": 1385272
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 1161920,
+          "p50_ns": 1291143,
+          "p95_ns": 1616160,
+          "p99_ns": 1770952,
+          "max_ns": 2696538,
+          "mean_ns": 1327002
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5788,
+          "p50_ns": 6310,
+          "p95_ns": 9975,
+          "p99_ns": 1078175,
+          "max_ns": 1089732,
+          "mean_ns": 41184
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 130,
+          "p50_ns": 511,
+          "p95_ns": 791,
+          "p99_ns": 2874,
+          "max_ns": 238247,
+          "mean_ns": 1640
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 370,
+          "p50_ns": 401,
+          "p95_ns": 441,
+          "p99_ns": 541,
+          "max_ns": 1560237,
+          "mean_ns": 1932
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 5398,
+          "p50_ns": 6680,
+          "p95_ns": 28483,
+          "p99_ns": 142133,
+          "max_ns": 180019,
+          "mean_ns": 13511
+        }
+      },
+      "collector_ns_total": 212905,
+      "loop_session_ns": 1589633592,
+      "startup_ns": 143438318,
+      "tail_flush_ns": 918476,
+      "exit_readback_ns": 5825014
+    },
+    "transfer-latency-reference": {
+      "file": "profiles/transfer-latency-reference.json",
+      "seen": 1067,
+      "retained": 1024,
+      "overwritten": 43,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 1160680,
+          "p50_ns": 1569492,
+          "p95_ns": 1811334,
+          "p99_ns": 2064273,
+          "max_ns": 81226254,
+          "mean_ns": 1610268
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 1147630,
+          "p50_ns": 1549872,
+          "p95_ns": 1762647,
+          "p99_ns": 1993978,
+          "max_ns": 3901191,
+          "mean_ns": 1504673
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5668,
+          "p50_ns": 6049,
+          "p95_ns": 9084,
+          "p99_ns": 17206,
+          "max_ns": 79309982,
+          "mean_ns": 83942
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 380,
+          "p50_ns": 461,
+          "p95_ns": 912,
+          "p99_ns": 3035,
+          "max_ns": 239279,
+          "mean_ns": 1667
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 370,
+          "p50_ns": 401,
+          "p95_ns": 490,
+          "p99_ns": 601,
+          "max_ns": 1444275,
+          "mean_ns": 1825
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 5338,
+          "p50_ns": 10095,
+          "p95_ns": 41733,
+          "p99_ns": 150736,
+          "max_ns": 256925,
+          "mean_ns": 18160
+        }
+      },
+      "collector_ns_total": 188882,
+      "loop_session_ns": 1764200303,
+      "startup_ns": 139515595,
+      "tail_flush_ns": 689363,
+      "exit_readback_ns": 5271821
+    },
+    "transfer-delayed": {
+      "file": "profiles/transfer-delayed.json",
+      "seen": 1100,
+      "retained": 1024,
+      "overwritten": 76,
+      "summary": {
+        "wall_ns": {
+          "count": 1024,
+          "min_ns": 1150885,
+          "p50_ns": 1638836,
+          "p95_ns": 2613656,
+          "p99_ns": 2969325,
+          "max_ns": 4927945,
+          "mean_ns": 1718408
+        },
+        "pump_ns": {
+          "count": 1024,
+          "min_ns": 1136854,
+          "p50_ns": 1525426,
+          "p95_ns": 1989041,
+          "p99_ns": 2229311,
+          "max_ns": 4912492,
+          "mean_ns": 1561366
+        },
+        "game_ns": {
+          "count": 1024,
+          "min_ns": 5848,
+          "p50_ns": 6620,
+          "p95_ns": 1070054,
+          "p99_ns": 1079598,
+          "max_ns": 1087220,
+          "mean_ns": 137280
+        },
+        "mesh_ns": {
+          "count": 1024,
+          "min_ns": 120,
+          "p50_ns": 531,
+          "p95_ns": 1011,
+          "p99_ns": 1672,
+          "max_ns": 231828,
+          "mean_ns": 1650
+        },
+        "save_ns": {
+          "count": 1024,
+          "min_ns": 380,
+          "p50_ns": 421,
+          "p95_ns": 601,
+          "p99_ns": 681,
+          "max_ns": 1513748,
+          "mean_ns": 1956
+        },
+        "submit_ns": {
+          "count": 1024,
+          "min_ns": 5047,
+          "p50_ns": 8192,
+          "p95_ns": 30346,
+          "p99_ns": 149974,
+          "max_ns": 198447,
+          "mean_ns": 16154
+        }
+      },
+      "collector_ns_total": 236968,
+      "loop_session_ns": 1895839325,
+      "startup_ns": 39365793,
+      "tail_flush_ns": 1111946,
+      "exit_readback_ns": 5442046
+    },
+    "transfer-delayed-reference": {
+      "file": "profiles/transfer-delayed-reference.json",
+      "seen": 975,
+      "retained": 975,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 975,
+          "min_ns": 984415,
+          "p50_ns": 1879585,
+          "p95_ns": 2229378,
+          "p99_ns": 2856338,
+          "max_ns": 32109108,
+          "mean_ns": 1922562
+        },
+        "pump_ns": {
+          "count": 975,
+          "min_ns": 13059,
+          "p50_ns": 1850321,
+          "p95_ns": 2199074,
+          "p99_ns": 2762981,
+          "max_ns": 31520216,
+          "mean_ns": 1886481
+        },
+        "game_ns": {
+          "count": 975,
+          "min_ns": 5689,
+          "p50_ns": 6189,
+          "p95_ns": 8964,
+          "p99_ns": 25448,
+          "max_ns": 684405,
+          "mean_ns": 7706
+        },
+        "mesh_ns": {
+          "count": 975,
+          "min_ns": 390,
+          "p50_ns": 491,
+          "p95_ns": 962,
+          "p99_ns": 95804,
+          "max_ns": 240540,
+          "mean_ns": 2334
+        },
+        "save_ns": {
+          "count": 975,
+          "min_ns": 370,
+          "p50_ns": 411,
+          "p95_ns": 510,
+          "p99_ns": 631,
+          "max_ns": 1708651,
+          "mean_ns": 2173
+        },
+        "submit_ns": {
+          "count": 975,
+          "min_ns": 5408,
+          "p50_ns": 16925,
+          "p95_ns": 114963,
+          "p99_ns": 147151,
+          "max_ns": 945337,
+          "mean_ns": 23866
+        }
+      },
+      "collector_ns_total": 161268,
+      "loop_session_ns": 1874754795,
+      "startup_ns": 34733731,
+      "tail_flush_ns": 1076692,
+      "exit_readback_ns": 5412316
+    },
+    "transfer-quit": {
+      "file": "profiles/transfer-quit.json",
+      "seen": 630,
+      "retained": 630,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 630,
+          "min_ns": 27471,
+          "p50_ns": 49194,
+          "p95_ns": 204296,
+          "p99_ns": 1132696,
+          "max_ns": 2153785,
+          "mean_ns": 86517
+        },
+        "pump_ns": {
+          "count": 630,
+          "min_ns": 751,
+          "p50_ns": 12979,
+          "p95_ns": 26971,
+          "p99_ns": 44817,
+          "max_ns": 60070,
+          "mean_ns": 13790
+        },
+        "game_ns": {
+          "count": 630,
+          "min_ns": 5378,
+          "p50_ns": 5529,
+          "p95_ns": 6099,
+          "p99_ns": 1064164,
+          "max_ns": 1480478,
+          "mean_ns": 24199
+        },
+        "mesh_ns": {
+          "count": 630,
+          "min_ns": 130,
+          "p50_ns": 341,
+          "p95_ns": 380,
+          "p99_ns": 17496,
+          "max_ns": 221652,
+          "mean_ns": 1758
+        },
+        "save_ns": {
+          "count": 630,
+          "min_ns": 370,
+          "p50_ns": 381,
+          "p95_ns": 401,
+          "p99_ns": 511,
+          "max_ns": 1959334,
+          "mean_ns": 3497
+        },
+        "submit_ns": {
+          "count": 630,
+          "min_ns": 12659,
+          "p50_ns": 27091,
+          "p95_ns": 174181,
+          "p99_ns": 205047,
+          "max_ns": 721791,
+          "mean_ns": 43270
+        }
+      },
+      "collector_ns_total": 93328,
+      "loop_session_ns": 54637980,
+      "startup_ns": 21025364,
+      "tail_flush_ns": 794182626,
+      "exit_readback_ns": 8329134
+    },
+    "inventory-empty": {
+      "file": "profiles/inventory-empty.json",
+      "seen": 10,
+      "retained": 10,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 10,
+          "min_ns": 22224,
+          "p50_ns": 64717,
+          "p95_ns": 813568,
+          "p99_ns": 813568,
+          "max_ns": 813568,
+          "mean_ns": 205599
+        },
+        "pump_ns": {
+          "count": 10,
+          "min_ns": 751,
+          "p50_ns": 941,
+          "p95_ns": 16795,
+          "p99_ns": 16795,
+          "max_ns": 16795,
+          "mean_ns": 3744
+        },
+        "game_ns": {
+          "count": 10,
+          "min_ns": 5298,
+          "p50_ns": 5508,
+          "p95_ns": 23906,
+          "p99_ns": 23906,
+          "max_ns": 23906,
+          "mean_ns": 8279
+        },
+        "mesh_ns": {
+          "count": 10,
+          "min_ns": 60,
+          "p50_ns": 70,
+          "p95_ns": 58407,
+          "p99_ns": 58407,
+          "max_ns": 58407,
+          "mean_ns": 6032
+        },
+        "save_ns": {
+          "count": 10,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 20,
+          "max_ns": 20,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 10,
+          "min_ns": 16024,
+          "p50_ns": 57246,
+          "p95_ns": 777765,
+          "p99_ns": 777765,
+          "max_ns": 777765,
+          "mean_ns": 187521
+        }
+      },
+      "collector_ns_total": 1492,
+      "loop_session_ns": 2066054,
+      "startup_ns": 14440172,
+      "tail_flush_ns": 14263192,
+      "exit_readback_ns": 5383292
+    },
+    "inventory-held": {
+      "file": "profiles/inventory-held.json",
+      "seen": 14,
+      "retained": 14,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 14,
+          "min_ns": 21893,
+          "p50_ns": 31167,
+          "p95_ns": 2071973,
+          "p99_ns": 2071973,
+          "max_ns": 2071973,
+          "mean_ns": 240170
+        },
+        "pump_ns": {
+          "count": 14,
+          "min_ns": 651,
+          "p50_ns": 891,
+          "p95_ns": 19339,
+          "p99_ns": 19339,
+          "max_ns": 19339,
+          "mean_ns": 3231
+        },
+        "game_ns": {
+          "count": 14,
+          "min_ns": 2584,
+          "p50_ns": 5388,
+          "p95_ns": 21191,
+          "p99_ns": 21191,
+          "max_ns": 21191,
+          "mean_ns": 6625
+        },
+        "mesh_ns": {
+          "count": 14,
+          "min_ns": 60,
+          "p50_ns": 90,
+          "p95_ns": 58418,
+          "p99_ns": 58418,
+          "max_ns": 58418,
+          "mean_ns": 4377
+        },
+        "save_ns": {
+          "count": 14,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 21,
+          "max_ns": 21,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 14,
+          "min_ns": 14532,
+          "p50_ns": 26670,
+          "p95_ns": 2036750,
+          "p99_ns": 2036750,
+          "max_ns": 2036750,
+          "mean_ns": 225916
+        }
+      },
+      "collector_ns_total": 1792,
+      "loop_session_ns": 3372891,
+      "startup_ns": 14638509,
+      "tail_flush_ns": 24371401,
+      "exit_readback_ns": 6163221
+    },
+    "inventory-open": {
+      "file": "profiles/inventory-open.json",
+      "seen": 29,
+      "retained": 29,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 29,
+          "min_ns": 20010,
+          "p50_ns": 33651,
+          "p95_ns": 236804,
+          "p99_ns": 824135,
+          "max_ns": 824135,
+          "mean_ns": 127712
+        },
+        "pump_ns": {
+          "count": 29,
+          "min_ns": 651,
+          "p50_ns": 1342,
+          "p95_ns": 11848,
+          "p99_ns": 14962,
+          "max_ns": 14962,
+          "mean_ns": 2338
+        },
+        "game_ns": {
+          "count": 29,
+          "min_ns": 2433,
+          "p50_ns": 2563,
+          "p95_ns": 13250,
+          "p99_ns": 24567,
+          "max_ns": 24567,
+          "mean_ns": 4511
+        },
+        "mesh_ns": {
+          "count": 29,
+          "min_ns": 60,
+          "p50_ns": 61,
+          "p95_ns": 761,
+          "p99_ns": 88533,
+          "max_ns": 88533,
+          "mean_ns": 3164
+        },
+        "save_ns": {
+          "count": 29,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 20,
+          "p99_ns": 21,
+          "max_ns": 21,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 29,
+          "min_ns": 13871,
+          "p50_ns": 27421,
+          "p95_ns": 227882,
+          "p99_ns": 786939,
+          "max_ns": 786939,
+          "mean_ns": 117678
+        }
+      },
+      "collector_ns_total": 2492,
+      "loop_session_ns": 3720692,
+      "startup_ns": 15452067,
+      "tail_flush_ns": 45101447,
+      "exit_readback_ns": 6265534
+    },
+    "inventory-final": {
+      "file": "profiles/inventory-final.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 17175,
+          "p50_ns": 32088,
+          "p95_ns": 234452,
+          "p99_ns": 826598,
+          "max_ns": 826598,
+          "mean_ns": 81239
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 681,
+          "p50_ns": 2524,
+          "p95_ns": 4436,
+          "p99_ns": 21251,
+          "max_ns": 21251,
+          "mean_ns": 2939
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 631,
+          "p50_ns": 5298,
+          "p95_ns": 12709,
+          "p99_ns": 23105,
+          "max_ns": 23105,
+          "mean_ns": 5069
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 50,
+          "p50_ns": 60,
+          "p95_ns": 181,
+          "p99_ns": 59018,
+          "max_ns": 59018,
+          "mean_ns": 1233
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 7461,
+          "p50_ns": 23555,
+          "p95_ns": 230345,
+          "p99_ns": 790734,
+          "max_ns": 790734,
+          "mean_ns": 71975
+        }
+      },
+      "collector_ns_total": 5878,
+      "loop_session_ns": 7336898,
+      "startup_ns": 15756138,
+      "tail_flush_ns": 107825237,
+      "exit_readback_ns": 5416352
+    },
+    "inventory-window": {
+      "file": "profiles/inventory-window.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 941140,
+          "p50_ns": 1655960,
+          "p95_ns": 2187977,
+          "p99_ns": 26201801,
+          "max_ns": 26201801,
+          "mean_ns": 1978351
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 10636,
+          "p50_ns": 1623030,
+          "p95_ns": 2011723,
+          "p99_ns": 25973840,
+          "max_ns": 25973840,
+          "mean_ns": 1905098
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 1072,
+          "p50_ns": 5729,
+          "p95_ns": 181782,
+          "p99_ns": 239559,
+          "max_ns": 239559,
+          "mean_ns": 19064
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 100,
+          "p50_ns": 220,
+          "p95_ns": 781,
+          "p99_ns": 82734,
+          "max_ns": 82734,
+          "mean_ns": 1770
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 21,
+          "p99_ns": 30,
+          "max_ns": 30,
+          "mean_ns": 20
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 4246,
+          "p50_ns": 5809,
+          "p95_ns": 201772,
+          "p99_ns": 832177,
+          "max_ns": 832177,
+          "mean_ns": 52398
+        }
+      },
+      "collector_ns_total": 12168,
+      "loop_session_ns": 178095218,
+      "startup_ns": 32877385,
+      "tail_flush_ns": 752858,
+      "exit_readback_ns": 5426067
+    },
+    "inventory-debug": {
+      "file": "profiles/inventory-debug.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 15464,
+          "p50_ns": 36755,
+          "p95_ns": 319609,
+          "p99_ns": 899086,
+          "max_ns": 899086,
+          "mean_ns": 114364
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 621,
+          "p50_ns": 2444,
+          "p95_ns": 4807,
+          "p99_ns": 13791,
+          "max_ns": 13791,
+          "mean_ns": 2775
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 1623,
+          "p50_ns": 7802,
+          "p95_ns": 9084,
+          "p99_ns": 31437,
+          "max_ns": 31437,
+          "mean_ns": 6461
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 290,
+          "p50_ns": 311,
+          "p95_ns": 411,
+          "p99_ns": 596684,
+          "max_ns": 596684,
+          "mean_ns": 13169
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 20,
+          "p50_ns": 20,
+          "p95_ns": 30,
+          "p99_ns": 311,
+          "max_ns": 311,
+          "mean_ns": 23
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 5739,
+          "p50_ns": 25869,
+          "p95_ns": 301532,
+          "p99_ns": 852987,
+          "max_ns": 852987,
+          "mean_ns": 91934
+        }
+      },
+      "collector_ns_total": 23822,
+      "loop_session_ns": 10339155,
+      "startup_ns": 15841210,
+      "tail_flush_ns": 92338673,
+      "exit_readback_ns": 11657609
+    },
+    "inventory-save": {
+      "file": "profiles/inventory-save.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 20961,
+          "p50_ns": 36424,
+          "p95_ns": 247090,
+          "p99_ns": 980388,
+          "max_ns": 980388,
+          "mean_ns": 91586
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 711,
+          "p50_ns": 2654,
+          "p95_ns": 6129,
+          "p99_ns": 21522,
+          "max_ns": 21522,
+          "mean_ns": 3378
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 671,
+          "p50_ns": 5368,
+          "p95_ns": 10386,
+          "p99_ns": 26730,
+          "max_ns": 26730,
+          "mean_ns": 5674
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 60,
+          "p50_ns": 70,
+          "p95_ns": 201,
+          "p99_ns": 85608,
+          "max_ns": 85608,
+          "mean_ns": 1748
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 360,
+          "p50_ns": 381,
+          "p95_ns": 681,
+          "p99_ns": 5938,
+          "max_ns": 5938,
+          "mean_ns": 506
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 7261,
+          "p50_ns": 27501,
+          "p95_ns": 238607,
+          "p99_ns": 938776,
+          "max_ns": 938776,
+          "mean_ns": 80279
+        }
+      },
+      "collector_ns_total": 7440,
+      "loop_session_ns": 8272870,
+      "startup_ns": 16958443,
+      "tail_flush_ns": 90977828,
+      "exit_readback_ns": 10650195
+    },
+    "inventory-paged": {
+      "file": "profiles/inventory-paged.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 27020,
+          "p50_ns": 49985,
+          "p95_ns": 286780,
+          "p99_ns": 823824,
+          "max_ns": 823824,
+          "mean_ns": 101161
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 901,
+          "p50_ns": 2734,
+          "p95_ns": 6239,
+          "p99_ns": 44116,
+          "max_ns": 44116,
+          "mean_ns": 3812
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 742,
+          "p50_ns": 5508,
+          "p95_ns": 16124,
+          "p99_ns": 36465,
+          "max_ns": 36465,
+          "mean_ns": 6629
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 370,
+          "p50_ns": 460,
+          "p95_ns": 992,
+          "p99_ns": 97316,
+          "max_ns": 97316,
+          "mean_ns": 2326
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 370,
+          "p50_ns": 410,
+          "p95_ns": 791,
+          "p99_ns": 911,
+          "max_ns": 911,
+          "mean_ns": 486
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 14181,
+          "p50_ns": 37726,
+          "p95_ns": 275933,
+          "p99_ns": 771736,
+          "max_ns": 771736,
+          "mean_ns": 87907
+        }
+      },
+      "collector_ns_total": 12208,
+      "loop_session_ns": 9160843,
+      "startup_ns": 19759402,
+      "tail_flush_ns": 144353131,
+      "exit_readback_ns": 5135233
+    },
+    "inventory-map": {
+      "file": "profiles/inventory-map.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 22834,
+          "p50_ns": 38537,
+          "p95_ns": 248743,
+          "p99_ns": 829152,
+          "max_ns": 829152,
+          "mean_ns": 95275
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 721,
+          "p50_ns": 2664,
+          "p95_ns": 6560,
+          "p99_ns": 47060,
+          "max_ns": 47060,
+          "mean_ns": 3331
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 681,
+          "p50_ns": 5268,
+          "p95_ns": 11817,
+          "p99_ns": 103806,
+          "max_ns": 103806,
+          "mean_ns": 6041
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 370,
+          "p50_ns": 381,
+          "p95_ns": 501,
+          "p99_ns": 89594,
+          "max_ns": 89594,
+          "mean_ns": 2181
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 361,
+          "p50_ns": 371,
+          "p95_ns": 411,
+          "p99_ns": 6149,
+          "max_ns": 6149,
+          "mean_ns": 444
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 12449,
+          "p50_ns": 29844,
+          "p95_ns": 243615,
+          "p99_ns": 789874,
+          "max_ns": 789874,
+          "mean_ns": 83277
+        }
+      },
+      "collector_ns_total": 11412,
+      "loop_session_ns": 8606442,
+      "startup_ns": 17658794,
+      "tail_flush_ns": 158602638,
+      "exit_readback_ns": 5204386
+    },
+    "tall-preview": {
+      "file": "profiles/tall-preview.json",
+      "seen": 3,
+      "retained": 3,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 3,
+          "min_ns": 29425,
+          "p50_ns": 44116,
+          "p95_ns": 359409,
+          "p99_ns": 359409,
+          "max_ns": 359409,
+          "mean_ns": 144316
+        },
+        "pump_ns": {
+          "count": 3,
+          "min_ns": 1252,
+          "p50_ns": 2214,
+          "p95_ns": 11367,
+          "p99_ns": 11367,
+          "max_ns": 11367,
+          "mean_ns": 4944
+        },
+        "game_ns": {
+          "count": 3,
+          "min_ns": 751,
+          "p50_ns": 1412,
+          "p95_ns": 3586,
+          "p99_ns": 3586,
+          "max_ns": 3586,
+          "mean_ns": 1916
+        },
+        "mesh_ns": {
+          "count": 3,
+          "min_ns": 161,
+          "p50_ns": 260,
+          "p95_ns": 921,
+          "p99_ns": 921,
+          "max_ns": 921,
+          "mean_ns": 447
+        },
+        "save_ns": {
+          "count": 3,
+          "min_ns": 380,
+          "p50_ns": 401,
+          "p95_ns": 591,
+          "p99_ns": 591,
+          "max_ns": 591,
+          "mean_ns": 457
+        },
+        "submit_ns": {
+          "count": 3,
+          "min_ns": 26881,
+          "p50_ns": 39829,
+          "p95_ns": 342944,
+          "p99_ns": 342944,
+          "max_ns": 342944,
+          "mean_ns": 136551
+        }
+      },
+      "collector_ns_total": 1111,
+      "loop_session_ns": 434551,
+      "startup_ns": 18189238,
+      "tail_flush_ns": 9812059,
+      "exit_readback_ns": 7104563
+    },
+    "tall-window": {
+      "file": "profiles/tall-window.json",
+      "seen": 3,
+      "retained": 3,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 3,
+          "min_ns": 381712,
+          "p50_ns": 2625042,
+          "p95_ns": 28090791,
+          "p99_ns": 28090791,
+          "max_ns": 28090791,
+          "mean_ns": 10365848
+        },
+        "pump_ns": {
+          "count": 3,
+          "min_ns": 13441,
+          "p50_ns": 2591562,
+          "p95_ns": 28037491,
+          "p99_ns": 28037491,
+          "max_ns": 28037491,
+          "mean_ns": 10214164
+        },
+        "game_ns": {
+          "count": 3,
+          "min_ns": 2524,
+          "p50_ns": 3204,
+          "p95_ns": 3696,
+          "p99_ns": 3696,
+          "max_ns": 3696,
+          "mean_ns": 3141
+        },
+        "mesh_ns": {
+          "count": 3,
+          "min_ns": 431,
+          "p50_ns": 1062,
+          "p95_ns": 1522,
+          "p99_ns": 1522,
+          "max_ns": 1522,
+          "mean_ns": 1005
+        },
+        "save_ns": {
+          "count": 3,
+          "min_ns": 581,
+          "p50_ns": 601,
+          "p95_ns": 681,
+          "p99_ns": 681,
+          "max_ns": 681,
+          "mean_ns": 621
+        },
+        "submit_ns": {
+          "count": 3,
+          "min_ns": 29844,
+          "p50_ns": 47481,
+          "p95_ns": 363424,
+          "p99_ns": 363424,
+          "max_ns": 363424,
+          "mean_ns": 146916
+        }
+      },
+      "collector_ns_total": 1634,
+      "loop_session_ns": 31099820,
+      "startup_ns": 35826891,
+      "tail_flush_ns": 1393247,
+      "exit_readback_ns": 7209961
+    },
+    "tall-debug": {
+      "file": "profiles/tall-debug.json",
+      "seen": 3,
+      "retained": 3,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 3,
+          "min_ns": 41642,
+          "p50_ns": 59469,
+          "p95_ns": 416043,
+          "p99_ns": 416043,
+          "max_ns": 416043,
+          "mean_ns": 172384
+        },
+        "pump_ns": {
+          "count": 3,
+          "min_ns": 1342,
+          "p50_ns": 2834,
+          "p95_ns": 15844,
+          "p99_ns": 15844,
+          "max_ns": 15844,
+          "mean_ns": 6673
+        },
+        "game_ns": {
+          "count": 3,
+          "min_ns": 841,
+          "p50_ns": 2043,
+          "p95_ns": 11076,
+          "p99_ns": 11076,
+          "max_ns": 11076,
+          "mean_ns": 4653
+        },
+        "mesh_ns": {
+          "count": 3,
+          "min_ns": 861,
+          "p50_ns": 1182,
+          "p95_ns": 2334,
+          "p99_ns": 2334,
+          "max_ns": 2334,
+          "mean_ns": 1459
+        },
+        "save_ns": {
+          "count": 3,
+          "min_ns": 421,
+          "p50_ns": 471,
+          "p95_ns": 751,
+          "p99_ns": 751,
+          "max_ns": 751,
+          "mean_ns": 547
+        },
+        "submit_ns": {
+          "count": 3,
+          "min_ns": 38177,
+          "p50_ns": 52939,
+          "p95_ns": 386038,
+          "p99_ns": 386038,
+          "max_ns": 386038,
+          "mean_ns": 159051
+        }
+      },
+      "collector_ns_total": 3686,
+      "loop_session_ns": 521150,
+      "startup_ns": 56656425,
+      "tail_flush_ns": 8933213,
+      "exit_readback_ns": 9685400
+    },
+    "tall-large": {
+      "file": "profiles/tall-large.json",
+      "seen": 3,
+      "retained": 3,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 3,
+          "min_ns": 163285,
+          "p50_ns": 188343,
+          "p95_ns": 557335,
+          "p99_ns": 557335,
+          "max_ns": 557335,
+          "mean_ns": 302987
+        },
+        "pump_ns": {
+          "count": 3,
+          "min_ns": 2354,
+          "p50_ns": 3896,
+          "p95_ns": 17487,
+          "p99_ns": 17487,
+          "max_ns": 17487,
+          "mean_ns": 7912
+        },
+        "game_ns": {
+          "count": 3,
+          "min_ns": 721,
+          "p50_ns": 1813,
+          "p95_ns": 3925,
+          "p99_ns": 3925,
+          "max_ns": 3925,
+          "mean_ns": 2153
+        },
+        "mesh_ns": {
+          "count": 3,
+          "min_ns": 741,
+          "p50_ns": 871,
+          "p95_ns": 1753,
+          "p99_ns": 1753,
+          "max_ns": 1753,
+          "mean_ns": 1121
+        },
+        "save_ns": {
+          "count": 3,
+          "min_ns": 390,
+          "p50_ns": 531,
+          "p95_ns": 561,
+          "p99_ns": 561,
+          "max_ns": 561,
+          "mean_ns": 494
+        },
+        "submit_ns": {
+          "count": 3,
+          "min_ns": 159079,
+          "p50_ns": 181232,
+          "p95_ns": 533609,
+          "p99_ns": 533609,
+          "max_ns": 533609,
+          "mean_ns": 291306
+        }
+      },
+      "collector_ns_total": 1922,
+      "loop_session_ns": 911616,
+      "startup_ns": 43406980,
+      "tail_flush_ns": 28841196,
+      "exit_readback_ns": 10144698
+    },
+    "tall-play": {
+      "file": "profiles/tall-play.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 29224,
+          "p50_ns": 42814,
+          "p95_ns": 249493,
+          "p99_ns": 830915,
+          "max_ns": 830915,
+          "mean_ns": 92632
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 681,
+          "p50_ns": 2544,
+          "p95_ns": 8333,
+          "p99_ns": 26690,
+          "max_ns": 26690,
+          "mean_ns": 3176
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 621,
+          "p50_ns": 5509,
+          "p95_ns": 6490,
+          "p99_ns": 23315,
+          "max_ns": 23315,
+          "mean_ns": 4796
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 120,
+          "p50_ns": 131,
+          "p95_ns": 181,
+          "p99_ns": 71617,
+          "max_ns": 71617,
+          "mean_ns": 1622
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 380,
+          "p50_ns": 391,
+          "p95_ns": 441,
+          "p99_ns": 600,
+          "max_ns": 600,
+          "mean_ns": 398
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 19019,
+          "p50_ns": 33711,
+          "p95_ns": 239829,
+          "p99_ns": 795122,
+          "max_ns": 795122,
+          "mean_ns": 82638
+        }
+      },
+      "collector_ns_total": 7475,
+      "loop_session_ns": 8362548,
+      "startup_ns": 17684988,
+      "tail_flush_ns": 150150169,
+      "exit_readback_ns": 5491075
+    },
+    "tall-play-window": {
+      "file": "profiles/tall-play-window.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 925337,
+          "p50_ns": 1915129,
+          "p95_ns": 2406164,
+          "p99_ns": 27988028,
+          "max_ns": 27988028,
+          "mean_ns": 2298263
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 12609,
+          "p50_ns": 1880106,
+          "p95_ns": 2249520,
+          "p99_ns": 27749270,
+          "max_ns": 27749270,
+          "mean_ns": 2222185
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 1082,
+          "p50_ns": 6190,
+          "p95_ns": 104967,
+          "p99_ns": 156905,
+          "max_ns": 156905,
+          "mean_ns": 14038
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 201,
+          "p50_ns": 320,
+          "p95_ns": 551,
+          "p99_ns": 107080,
+          "max_ns": 107080,
+          "mean_ns": 2391
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 371,
+          "p50_ns": 411,
+          "p95_ns": 521,
+          "p99_ns": 861,
+          "max_ns": 861,
+          "mean_ns": 428
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 12369,
+          "p50_ns": 14452,
+          "p95_ns": 172819,
+          "p99_ns": 808952,
+          "max_ns": 808952,
+          "mean_ns": 59219
+        }
+      },
+      "collector_ns_total": 14871,
+      "loop_session_ns": 206889093,
+      "startup_ns": 38635279,
+      "tail_flush_ns": 1162792,
+      "exit_readback_ns": 5252568
+    },
+    "tall-migrated": {
+      "file": "profiles/tall-migrated.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 28593,
+          "p50_ns": 44376,
+          "p95_ns": 270646,
+          "p99_ns": 831606,
+          "max_ns": 831606,
+          "mean_ns": 97200
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 731,
+          "p50_ns": 2775,
+          "p95_ns": 7001,
+          "p99_ns": 20020,
+          "max_ns": 20020,
+          "mean_ns": 3410
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 791,
+          "p50_ns": 5298,
+          "p95_ns": 13981,
+          "p99_ns": 44677,
+          "max_ns": 44677,
+          "mean_ns": 5887
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 120,
+          "p50_ns": 131,
+          "p95_ns": 220,
+          "p99_ns": 136134,
+          "max_ns": 136134,
+          "mean_ns": 2444
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 360,
+          "p50_ns": 371,
+          "p95_ns": 641,
+          "p99_ns": 931,
+          "max_ns": 931,
+          "mean_ns": 434
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 19599,
+          "p50_ns": 32749,
+          "p95_ns": 262834,
+          "p99_ns": 772458,
+          "max_ns": 772458,
+          "mean_ns": 85024
+        }
+      },
+      "collector_ns_total": 8752,
+      "loop_session_ns": 8778501,
+      "startup_ns": 19899089,
+      "tail_flush_ns": 128050729,
+      "exit_readback_ns": 5238558
+    },
+    "tall-legacy-control": {
+      "file": "profiles/tall-legacy-control.json",
+      "seen": 90,
+      "retained": 90,
+      "overwritten": 0,
+      "summary": {
+        "wall_ns": {
+          "count": 90,
+          "min_ns": 28633,
+          "p50_ns": 36565,
+          "p95_ns": 249123,
+          "p99_ns": 682382,
+          "max_ns": 682382,
+          "mean_ns": 89908
+        },
+        "pump_ns": {
+          "count": 90,
+          "min_ns": 711,
+          "p50_ns": 2544,
+          "p95_ns": 6880,
+          "p99_ns": 15624,
+          "max_ns": 15624,
+          "mean_ns": 3006
+        },
+        "game_ns": {
+          "count": 90,
+          "min_ns": 571,
+          "p50_ns": 5288,
+          "p95_ns": 6921,
+          "p99_ns": 21062,
+          "max_ns": 21062,
+          "mean_ns": 4721
+        },
+        "mesh_ns": {
+          "count": 90,
+          "min_ns": 50,
+          "p50_ns": 60,
+          "p95_ns": 90,
+          "p99_ns": 96184,
+          "max_ns": 96184,
+          "mean_ns": 1901
+        },
+        "save_ns": {
+          "count": 90,
+          "min_ns": 360,
+          "p50_ns": 381,
+          "p95_ns": 430,
+          "p99_ns": 611,
+          "max_ns": 611,
+          "mean_ns": 385
+        },
+        "submit_ns": {
+          "count": 90,
+          "min_ns": 16925,
+          "p50_ns": 28683,
+          "p95_ns": 244296,
+          "p99_ns": 646578,
+          "max_ns": 646578,
+          "mean_ns": 79892
+        }
+      },
+      "collector_ns_total": 5206,
+      "loop_session_ns": 8115328,
+      "startup_ns": 16129357,
+      "tail_flush_ns": 130964919,
+      "exit_readback_ns": 5319048
+    }
+  },
+  "percentiles_recomputed_independently": true,
+  "profiled_replay_png_and_gameplay_unchanged": true,
+  "profile_export_failure_exit": 7,
+  "world_saved_before_profile_failure": true,
+  "scope": "CPU loop wall time on Linux lavapipe/Xvfb; no GPU timestamps or Windows GUI timing"
+}

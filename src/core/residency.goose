@@ -3,7 +3,7 @@ import .world;
 namespace residency;
 
 struct State {
-    wanted: bool[81] = [false; 81], ready: bool[81] = [false; 81],
+    wanted: bool[324] = [false; 324], ready: bool[324] = [false; 324],
     center_x: i64 = 0, center_z: i64 = 0, radius: i64 = 0, initialized: bool = false,
     desired: i64 = 0, resident: i64 = 0, peak: i64 = 0,
     admissions: i64 = 0, evictions: i64 = 0, shifts: i64 = 0,

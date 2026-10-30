@@ -27,6 +27,7 @@ fn begin(map: world::Paged&, worker: prefetch::State&, state: State&, x: i64, z:
     }
 }
 fn begin(map: world::Map&, worker: prefetch::State&, state: State&, x: i64, z: i64, mesh_radius: i64) { abort("transfer requires a paged world"); }
+fn begin(map: world::Tall&, worker: prefetch::State&, state: State&, x: i64, z: i64, mesh_radius: i64) { abort("transfer requires a paged world"); }
 
 fn pump(root: const u8[:], map: world::Paged&, worker: prefetch::State&, state: State&) -> bool {
     assert(pending(state));
@@ -84,3 +85,4 @@ fn pump(root: const u8[:], map: world::Paged&, worker: prefetch::State&, state: 
     return true;
 }
 fn pump(root: const u8[:], map: world::Map&, worker: prefetch::State&, state: State&) -> bool { false }
+fn pump(root: const u8[:], map: world::Tall&, worker: prefetch::State&, state: State&) -> bool { false }

@@ -185,3 +185,11 @@ focus loss освобождает захват и held input. Scene повтор
 закрытии E/Escape и resume. В графическом replay проверены три release/recapture,
 запрет look/move/jump/world edits в модальном окне и оба клика при закрытии.
 Новых extern/native API и зависимостей нет. Inventory suite работает JIT/AOT.
+
+В 0.14 используются прежние growable-tail, copy/resize и C ABI read_bounded.
+MAX v4 payload потребовал увеличения общего C bound 1→2 MiB; сигнатура не
+менялась, codec/height/генератор остались на Goose. Для большого read buffer
+используется bounded heap tail, не фиксированный 1.3 MiB stack array.
+`chunk_coord`/Euclidean `%` проверены на отрицательных Y; local Chunk/Halo
+размеры 16/18 сохранены. Tall suite JIT/AOT проверяет explicit-copy roundtrip
+growable-tail world и неизменность live data при malformed decode.

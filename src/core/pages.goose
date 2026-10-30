@@ -6,6 +6,7 @@ import .terrain;
 import .storage;
 import .fileio;
 import .prepared;
+import .tall_storage;
 namespace pages;
 
 // Diagnostic only. Copied into the worker by Goose at spawn, never shared.
@@ -128,6 +129,7 @@ fn save(root: const u8[:], map: world::Paged&) -> bool {
     return true;
 }
 fn save(path: const u8[:], map: world::Map&) -> bool { storage::save(path, map) }
+fn save(path: const u8[:], map: world::Tall&) -> bool { tall_store::save(path, map) }
 
 fn read_cached<T>(root: const u8[:], map: world::Paged&, at: i64, out: world::Chunk&, cache: T&, preflight: bool = false) -> bool {
     if prepared::get(cache, map.index, at, out) { return true; }
@@ -172,6 +174,7 @@ fn ensure_cached<T>(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mes
     return true;
 }
 fn ensure_cached<T>(path: const u8[:], map: world::Map&, cx: i64, cz: i64, mesh_radius: i64, cache: T&) -> bool { true }
+fn ensure_cached<T>(path: const u8[:], map: world::Tall&, cx: i64, cz: i64, mesh_radius: i64, cache: T&) -> bool { true }
 fn ensure(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: i64) -> bool {
     var cache = prepared::None {}; return ensure_cached(root, map, cx, cz, mesh_radius, cache);
 }
@@ -227,9 +230,11 @@ fn export_world(root: const u8[:], destination: const u8[:]) -> bool {
 }
 
 fn format(map: world::Map&) -> i64 { storage::version(map) }
+fn format(map: world::Tall&) -> i64 { 4 }
 fn format(map: world::Paged&) -> i64 { 3 }
 struct Stats { resident: i64 = 0, peak: i64 = 0, evictions: i64 = 0, commits: i64 = 0, writes: i64 = 0, loads: i64 = 0, generated: i64 = 0 }
 fn stats(map: world::Map&) -> Stats { Stats { resident: world::count(map), peak: world::count(map) } }
+fn stats(map: world::Tall&) -> Stats { Stats { resident: world::count(map), peak: world::count(map) } }
 fn stats(map: world::Paged&) -> Stats { Stats { map.resident, map.peak, map.evictions, map.commits, map.page_writes, map.reads, map.generated } }
 fn report(map: world::Map&) -> u8[>..] {
     str(",\"paged\":false,\"cpu_resident_chunks\":", world::count(map),
@@ -239,4 +244,8 @@ fn report(map: world::Paged&) -> u8[>..] {
     str(",\"paged\":true,\"cpu_resident_chunks\":", map.resident, ",\"cpu_peak_chunks\":", map.peak,
         ",\"cpu_evictions\":", map.evictions, ",\"page_commits\":", map.commits,
         ",\"page_writes\":", map.page_writes, ",\"page_loads\":", map.reads, ",\"chunk_generations\":", map.generated)
+}
+fn report(map: world::Tall&) -> u8[>..] {
+    str(",\"paged\":false,\"cpu_resident_chunks\":", world::count(map), ",\"cpu_peak_chunks\":", world::count(map),
+        ",\"cpu_evictions\":0,\"page_commits\":0,\"page_writes\":0,\"page_loads\":0,\"chunk_generations\":0")
 }

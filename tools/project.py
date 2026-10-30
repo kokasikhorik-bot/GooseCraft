@@ -16,6 +16,7 @@ import xml.etree.ElementTree as ET
 from png_readback import compare_boundary_pixels, differences, enclosed_clear, compare_surface_edges
 from profile_readback import validate_profile
 from page_readback import validate_pages
+from tall_readback import validate_tall, terrain_bytes
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -88,7 +89,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging", "inventory")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging", "inventory", "tall")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/prefetch.goose", ROOT / "tests/transfer.goose", ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -110,6 +111,10 @@ def test():
                 if paging_base.exists(): shutil.rmtree(paging_base)
                 paging_base.mkdir(parents=True)
                 extra = [paging_base]
+            if source == "tall":
+                tall_base = save_folder / "tall"
+                if tall_base.exists(): shutil.rmtree(tall_base)
+                tall_base.mkdir(parents=True); extra = [tall_base]
             if source == "profiling":
                 profile_path.unlink(missing_ok=True)
                 extra = [profile_path, blocked / "frames.json"]
@@ -124,6 +129,8 @@ def test():
             native_build(ROOT / f"tests/{source}.goose", binary, flags)
             if source == "paging":
                 shutil.rmtree(paging_base); paging_base.mkdir(parents=True)
+            if source == "tall":
+                shutil.rmtree(tall_base); tall_base.mkdir(parents=True)
             result = run([binary, *extra])
             if result.stdout.strip() != f"headless {label}: ok":
                 raise RuntimeError("Missing Goose assertions result")
@@ -153,6 +160,35 @@ def test():
             native_build(ROOT / f"tests/{source}.goose", binary, flags)
             if run([binary, path]).stdout.strip() != f"headless {source}: ok":
                 raise RuntimeError("Missing native worker test result")
+    for vector in json.loads((ROOT / "tests/fixtures/tall-vectors.json").read_text())["vectors"]:
+        seed, radius = vector["seed"], vector["radius"]
+        oracle = terrain_bytes(seed, radius)
+        if hashlib.sha256(oracle).hexdigest() != vector["sha256"]: raise RuntimeError("Tall oracle changed")
+        for label, command in (("native", [CLIENT]), ("jit", [GOOSE, "run", ROOT / "src/client.goose", "--offline", "--"])):
+            path = save_folder / f"tall-{seed}-{radius}-{label}.gcw"; path.unlink(missing_ok=True)
+            run([*command,"--headless","--generate-tall",seed,path,"--radius",radius])
+            if path.read_bytes() != oracle: raise RuntimeError("Tall terrain differs from independent byte oracle")
+            validate_tall(path)
+            run([*command,"--headless","--generate-tall",seed,path,"--radius",radius],expected=5)
+            if path.read_bytes() != oracle: raise RuntimeError("Tall creation replaced an existing world")
+    migrated = save_folder / "explicit-tall-migration.gcw"; migrated.unlink(missing_ok=True)
+    original_legacy = save_path.read_bytes()
+    run([CLIENT,"--headless","--import-tall",save_path,migrated])
+    summary=validate_tall(migrated,save_path)
+    info=json.loads(run([CLIENT,"--headless","--inspect-tall",migrated]).stdout)
+    if info['sections']!=36 or info['solid_blocks']!=2333 or info['generator']!=0 or info['seed']!=0:
+        raise RuntimeError('Tall migration metadata differs')
+    original_tall=migrated.read_bytes()
+    run([CLIENT,"--headless","--import-tall",save_path,migrated],expected=5)
+    run([CLIENT,"--headless","--inspect-world",migrated],expected=5)
+    run([CLIENT,"--headless","--inspect-tall",save_path],expected=5)
+    if save_path.read_bytes()!=original_legacy or migrated.read_bytes()!=original_tall:raise RuntimeError('Failed tall operation changed source bytes')
+    bad_tall=save_folder/'bad-tall.gcw';bad_tall.write_bytes(b'GOOSEWLD\x04')
+    run([CLIENT,"--headless","--inspect-tall",bad_tall],expected=5)
+    huge_tall=save_folder/'huge-tall.gcw'
+    with huge_tall.open('wb') as file: file.seek(1024**3-1);file.write(b'0')
+    run([CLIENT,"--headless","--inspect-tall",huge_tall],expected=5)
+    huge_tall.unlink()
     inspected = json.loads(run([CLIENT, "--headless", "--inspect-world", save_path]).stdout)
     if inspected != {"mode": "world-inspect", "chunks": 9, "solid_blocks": 2333, "format": 1}:
         raise RuntimeError("Native saved-world inspection failed")
@@ -407,6 +443,9 @@ def render_build():
     native_build(ROOT / "src/viewer.goose", VIEWER, timeout=900)
     run([VIEWER, "--help"])
     for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"],
+                 ["--tall-world"], ["--tall-world", "x", "--paged-world", "y"], ["--tall-world", "x", "--demo-world"],
+                 ["--tall-world", "x", "--single-chunk"], ["--tall-world", "x", "--deferred-respawn"],
+                 ["--tall-world", "x", "--screenshot", "world.gcw"], ["--tall-world", "x", "--profile", "world.gcw"],
                  ["--inventory-replay", "--replay"], ["--inventory-replay", "--preview"], ["--inventory-replay", "--empty"],
                  ["--seam-replay", "--single-chunk"], ["--world"], ["--world", "x", "--no-save"], ["--view-away"]):
         run([VIEWER, *args], expected=2)
@@ -614,6 +653,16 @@ def render_test(evidence):
         ("inventory-paged", [], ["--offscreen", "--inventory-replay", "--paged-world", saves / "inventory-paged", "--radius", "4", "--mesh-radius", "2"], 90, 0),
         ("inventory-map", [], ["--offscreen", "--inventory-replay", "--world", saves / "inventory-map.gcw", "--radius", "4", "--mesh-radius", "2"], 90, 0),
     ]
+    profile_specs += [
+        ("tall-preview", [], ["--offscreen", "--preview", "--tall-world", saves / "tall-preview.gcw", "--radius", "1"], 3, 0),
+        ("tall-window", xvfb, ["--preview", "--tall-world", saves / "tall-window.gcw", "--radius", "1"], 3, 0),
+        ("tall-debug", [], ["--offscreen", "--preview", "--tall-world", saves / "tall-debug.gcw", "--radius", "1"], 3, 0),
+        ("tall-large", [], ["--offscreen", "--preview", "--tall-world", saves / "tall-large.gcw", "--radius", "4"], 3, 0),
+        ("tall-play", [], ["--offscreen", "--inventory-replay", "--tall-world", saves / "tall-play.gcw", "--radius", "1"], 90, 0),
+        ("tall-play-window", xvfb, ["--inventory-replay", "--tall-world", saves / "tall-play-window.gcw", "--radius", "1"], 90, 0),
+        ("tall-migrated", [], ["--offscreen", "--inventory-replay", "--tall-world", saves / "tall-migrated.gcw"], 90, 0),
+        ("tall-legacy-control", [], ["--offscreen", "--inventory-replay", "--world", saves / "tall-legacy-control.gcw"], 90, 0),
+    ]
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
     cache_retained_save = saves / "cache-retained" / "world.gcw"
@@ -638,10 +687,16 @@ def render_test(evidence):
         cases.append((name, prefix, [*flags, "--profile", profile_paths[name], "--profile-warmup", str(warmup)], frames))
     cases += [("pages-reopen", xvfb, ["--paged-world", saves / "pages-route", "--mesh-radius", "1"], 30),
               ("pages-reopen-legacy", xvfb, ["--world", saves / "pages-route.gcw", "--mesh-radius", "1"], 30),
-              ("inventory-reopen", [], ["--offscreen", "--world", saves / "inventory.gcw"], 3)]
+              ("inventory-reopen", [], ["--offscreen", "--world", saves / "inventory.gcw"], 3),
+              ("tall-reopen", [], ["--offscreen", "--tall-world", saves / "tall-play.gcw"], 3)]
     origin = saves / "pages-origin.gcw"
     run([CLIENT, "--headless", "--generate-world", "12345", origin, "--radius", "4"])
     origin_before = origin.read_bytes()
+    tall_origin = saves / "tall-legacy-origin.gcw"
+    run([CLIENT, "--headless", "--generate-world", "12345", tall_origin, "--radius", "1"])
+    tall_origin_before = tall_origin.read_bytes()
+    shutil.copy2(tall_origin, saves / "tall-legacy-control.gcw")
+    run([CLIENT, "--headless", "--import-tall", tall_origin, saves / "tall-migrated.gcw"])
     for name in ("pages-imported", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync", "fallback-file-delayed"):
         run([CLIENT, "--headless", "--import-world", origin, saves / name])
     for name, *_ in profile_specs:
@@ -667,9 +722,10 @@ def render_test(evidence):
             persisted_cache = cache_save.read_bytes()
         if name == "inventory-reopen":
             inventory_saved_bytes = (saves / "inventory.gcw").read_bytes()
+        if name == "tall-reopen": tall_saved_bytes = (saves / "tall-play.gcw").read_bytes()
         if name == "pages-reopen":
             pages_before = {p.name: p.read_bytes() for p in (saves / "pages-route").iterdir() if p.suffix in (".gci", ".gcp")}
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug", "inventory-debug") else VIEWER
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug", "inventory-debug", "tall-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -691,7 +747,7 @@ def render_test(evidence):
             if data["colored_pixels"] != 0 or (name == "empty" and data["indices"] != 0):
                 raise RuntimeError("Empty render is not the clear color")
         elif not (5000 < data["colored_pixels"] <= 640 * 480 and
-                  (data["colored_pixels"] < 640 * 480 or name in ("inventory-paged", "inventory-map")) and data["indices"] > 0):
+                  (data["colored_pixels"] < 640 * 480 or name in ("inventory-paged", "inventory-map") or name.startswith("tall-")) and data["indices"] > 0):
             raise RuntimeError("Scene geometry is missing from GPU readback")
         raw = png.read_bytes()
         if raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR" or struct.unpack(">II", raw[16:24]) != (640, 480):
@@ -914,6 +970,8 @@ def render_test(evidence):
             if trace[key] != stdout[key]: raise RuntimeError(f"Transfer profile metadata disagrees: {name}: {key}")
         for key in ("inventory_frames", "inventory_opens", "inventory_open", "selected_slot", "selected_material"):
             if trace[key] != stdout[key]: raise RuntimeError(f"Inventory profile metadata disagrees: {name}: {key}")
+        for key in ("world_min_y", "world_max_y_exclusive", "sectioned"):
+            if trace[key] != stdout[key]: raise RuntimeError(f"Height profile metadata disagrees: {name}: {key}")
     for name in ("timing-offscreen", "timing-window", "timing-debug"):
         if results[name]["png_sha256"] != results["terrain-replay"]["png_sha256"] or any(results[name][k] != results["terrain-replay"][k] for k in keys):
             raise RuntimeError("Profiling changed terrain replay pixels or gameplay")
@@ -1112,6 +1170,30 @@ def render_test(evidence):
         "paged_map_pixels_and_export_equal":True, "reopen_preserves_world_bytes":True,
         "scope":"Linux lavapipe/Xvfb with injected real gfx input; Windows GUI unverified",
     },indent=2)+"\n")
+    for a,b in (("tall-preview","tall-window"),("tall-preview","tall-debug"),("tall-play","tall-play-window"),
+                ("tall-migrated","tall-legacy-control")):
+        if results[a]["png_sha256"] != results[b]["png_sha256"] or any(results[a][key] != results[b][key] for key in keys):
+            raise RuntimeError(f"Tall section origin, input or migration changed pixels/gameplay: {a}, {b}")
+    for name in ("tall-preview","tall-window","tall-debug","tall-large","tall-play","tall-play-window","tall-migrated"):
+        d=results[name]; validate_tall(saves / (name+'.gcw'))
+        if d['world_format']!=4 or (d['world_min_y'],d['world_max_y_exclusive'])!=(-16,48) or not d['sectioned']:
+            raise RuntimeError('Tall height metadata disagrees')
+    if results['tall-large']['chunks']!=324 or results['tall-large']['cpu_block_capacity_bytes']!=324*4096:
+        raise RuntimeError('Tall maximum radius did not retain all 324 sections')
+    for name in ('tall-play','tall-play-window'):
+        if results[name]['max_y']<=16 or results[name]['breaks']!=1 or results[name]['places']!=1:
+            raise RuntimeError('Tall replay did not play/edit above the previous ceiling')
+    validate_tall(saves/'tall-migrated.gcw', saves/'tall-legacy-control.gcw')
+    if tall_origin.read_bytes()!=tall_origin_before or (saves/'tall-play.gcw').read_bytes()!=tall_saved_bytes:
+        raise RuntimeError('Tall migration changed its source or reopen rewrote the save')
+    run([VIEWER,'--tall-world',tall_origin,'--frames','1'],expected=5,extra_env=env)
+    run([VIEWER,'--world',saves/'tall-play.gcw','--frames','1'],expected=5,extra_env=env)
+    if (saves/'tall-play.gcw').read_bytes()!=tall_saved_bytes or tall_origin.read_bytes()!=tall_origin_before:
+        raise RuntimeError('Wrong-mode load changed original bytes')
+    (evidence/'tall-results.json').write_text(json.dumps({'height':64,'min_y':-16,'max_y_exclusive':48,'sections_max':324,
+        'chunk_payload_unchanged':4096,'legacy_source_preserved':True,'migrated_low_layer_equals_legacy_gameplay':True,
+        'window_offscreen_debug_pixels_equal':True,'above_16_edits_checked':True,'reopen_preserves_bytes':True,
+        'scope':'Fully resident GCW v4 backend, not paged v3 or Minecraft save format'},indent=2)+'\n')
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
           "frustum culling, terrain, release/debug/reference, saves, opt-in frame profiling, independent percentiles, no unrequested readback, cached overlays")
@@ -1144,7 +1226,7 @@ def package(graphics=False):
         "source_commit": revision, "source_dirty": bool(status.stdout) if status.returncode == 0 else None,
         "ci_url": ci_url,
         "target": "windows-x64" if WINDOWS else "linux-x64", "graphics": graphics,
-        "world_format": 3, "world_formats": [1, 2, 3],
+        "world_format": 4, "world_formats": [1, 2, 3, 4], "terrain_generators": [1, 2],
         "terrain_generator": 1,
         "profiling_schema": 1,
     }, indent=2) + "\n")

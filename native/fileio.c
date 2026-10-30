@@ -32,7 +32,7 @@ static int gc_path(gc_bytes path, char out[4096]) {
 #endif
 
 int64_t gc_read_bounded(gc_bytes path, gc_bytes out) {
-    if (out.len < 0 || out.len > 1048576) return -1;
+    if (out.len < 0 || out.len > 2 * 1024 * 1024) return -1;
 #ifdef _WIN32
     wchar_t name[4096];
     if (!gc_path(path, name)) return -1;
