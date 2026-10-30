@@ -19,6 +19,9 @@ fn fixture(kind: i64) -> world::Chunk {
 fn measure(chunk: world::Chunk&, iterations: i64, greedy: bool) -> i64, i64, i64, i64 {
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
+    let vertex: mesh::Vertex[1] = [mesh::Vertex { float3 { 0.0, 0.0, 0.0 }, [0; 4] }];
+    let index: u32[1] = [0];
+    assert(bytes_of(vertex).len == 16 && bytes_of(index).len == 4);
     var checksum: i64 = 0;
     // Warm buffers and code before starting the monotonic timer.
     for i in 8 {

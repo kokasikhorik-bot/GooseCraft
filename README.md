@@ -2,13 +2,15 @@
 
 Самостоятельный нативный клиент на Goose для Windows 10 x64, разрабатываемый
 полностью в Codex Cloud. Цель — реализация поведения Minecraft Java Edition
-с отдельным лаунчером. Текущий этап **0.3.0-stage3 — первый игровой цикл**:
-движение от первого лица, прыжок, коллизии, выбор, разрушение и установка блоков.
+с отдельным лаунчером. Текущий этап **0.4.0 — первая оптимизация игрового цикла**:
+greedy meshing, повторное использование GPU-буферов и кеширование HUD/обводки.
+Движение от первого лица, прыжок, коллизии, выбор, разрушение и установка блоков
+сохраняются и проверяются против reference-реализации.
 Это небольшой собственный voxel-прототип: одного чанка, двух типов блоков
 и временного мира достаточно для первых проверок управления. Сохранения,
 сеть, бесконечный мир и совместимость с Java Edition ещё не реализованы.
 
-![GooseCraft: вид от первого лица](docs/validation/stage3/play-window.png)
+![GooseCraft: вид от первого лица](docs/validation/optimization-1/play-window.png)
 
 ## Компоненты
 
@@ -29,6 +31,18 @@ Escape освобождает мышь и ставит игру на паузу,
 R возвращает на старт; F10 или закрытие окна завершает игру.
 Изменения мира теряются после выхода. [Первый запуск на Windows](docs/first-play.md).
 
+## Оптимизация и цель проекта
+
+У тестовой сцены меш уменьшен с 620 до 22 прямоугольников, полезные vertex/index
+данные — с 54 560 до 1 936 байт. При неподвижном игроке HUD и обводка загружаются
+один раз вместо каждого кадра. [Замеры и ограничения](docs/optimization-1.md)
+включают сложные случаи, где мешер строится медленнее. Это сравнение с нашей
+предыдущей реализацией; преимущество над Minecraft ещё не измерено.
+
+Цель — эффективный клиент, затем вход на серверы Java Edition.
+[План развития](docs/roadmap.md): несколько чанков и сохранение, профилирование
+игры, доставка, затем проверенный протокол конкретной версии. Сейчас сети нет.
+
 ## Проверки в облаке
 
 Пользователю пока ничего не требуется устанавливать на Windows.
@@ -39,6 +53,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r tools/requirements.txt
 .venv/bin/python tools/bootstrap.py --jobs 2
 .venv/bin/python tools/project.py test
+.venv/bin/python tools/project.py benchmark --evidence build/benchmarks
 ./build/goosecraft-headless --headless --ticks 20
 ```
 
@@ -69,11 +84,9 @@ Goose, Python, Java или локальная среда разработки. �
 `goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
-[CI игрового прототипа 0.3 — #41015539670](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
-успешно прошёл все три jobs: Windows x64, Linux headless и Linux Vulkan/Xvfb
-с игровым input replay. [Скачать Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670/artifacts/12959044218),
-распаковать и запустить `goosecraft.cmd` — это первый кандидат для локальной
-проверки управления. [Подробности и границы проверки](docs/github-ci.md).
+Предыдущий [CI игрового прототипа 0.3](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
+прошёл все три jobs. Оптимизации 0.4 проверены на Linux; результат нового
+Windows CI и артефакт будут добавлены в [отчёт](docs/github-ci.md) после запуска.
 Windows GUI и пользовательская Windows 10 ещё не проверены.
 
 ## Документация
@@ -84,6 +97,8 @@ Windows GUI и пользовательская Windows 10 ещё не пров�
 - [Результаты этапа 1](docs/stage-1-results.md)
 - [Результаты графического этапа](docs/stage-2-results.md)
 - [Игровой цикл и проверки ввода](docs/stage-3-results.md)
+- [Оптимизация и benchmark](docs/optimization-1.md)
+- [План до серверов Java Edition](docs/roadmap.md)
 - [GitHub и статус CI](docs/github-ci.md)
 - [Лицензии](THIRD_PARTY_NOTICES.md)
 

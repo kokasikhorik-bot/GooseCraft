@@ -117,10 +117,20 @@ fn build(chunk: world::Chunk&, vertices: Vertex[>..]&, indices: u32[>..]&) {
                     let first_v = if positive { v } else { v + height };
                     let last_v = if positive { v + height } else { v };
                     let base = vertices.len as u32;
-                    vertices.push(Vertex { point(axis, n, u, first_v), color });
-                    vertices.push(Vertex { point(axis, n, u + width, first_v), color });
-                    vertices.push(Vertex { point(axis, n, u + width, last_v), color });
-                    vertices.push(Vertex { point(axis, n, u, last_v), color });
+                    let a = Vertex { point(axis, n, u, first_v), color };
+                    let b = Vertex { point(axis, n, u + width, first_v), color };
+                    let c = Vertex { point(axis, n, u + width, last_v), color };
+                    let d = Vertex { point(axis, n, u, last_v), color };
+                    // Keep the reference diagonal too: changing a coplanar
+                    // triangle's diagonal can change edge coverage after f32
+                    // perspective projection even with the same voxel surface.
+                    if axis == 0 {
+                        vertices.push(a); vertices.push(b); vertices.push(c); vertices.push(d);
+                    } else if positive {
+                        vertices.push(b); vertices.push(c); vertices.push(d); vertices.push(a);
+                    } else {
+                        vertices.push(d); vertices.push(a); vertices.push(b); vertices.push(c);
+                    }
                     indices.append([base, base + 1, base + 2, base, base + 2, base + 3]);
                     for row in height {
                         for col in width { masks[offset + (v + row) * 16 + u + col] = 0; }

@@ -1,0 +1,112 @@
++ /work/.cache/toolchain/build/goose build /work/benchmarks/mesh.goose --offline -o /work/build/mesh-benchmark
+built /work/build/mesh-benchmark
++ /work/.cache/toolchain/build/goose toolchain
+C compiler:   gcc 12.2.0, found on PATH
+              /usr/bin/cc
+C++ compiler: /usr/bin/g++
+style:        cc
+id:           gcc-12.2.0-a920ca84
+cmake:       /usr/local/bin/cmake (3.31.6)
+git:         /usr/bin/git (2.39.5)
+built in:     no packages
+GOOSE_HOME:   /work/.cache/goose-home
++ /work/build/mesh-benchmark --iterations 1000
+{"scene":"empty","sample":0,"iterations":1000,"reference_ns":1213700,"greedy_ns":1501179,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":1,"iterations":1000,"reference_ns":1165868,"greedy_ns":1507188,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":2,"iterations":1000,"reference_ns":1116175,"greedy_ns":1513607,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":3,"iterations":1000,"reference_ns":1125929,"greedy_ns":1471996,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":4,"iterations":1000,"reference_ns":1133281,"greedy_ns":1474830,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":5,"iterations":1000,"reference_ns":1132019,"greedy_ns":1503493,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":6,"iterations":1000,"reference_ns":1120221,"greedy_ns":1487429,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"flat","sample":0,"iterations":1000,"reference_ns":7550422,"greedy_ns":4739990,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":1,"iterations":1000,"reference_ns":7529850,"greedy_ns":4741722,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":2,"iterations":1000,"reference_ns":7535430,"greedy_ns":4791576,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":3,"iterations":1000,"reference_ns":7450083,"greedy_ns":4800721,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":4,"iterations":1000,"reference_ns":7458104,"greedy_ns":4773971,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":5,"iterations":1000,"reference_ns":7465054,"greedy_ns":4762524,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":6,"iterations":1000,"reference_ns":7492214,"greedy_ns":5036292,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"full","sample":0,"iterations":1000,"reference_ns":43030281,"greedy_ns":27410013,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":1,"iterations":1000,"reference_ns":43315306,"greedy_ns":28890290,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":2,"iterations":1000,"reference_ns":43242187,"greedy_ns":28635921,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":3,"iterations":1000,"reference_ns":43165523,"greedy_ns":29087584,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":4,"iterations":1000,"reference_ns":43987098,"greedy_ns":29448323,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":5,"iterations":1000,"reference_ns":43507612,"greedy_ns":29785275,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":6,"iterations":1000,"reference_ns":43137651,"greedy_ns":28662100,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"demo","sample":0,"iterations":1000,"reference_ns":8060393,"greedy_ns":6355920,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":1,"iterations":1000,"reference_ns":7954704,"greedy_ns":6409070,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":2,"iterations":1000,"reference_ns":7964850,"greedy_ns":6292877,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":3,"iterations":1000,"reference_ns":7943347,"greedy_ns":6298985,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":4,"iterations":1000,"reference_ns":8024178,"greedy_ns":6293426,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":5,"iterations":1000,"reference_ns":7960573,"greedy_ns":6267599,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":6,"iterations":1000,"reference_ns":8356424,"greedy_ns":6321588,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"terrain","sample":0,"iterations":1000,"reference_ns":36409095,"greedy_ns":31034449,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":1,"iterations":1000,"reference_ns":36668722,"greedy_ns":31249400,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":2,"iterations":1000,"reference_ns":36909451,"greedy_ns":31182309,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":3,"iterations":1000,"reference_ns":36724705,"greedy_ns":31296489,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":4,"iterations":1000,"reference_ns":37193354,"greedy_ns":29672197,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":5,"iterations":1000,"reference_ns":36450607,"greedy_ns":29579870,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":6,"iterations":1000,"reference_ns":36998625,"greedy_ns":30335296,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"checker","sample":0,"iterations":1000,"reference_ns":128974788,"greedy_ns":137027360,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":1,"iterations":1000,"reference_ns":125994653,"greedy_ns":136361156,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":2,"iterations":1000,"reference_ns":126261121,"greedy_ns":136566112,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":3,"iterations":1000,"reference_ns":127474964,"greedy_ns":136213575,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":4,"iterations":1000,"reference_ns":126461704,"greedy_ns":136653796,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":5,"iterations":1000,"reference_ns":126465060,"greedy_ns":136798742,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":6,"iterations":1000,"reference_ns":126635013,"greedy_ns":137983135,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{
+  "empty": {
+    "reference_quads": 0,
+    "greedy_quads": 0,
+    "reference_mesh_bytes": 0,
+    "greedy_mesh_bytes": 0,
+    "reference_median_us": 1.132019,
+    "greedy_median_us": 1.501179,
+    "cpu_speedup": 0.7540866212490317
+  },
+  "flat": {
+    "reference_quads": 576,
+    "greedy_quads": 6,
+    "reference_mesh_bytes": 50688,
+    "greedy_mesh_bytes": 528,
+    "reference_median_us": 7.492214,
+    "greedy_median_us": 4.7739709999999995,
+    "cpu_speedup": 1.569388251415855
+  },
+  "full": {
+    "reference_quads": 1536,
+    "greedy_quads": 6,
+    "reference_mesh_bytes": 135168,
+    "greedy_mesh_bytes": 528,
+    "reference_median_us": 43.242187,
+    "greedy_median_us": 28.89029,
+    "cpu_speedup": 1.4967723411568385
+  },
+  "demo": {
+    "reference_quads": 620,
+    "greedy_quads": 22,
+    "reference_mesh_bytes": 54560,
+    "greedy_mesh_bytes": 1936,
+    "reference_median_us": 7.96485,
+    "greedy_median_us": 6.298985,
+    "cpu_speedup": 1.2644656242235852
+  },
+  "terrain": {
+    "reference_quads": 2880,
+    "greedy_quads": 1135,
+    "reference_mesh_bytes": 253440,
+    "greedy_mesh_bytes": 99880,
+    "reference_median_us": 36.724705,
+    "greedy_median_us": 31.034449000000002,
+    "cpu_speedup": 1.1833528927805355
+  },
+  "checker": {
+    "reference_quads": 12288,
+    "greedy_quads": 12288,
+    "reference_mesh_bytes": 1081344,
+    "greedy_mesh_bytes": 1081344,
+    "reference_median_us": 126.46506,
+    "greedy_median_us": 136.653796,
+    "cpu_speedup": 0.9254412515551342
+  }
+}
+PASS: native meshing benchmark recorded; timings are observations, not CI performance gates

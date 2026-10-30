@@ -25,10 +25,16 @@
       }
     }
   },
+  "sources": {
+    "src/core/mesh.goose": "ab583fcce5a9d6ad0ccb6d4f6b5829ae770b2f6958e886514dadb57186cb2dc5",
+    "src/core/world.goose": "5e86b51abf86737cc5892d6be05f466709a03943bf1e47ed14a5ac9916ee8484",
+    "benchmarks/mesh.goose": "d7667421c3fbaea070758ed13ffce7a8d7b3676e90afa235f45e94d2c6501d2c"
+  },
   "method": {
     "samples": 7,
-    "iterations_per_sample": 200,
+    "iterations_per_sample": 1000,
     "warmup_builds": 8,
+    "build": "native release; pinned Goose uses -O2 or /O2",
     "alternating_algorithm_order": true,
     "clock": "os.clock_ns (monotonic)",
     "scope": "one-chunk CPU meshing; no FPS or Minecraft comparison",
@@ -41,63 +47,63 @@
       "greedy_quads": 0,
       "reference_mesh_bytes": 0,
       "greedy_mesh_bytes": 0,
-      "reference_median_us": 1.174655,
-      "greedy_median_us": 1.36479,
-      "cpu_speedup": 0.8606855267110691
+      "reference_median_us": 1.305847,
+      "greedy_median_us": 1.263023,
+      "cpu_speedup": 1.033905954206693
     },
     "flat": {
       "reference_quads": 576,
       "greedy_quads": 6,
       "reference_mesh_bytes": 50688,
       "greedy_mesh_bytes": 528,
-      "reference_median_us": 7.625439999999999,
-      "greedy_median_us": 4.227765000000001,
-      "cpu_speedup": 1.8036574880581107
+      "reference_median_us": 7.903382,
+      "greedy_median_us": 4.190035,
+      "cpu_speedup": 1.886232931228498
     },
     "full": {
       "reference_quads": 1536,
       "greedy_quads": 6,
       "reference_mesh_bytes": 135168,
       "greedy_mesh_bytes": 528,
-      "reference_median_us": 39.83114,
-      "greedy_median_us": 26.3481,
-      "cpu_speedup": 1.5117272213176662
+      "reference_median_us": 40.629312,
+      "greedy_median_us": 26.2808,
+      "cpu_speedup": 1.5459693768835043
     },
     "demo": {
       "reference_quads": 620,
       "greedy_quads": 22,
       "reference_mesh_bytes": 54560,
       "greedy_mesh_bytes": 1936,
-      "reference_median_us": 8.002,
-      "greedy_median_us": 5.34809,
-      "cpu_speedup": 1.4962351044952498
+      "reference_median_us": 8.295637000000001,
+      "greedy_median_us": 5.38819,
+      "cpu_speedup": 1.5395962280468953
     },
     "terrain": {
       "reference_quads": 2880,
       "greedy_quads": 1135,
       "reference_mesh_bytes": 253440,
       "greedy_mesh_bytes": 99880,
-      "reference_median_us": 37.493395,
-      "greedy_median_us": 42.03598,
-      "cpu_speedup": 0.8919357892928866
+      "reference_median_us": 37.29528,
+      "greedy_median_us": 30.511271,
+      "cpu_speedup": 1.222344359236952
     },
     "checker": {
       "reference_quads": 12288,
       "greedy_quads": 12288,
       "reference_mesh_bytes": 1081344,
       "greedy_mesh_bytes": 1081344,
-      "reference_median_us": 126.560675,
-      "greedy_median_us": 148.620175,
-      "cpu_speedup": 0.8515712957544291
+      "reference_median_us": 129.279334,
+      "greedy_median_us": 146.255174,
+      "cpu_speedup": 0.8839299866410196
     }
   },
   "raw_samples": [
     {
       "scene": "empty",
       "sample": 0,
-      "iterations": 200,
-      "reference_ns": 234931,
-      "greedy_ns": 275201,
+      "iterations": 1000,
+      "reference_ns": 1395170,
+      "greedy_ns": 1413827,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -107,9 +113,9 @@
     {
       "scene": "empty",
       "sample": 1,
-      "iterations": 200,
-      "reference_ns": 234851,
-      "greedy_ns": 259117,
+      "iterations": 1000,
+      "reference_ns": 1151768,
+      "greedy_ns": 1378034,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -119,9 +125,9 @@
     {
       "scene": "empty",
       "sample": 2,
-      "iterations": 200,
-      "reference_ns": 234921,
-      "greedy_ns": 279537,
+      "iterations": 1000,
+      "reference_ns": 1193340,
+      "greedy_ns": 1355130,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -131,9 +137,9 @@
     {
       "scene": "empty",
       "sample": 3,
-      "iterations": 200,
-      "reference_ns": 235421,
-      "greedy_ns": 276994,
+      "iterations": 1000,
+      "reference_ns": 1182233,
+      "greedy_ns": 1258897,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -143,9 +149,9 @@
     {
       "scene": "empty",
       "sample": 4,
-      "iterations": 200,
-      "reference_ns": 234820,
-      "greedy_ns": 272958,
+      "iterations": 1000,
+      "reference_ns": 1322412,
+      "greedy_ns": 1260520,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -155,9 +161,9 @@
     {
       "scene": "empty",
       "sample": 5,
-      "iterations": 200,
-      "reference_ns": 242793,
-      "greedy_ns": 259527,
+      "iterations": 1000,
+      "reference_ns": 1451333,
+      "greedy_ns": 1257055,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -167,9 +173,9 @@
     {
       "scene": "empty",
       "sample": 6,
-      "iterations": 200,
-      "reference_ns": 235081,
-      "greedy_ns": 271375,
+      "iterations": 1000,
+      "reference_ns": 1305847,
+      "greedy_ns": 1263023,
       "reference_vertices": 0,
       "greedy_vertices": 0,
       "reference_indices": 0,
@@ -179,422 +185,422 @@
     {
       "scene": "flat",
       "sample": 0,
-      "iterations": 200,
-      "reference_ns": 1517055,
-      "greedy_ns": 881076,
+      "iterations": 1000,
+      "reference_ns": 7662405,
+      "greedy_ns": 4169504,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "flat",
       "sample": 1,
-      "iterations": 200,
-      "reference_ns": 1525789,
-      "greedy_ns": 846234,
+      "iterations": 1000,
+      "reference_ns": 7989870,
+      "greedy_ns": 4247430,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "flat",
       "sample": 2,
-      "iterations": 200,
-      "reference_ns": 1525088,
-      "greedy_ns": 845553,
+      "iterations": 1000,
+      "reference_ns": 7825287,
+      "greedy_ns": 4207190,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "flat",
       "sample": 3,
-      "iterations": 200,
-      "reference_ns": 1535143,
-      "greedy_ns": 844721,
+      "iterations": 1000,
+      "reference_ns": 7824415,
+      "greedy_ns": 4190035,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "flat",
       "sample": 4,
-      "iterations": 200,
-      "reference_ns": 1510506,
-      "greedy_ns": 844762,
+      "iterations": 1000,
+      "reference_ns": 7973246,
+      "greedy_ns": 4286678,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "flat",
       "sample": 5,
-      "iterations": 200,
-      "reference_ns": 1537436,
-      "greedy_ns": 844071,
+      "iterations": 1000,
+      "reference_ns": 7903382,
+      "greedy_ns": 4151087,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "flat",
       "sample": 6,
-      "iterations": 200,
-      "reference_ns": 1510536,
-      "greedy_ns": 847096,
+      "iterations": 1000,
+      "reference_ns": 7943011,
+      "greedy_ns": 4128815,
       "reference_vertices": 2304,
       "greedy_vertices": 24,
       "reference_indices": 3456,
       "greedy_indices": 36,
-      "checksum": 1648000
+      "checksum": 8240000
     },
     {
       "scene": "full",
       "sample": 0,
-      "iterations": 200,
-      "reference_ns": 7999528,
-      "greedy_ns": 5313335,
+      "iterations": 1000,
+      "reference_ns": 40686016,
+      "greedy_ns": 26276815,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "full",
       "sample": 1,
-      "iterations": 200,
-      "reference_ns": 7906458,
-      "greedy_ns": 5270222,
+      "iterations": 1000,
+      "reference_ns": 40491477,
+      "greedy_ns": 26280800,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "full",
       "sample": 2,
-      "iterations": 200,
-      "reference_ns": 7938237,
-      "greedy_ns": 5269620,
+      "iterations": 1000,
+      "reference_ns": 40771442,
+      "greedy_ns": 26036547,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "full",
       "sample": 3,
-      "iterations": 200,
-      "reference_ns": 8174509,
-      "greedy_ns": 5342189,
+      "iterations": 1000,
+      "reference_ns": 40299512,
+      "greedy_ns": 26227541,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "full",
       "sample": 4,
-      "iterations": 200,
-      "reference_ns": 8007610,
-      "greedy_ns": 5228159,
+      "iterations": 1000,
+      "reference_ns": 40629312,
+      "greedy_ns": 26554947,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "full",
       "sample": 5,
-      "iterations": 200,
-      "reference_ns": 7912228,
-      "greedy_ns": 5261949,
+      "iterations": 1000,
+      "reference_ns": 40798352,
+      "greedy_ns": 27850568,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "full",
       "sample": 6,
-      "iterations": 200,
-      "reference_ns": 7966228,
-      "greedy_ns": 5265885,
+      "iterations": 1000,
+      "reference_ns": 40564766,
+      "greedy_ns": 26613344,
       "reference_vertices": 6144,
       "greedy_vertices": 24,
       "reference_indices": 9216,
       "greedy_indices": 36,
-      "checksum": 4336000
+      "checksum": 21680000
     },
     {
       "scene": "demo",
       "sample": 0,
-      "iterations": 200,
-      "reference_ns": 1593921,
-      "greedy_ns": 1069617,
+      "iterations": 1000,
+      "reference_ns": 8021687,
+      "greedy_ns": 5282044,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "demo",
       "sample": 1,
-      "iterations": 200,
-      "reference_ns": 1589864,
-      "greedy_ns": 1069368,
+      "iterations": 1000,
+      "reference_ns": 8033104,
+      "greedy_ns": 5266251,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "demo",
       "sample": 2,
-      "iterations": 200,
-      "reference_ns": 1601262,
-      "greedy_ns": 1081456,
+      "iterations": 1000,
+      "reference_ns": 8470994,
+      "greedy_ns": 5489793,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "demo",
       "sample": 3,
-      "iterations": 200,
-      "reference_ns": 1600400,
-      "greedy_ns": 1071921,
+      "iterations": 1000,
+      "reference_ns": 8421451,
+      "greedy_ns": 5322334,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "demo",
       "sample": 4,
-      "iterations": 200,
-      "reference_ns": 1612558,
-      "greedy_ns": 1070909,
+      "iterations": 1000,
+      "reference_ns": 8296849,
+      "greedy_ns": 5432027,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "demo",
       "sample": 5,
-      "iterations": 200,
-      "reference_ns": 1613771,
-      "greedy_ns": 1069618,
+      "iterations": 1000,
+      "reference_ns": 8295637,
+      "greedy_ns": 5597691,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "demo",
       "sample": 6,
-      "iterations": 200,
-      "reference_ns": 1588393,
-      "greedy_ns": 1064991,
+      "iterations": 1000,
+      "reference_ns": 8242705,
+      "greedy_ns": 5388190,
       "reference_vertices": 2480,
       "greedy_vertices": 88,
       "reference_indices": 3720,
       "greedy_indices": 132,
-      "checksum": 1856400
+      "checksum": 9282000
     },
     {
       "scene": "terrain",
       "sample": 0,
-      "iterations": 200,
-      "reference_ns": 8377242,
-      "greedy_ns": 8407196,
+      "iterations": 1000,
+      "reference_ns": 36581596,
+      "greedy_ns": 29975539,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "terrain",
       "sample": 1,
-      "iterations": 200,
-      "reference_ns": 10708744,
-      "greedy_ns": 9358498,
+      "iterations": 1000,
+      "reference_ns": 36440810,
+      "greedy_ns": 31472744,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "terrain",
       "sample": 2,
-      "iterations": 200,
-      "reference_ns": 10677098,
-      "greedy_ns": 9337005,
+      "iterations": 1000,
+      "reference_ns": 37295280,
+      "greedy_ns": 30848798,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "terrain",
       "sample": 3,
-      "iterations": 200,
-      "reference_ns": 7122458,
-      "greedy_ns": 8822883,
+      "iterations": 1000,
+      "reference_ns": 37355873,
+      "greedy_ns": 30172301,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "terrain",
       "sample": 4,
-      "iterations": 200,
-      "reference_ns": 7104711,
-      "greedy_ns": 5966501,
+      "iterations": 1000,
+      "reference_ns": 37994211,
+      "greedy_ns": 30572154,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "terrain",
       "sample": 5,
-      "iterations": 200,
-      "reference_ns": 7120955,
-      "greedy_ns": 6160272,
+      "iterations": 1000,
+      "reference_ns": 37367190,
+      "greedy_ns": 30044765,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "terrain",
       "sample": 6,
-      "iterations": 200,
-      "reference_ns": 7498679,
-      "greedy_ns": 5993202,
+      "iterations": 1000,
+      "reference_ns": 36597520,
+      "greedy_ns": 30511271,
       "reference_vertices": 11520,
       "greedy_vertices": 4540,
       "reference_indices": 17280,
       "greedy_indices": 6810,
-      "checksum": 11300800
+      "checksum": 56504000
     },
     {
       "scene": "checker",
       "sample": 0,
-      "iterations": 200,
-      "reference_ns": 25377443,
-      "greedy_ns": 29768202,
+      "iterations": 1000,
+      "reference_ns": 131117659,
+      "greedy_ns": 147050111,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     },
     {
       "scene": "checker",
       "sample": 1,
-      "iterations": 200,
-      "reference_ns": 25278606,
-      "greedy_ns": 29501442,
+      "iterations": 1000,
+      "reference_ns": 128467087,
+      "greedy_ns": 147948688,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     },
     {
       "scene": "checker",
       "sample": 2,
-      "iterations": 200,
-      "reference_ns": 30272785,
-      "greedy_ns": 30142080,
+      "iterations": 1000,
+      "reference_ns": 130507994,
+      "greedy_ns": 148405086,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     },
     {
       "scene": "checker",
       "sample": 3,
-      "iterations": 200,
-      "reference_ns": 25312135,
-      "greedy_ns": 29863883,
+      "iterations": 1000,
+      "reference_ns": 129279334,
+      "greedy_ns": 146255174,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     },
     {
       "scene": "checker",
       "sample": 4,
-      "iterations": 200,
-      "reference_ns": 25854085,
-      "greedy_ns": 29724035,
+      "iterations": 1000,
+      "reference_ns": 126238117,
+      "greedy_ns": 144871590,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     },
     {
       "scene": "checker",
       "sample": 5,
-      "iterations": 200,
-      "reference_ns": 24597107,
-      "greedy_ns": 28895898,
+      "iterations": 1000,
+      "reference_ns": 127468224,
+      "greedy_ns": 145126999,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     },
     {
       "scene": "checker",
       "sample": 6,
-      "iterations": 200,
-      "reference_ns": 25151626,
-      "greedy_ns": 28901416,
+      "iterations": 1000,
+      "reference_ns": 129862730,
+      "greedy_ns": 145753599,
       "reference_vertices": 49152,
       "greedy_vertices": 49152,
       "reference_indices": 73728,
       "greedy_indices": 73728,
-      "checksum": 68830000
+      "checksum": 344150000
     }
   ]
 }

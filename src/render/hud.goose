@@ -2,6 +2,16 @@
 import core.core;
 namespace hud;
 
+struct Key {
+    size: int2 = int2 { 0, 0 },
+    active: bool = false,
+    selected: u8 = 0,
+    found: bool = false,
+    cell: int3 = int3 { 0, 0, 0 },
+    broken: i64 = 0,
+    placed: i64 = 0,
+}
+
 fn glyph(c: u8) -> u8[7] {
     let letters: u8[7][26] = [
         [14, 17, 17, 31, 17, 17, 17], [30, 17, 17, 30, 17, 17, 30],
@@ -64,7 +74,7 @@ fn build(vertices: mesh::Vertex[>..]&, size: int2, active: bool, selected: u8,
     let ink: u8[4] = [232, 239, 245, 255];
     let muted: u8[4] = [161, 182, 202, 255];
     rect(vertices, 0.0, 0.0, size.x, 52.0, size, [16, 24, 33, 255]);
-    text(vertices, "GOOSECRAFT 0.3", 12.0, 10.0, size, ink);
+    text(vertices, "GOOSECRAFT 0.4", 12.0, 10.0, size, ink);
     text(vertices, str("BREAK ", broken, "  PLACE ", placed), 12.0, 30.0, size, muted);
     text(vertices, if selected == 1 { "1 GREEN" } else { "2 AMBER" }, size.x - 112.0, 10.0, size,
          if selected == 1 { [108, 211, 134, 255] } else { [239, 174, 67, 255] });

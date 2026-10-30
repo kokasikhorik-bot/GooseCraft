@@ -1,0 +1,55 @@
+{
+  "offscreen": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "play-window": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "replay-paused": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "replay-offscreen": {
+    "changed_pixels": 2,
+    "limit": 4,
+    "pixels": [
+      {
+        "x": 257,
+        "y": 192,
+        "optimized": [
+          100,
+          73,
+          28,
+          255
+        ],
+        "reference": [
+          15,
+          23,
+          35,
+          255
+        ]
+      },
+      {
+        "x": 382,
+        "y": 192,
+        "optimized": [
+          100,
+          73,
+          28,
+          255
+        ],
+        "reference": [
+          15,
+          23,
+          35,
+          255
+        ]
+      }
+    ]
+  }
+}

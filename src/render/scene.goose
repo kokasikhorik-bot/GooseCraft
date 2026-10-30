@@ -5,37 +5,60 @@ namespace scene;
 
 struct Camera { view_projection: gfx::mat4 }
 
-fn fixture() -> world::Chunk {
-    var chunk = world::flat_fixture();
-    for y in 1..5 { assert(world::set(chunk, 5, y, 5, 2)); }
-    for y in 1..8 { assert(world::set(chunk, 10, y, 9, 2)); }
-    return chunk;
+struct MeshBuffers {
+    vertex: gfx::Buffer = gfx::Buffer { 0 },
+    index: gfx::Buffer = gfx::Buffer { 0 },
+    vertex_capacity: i64 = 0,
+    index_capacity: i64 = 0,
+    allocations: i64 = 0,
+    uploaded_bytes: i64 = 0,
+}
+
+fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, reference: bool) -> bool {
+    if reference && buffer.id != 0 {
+        gfx::release(buffer); buffer = gfx::Buffer { 0 }; capacity = 0;
+    }
+    if required <= capacity { return false; }
+    if buffer.id != 0 { gfx::release(buffer); }
+    capacity = if reference { required } else { 256 };
+    while capacity < required { capacity *= 2; }
+    buffer = gfx::buffer(usage, capacity, []);
+    if buffer.id == 0 { abort(str("GPU allocation: ", gfx::error())); }
+    return true;
 }
 
 fn rebuild(chunk: world::Chunk&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-           vb: gfx::Buffer&, ib: gfx::Buffer&) {
-    if vb.id != 0 { gfx::release(vb); vb = gfx::Buffer { 0 }; }
-    if ib.id != 0 { gfx::release(ib); ib = gfx::Buffer { 0 }; }
+           buffers: MeshBuffers&, reference: bool) {
     vertices.clear(); indices.clear();
-    mesh::build(chunk, vertices, indices);
-    if indices.len > 0 {
-        vb = gfx::vertex_buffer(bytes_of(vertices));
-        ib = gfx::index_buffer(bytes_of(indices));
-        if vb.id == 0 || ib.id == 0 { abort(str("GPU buffers: ", gfx::error())); }
+    if reference { mesh::build_reference(chunk, vertices, indices); }
+    else { mesh::build(chunk, vertices, indices); }
+    let vertex_bytes = bytes_of(vertices);
+    let index_bytes = bytes_of(indices);
+    if reserve(buffers.vertex, buffers.vertex_capacity, vertex_bytes.len, gfx::BUFFER_VERTEX, reference) {
+        buffers.allocations++;
     }
+    if reserve(buffers.index, buffers.index_capacity, index_bytes.len, gfx::BUFFER_INDEX, reference) {
+        buffers.allocations++;
+    }
+    if vertex_bytes.len > 0 && !gfx::update_buffer(buffers.vertex, vertex_bytes) {
+        abort(str("GPU vertex upload: ", gfx::error()));
+    }
+    if index_bytes.len > 0 && !gfx::update_buffer(buffers.index, index_bytes) {
+        abort(str("GPU index upload: ", gfx::error()));
+    }
+    buffers.uploaded_bytes += vertex_bytes.len + index_bytes.len;
 }
 
-fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, replay_input: bool) {
+fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, replay_input: bool, reference: bool) {
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.3.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.4.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
-    var chunk = if empty { world::Chunk {} } else { fixture() };
+    var chunk = if empty { world::Chunk {} } else { world::demo_fixture() };
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
-    var vb = gfx::Buffer { 0 };
-    var ib = gfx::Buffer { 0 };
-    rebuild(chunk, vertices, indices, vb, ib);
+    var buffers = MeshBuffers {};
+    rebuild(chunk, vertices, indices, buffers, reference);
     let vs = embed_shader("vert", """
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec4 color;
@@ -68,6 +91,11 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
     if hud_buffer.id == 0 || outline_buffer.id == 0 { abort(str("overlay buffers: ", gfx::error())); }
     var hud_vertices: mesh::Vertex[>..] = [];
     var outline_vertices: mesh::Vertex[>..] = [];
+    var hud_key = hud::Key {};
+    var outline_cell = int3 { -1, -1, -1 };
+    var hud_uploads: i64 = 0;
+    var hud_uploaded_bytes: i64 = 0;
+    var outline_uploads: i64 = 0;
     var state = player::State {};
     var active = true;
     var was_focused = true;
@@ -146,7 +174,7 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
                 } else if gfx::mouse_pressed(gfx::MOUSE_RIGHT) && interaction::place(chunk, hit, state.position, selected) {
                     placed++; dirty = true;
                 }
-                if dirty { rebuild(chunk, vertices, indices, vb, ib); remeshes++; }
+                if dirty { rebuild(chunk, vertices, indices, buffers, reference); remeshes++; }
             }
             hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
             assert(!player::collides(chunk, state.position));
@@ -158,23 +186,31 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
             gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, 128.0),
             gfx::look_at(eye, target, float3 { 0.0, 1.0, 0.0 })) };
         if !preview {
-            hud::build(hud_vertices, size, active, selected, hit, broken, placed);
-            hud::outline(outline_vertices, hit);
-            if !gfx::update_buffer(hud_buffer, bytes_of(hud_vertices)) { abort(str("HUD upload: ", gfx::error())); }
-            if outline_vertices.len > 0 && !gfx::update_buffer(outline_buffer, bytes_of(outline_vertices)) {
-                abort(str("outline upload: ", gfx::error()));
+            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed };
+            if reference || key != hud_key {
+                hud::build(hud_vertices, size, active, selected, hit, broken, placed);
+                let bytes = bytes_of(hud_vertices);
+                if !gfx::update_buffer(hud_buffer, bytes) { abort(str("HUD upload: ", gfx::error())); }
+                hud_uploads++; hud_uploaded_bytes += bytes.len; hud_key = key;
+            }
+            if hit.found && (reference || hit.cell != outline_cell) {
+                hud::outline(outline_vertices, hit);
+                if !gfx::update_buffer(outline_buffer, bytes_of(outline_vertices)) {
+                    abort(str("outline upload: ", gfx::error()));
+                }
+                outline_uploads++; outline_cell = hit.cell;
             }
         }
         gfx::begin_screen(float4 { 15.0 / 255.0, 23.0 / 255.0, 35.0 / 255.0, 1.0 });
         if indices.len > 0 {
             gfx::bind(pipeline);
-            gfx::bind_vertex_buffer(vb);
-            gfx::bind_index_buffer(ib, 4);
+            gfx::bind_vertex_buffer(buffers.vertex);
+            gfx::bind_index_buffer(buffers.index, 4);
             gfx::uniforms(gfx::VERTEX, 0, camera);
             gfx::draw_indexed(indices.len);
         }
         if !preview {
-            if outline_vertices.len > 0 {
+            if hit.found {
                 gfx::bind(outline_pipeline); gfx::bind_vertex_buffer(outline_buffer);
                 gfx::uniforms(gfx::VERTEX, 0, camera); gfx::draw(outline_vertices.len);
             }
@@ -204,6 +240,12 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
         ",\"width\":", size.x, ",\"height\":", size.y,
         ",\"vertices\":", vertices.len, ",\"indices\":", indices.len,
         ",\"colored_pixels\":", colored, ",\"misuse_count\":", gfx::misuse_count(),
+        ",\"reference_renderer\":", reference,
+        ",\"mesh_bytes\":", bytes_of(vertices).len + bytes_of(indices).len,
+        ",\"mesh_capacity_bytes\":", buffers.vertex_capacity + buffers.index_capacity,
+        ",\"mesh_allocations\":", buffers.allocations, ",\"mesh_uploaded_bytes\":", buffers.uploaded_bytes,
+        ",\"hud_uploads\":", hud_uploads, ",\"hud_uploaded_bytes\":", hud_uploaded_bytes,
+        ",\"outline_uploads\":", outline_uploads,
         ",\"interactive\":", !preview, ",\"replay\":", replay_input,
         ",\"ticks\":", state.ticks, ",\"breaks\":", broken, ",\"places\":", placed,
         ",\"remeshes\":", remeshes, ",\"solid_blocks\":", world::solid_count(chunk),

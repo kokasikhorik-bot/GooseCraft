@@ -10,6 +10,7 @@ import struct
 import statistics
 import subprocess
 import sys
+from png_readback import compare_boundary_pixels
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -126,7 +127,8 @@ def benchmark(evidence):
     binary = BUILD / ("mesh-benchmark" + EXT)
     run([GOOSE, "build", ROOT / "benchmarks/mesh.goose", "--offline", "-o", binary])
     toolchain = run([GOOSE, "toolchain"]).stdout
-    result = run([binary, "--iterations", "200"])
+    iterations = 1000
+    result = run([binary, "--iterations", str(iterations)])
     samples = [json.loads(line) for line in result.stdout.splitlines()]
     summaries = {}
     for name in ("empty", "flat", "full", "demo", "terrain", "checker"):
@@ -134,7 +136,7 @@ def benchmark(evidence):
         if len(rows) != 7 or {row["sample"] for row in rows} != set(range(7)):
             raise RuntimeError("Benchmark is missing samples")
         first = rows[0]
-        if any(row["checksum"] != first["checksum"] or row["iterations"] != 200 for row in rows):
+        if any(row["checksum"] != first["checksum"] or row["iterations"] != iterations for row in rows):
             raise RuntimeError("Benchmark geometry changed between samples")
         old_us = statistics.median(row["reference_ns"] / row["iterations"] / 1000 for row in rows)
         new_us = statistics.median(row["greedy_ns"] / row["iterations"] / 1000 for row in rows)
@@ -153,7 +155,10 @@ def benchmark(evidence):
         raise RuntimeError("Checkerboard worst case must preserve its isolated faces")
     report = {"platform": platform.platform(), "architecture": platform.machine(),
               "toolchain": toolchain, "lock": json.loads((ROOT / "toolchain.lock.json").read_text()),
-              "method": {"samples": 7, "iterations_per_sample": 200, "warmup_builds": 8,
+              "sources": {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+                          for name in ("src/core/mesh.goose", "src/core/world.goose", "benchmarks/mesh.goose")},
+              "method": {"samples": 7, "iterations_per_sample": iterations, "warmup_builds": 8,
+                         "build": "native release; pinned Goose uses -O2 or /O2",
                          "alternating_algorithm_order": True, "clock": "os.clock_ns (monotonic)",
                          "scope": "one-chunk CPU meshing; no FPS or Minecraft comparison",
                          "memory_scope": "logical vertex/index bytes; excludes capacity, scratch, total RSS/VRAM",
@@ -207,13 +212,17 @@ def render_test(evidence):
         ("empty", [], ["--offscreen", "--empty"], 3),
         ("offscreen", [], ["--offscreen", "--preview"], 3),
         ("window", xvfb, ["--preview"], 3),
-        ("play-window", xvfb, [], 3),
+        ("play-window", xvfb, [], 60),
         ("replay-before", [], ["--offscreen", "--replay"], 2),
         ("replay-broken", [], ["--offscreen", "--replay"], 4),
         ("replay-paused", [], ["--offscreen", "--replay"], 63),
         ("replay-offscreen", [], ["--offscreen", "--replay"], 110),
         ("replay-window", xvfb, ["--replay"], 110),
         ("replay-debug", [], ["--offscreen", "--replay"], 110),
+        ("reference-preview", [], ["--offscreen", "--preview", "--reference-renderer"], 3),
+        ("reference-idle", xvfb, ["--reference-renderer"], 60),
+        ("reference-paused", [], ["--offscreen", "--replay", "--reference-renderer"], 63),
+        ("reference-replay", [], ["--offscreen", "--replay", "--reference-renderer"], 110),
     ):
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
@@ -259,15 +268,39 @@ def render_test(evidence):
                (("player_x", 10.5), ("player_y", 1.0), ("player_z", 13.5))):
             raise RuntimeError("Respawn or focus-loss key reset failed")
     a, b = results["replay-offscreen"].copy(), results["replay-window"].copy()
-    a.pop("mode"); b.pop("mode")
+    # GPU counters depend on intermediate target changes and native window
+    # events. Compare rendered output and gameplay; check caching separately.
+    diagnostic = ("mode", "hud_uploads", "hud_uploaded_bytes", "outline_uploads")
+    for key in diagnostic:
+        a.pop(key); b.pop(key)
     if a != b:
         raise RuntimeError("Window and offscreen gameplay replay disagree")
-    c = results["replay-debug"].copy(); c.pop("mode")
+    c = results["replay-debug"].copy()
+    for key in diagnostic: c.pop(key)
     if a != c:
         raise RuntimeError("Debug and release gameplay replay disagree")
+    comparisons = {}
+    for optimized, reference in (("offscreen", "reference-preview"), ("play-window", "reference-idle"),
+                                 ("replay-paused", "reference-paused"), ("replay-offscreen", "reference-replay")):
+        comparisons[optimized] = compare_boundary_pixels(evidence / f"{optimized}.png", evidence / f"{reference}.png")
+    keys = ("interactive", "replay", "ticks", "breaks", "places", "solid_blocks", "jumps", "respawns",
+            "paused_frames", "focus_losses", "resumes", "walked", "max_y", "player_x", "player_y", "player_z")
+    if any(results["replay-offscreen"][key] != results["reference-replay"][key] for key in keys):
+        raise RuntimeError("Optimization changed gameplay state")
+    idle = results["play-window"]
+    if idle["hud_uploads"] != 1 or idle["outline_uploads"] != 1:
+        raise RuntimeError("Stationary overlays were rebuilt without a content change")
+    if results["reference-idle"]["hud_uploads"] != 60:
+        raise RuntimeError("Reference did not exercise the original per-frame HUD upload")
+    optimized, reference = results["replay-offscreen"], results["reference-replay"]
+    if optimized["mesh_allocations"] >= reference["mesh_allocations"] or optimized["hud_uploads"] >= 30:
+        raise RuntimeError("Replay did not reuse GPU buffers and overlay geometry")
+    if optimized["mesh_uploaded_bytes"] * 10 >= reference["mesh_uploaded_bytes"]:
+        raise RuntimeError("Greedy meshing did not reduce world upload traffic")
+    (evidence / "pixel-comparisons.json").write_text(json.dumps(comparisons, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
-    print("PASS: native software Vulkan, X11/Xvfb, default playable window, injected input replay, "
-          "movement/jump/edit/remesh/pause/focus/respawn, identical window/offscreen state and PNG")
+    print("PASS: Vulkan/Xvfb gameplay, release/debug, reference state and bounded geometry-edge pixels, greedy meshing, "
+          "GPU capacity reuse and cached HUD/outline; no per-frame uploads for stationary overlays")
 
 
 def package(graphics=False):

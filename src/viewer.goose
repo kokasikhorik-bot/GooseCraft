@@ -10,21 +10,24 @@ fn main() {
     var empty = false;
     var preview = false;
     var replay_input = false;
+    var reference = false;
     var frames: i64 = -1;
     var output: u8[>..] = [];
     var i: i64 = 1;
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.3.0: graphical scene and playable voxel prototype");
+            print("GooseCraft 0.4.0: graphical scene and playable voxel prototype");
             print("usage: goosecraft-client [--preview | --replay] [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.");
             print("Escape pauses; click/Enter resumes; R respawns; F10 quits. World changes are not saved.");
+            print("Diagnostics: --reference-renderer uses unit faces and uncached overlays for comparison.");
             return;
         } else if flag == "--offscreen" { offscreen = true; }
         else if flag == "--empty" { empty = true; }
         else if flag == "--preview" { preview = true; }
         else if flag == "--replay" { replay_input = true; }
+        else if flag == "--reference-renderer" { reference = true; }
         else if flag == "--frames" {
             if i + 1 >= argv.len { abort_args(); }
             i++;
@@ -44,7 +47,7 @@ fn main() {
     if offscreen && !replay_input { preview = true; }
     if empty { preview = true; }
     if offscreen && frames < 0 { frames = 3; }
-    scene::run(offscreen, empty, frames, output, preview, replay_input);
+    scene::run(offscreen, empty, frames, output, preview, replay_input, reference);
 }
 
 fn abort_args() {
