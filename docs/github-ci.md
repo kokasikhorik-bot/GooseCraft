@@ -1,6 +1,61 @@
-# GitHub: успешный CI GooseCraft 0.11.1 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.12 — 2026-10-30
 
-## Повторное использование preflight 0.11.1
+## Подготовка возврата между кадрами 0.12
+
+[Run 41099234878](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878)
+для `7431aaa4607f89cc9d6d3086bcaf1037cd0c9244` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug graphical clients и UTF-8 manifests; 12 suites TinyCC/native release/debug; prefetch/transfer native release/debug, TLS JIT rejection, stale results, corrupt/commit/re-read failures, partial cancellation/recovery, bounded admission, Unicode I/O/lock, CLI/cmd.exe, benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | 12 JIT/native suites и два native worker suites release/debug, кодеки/сохранения/отказы, profiling, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 139 сценариев: прежние 128 плюс пять deferred/control пар и pending exit; 49 профилей/130 PNG, exact gameplay/ticks/GCW equality, budget два admission, no remesh during loading и shutdown |
+
+**[Windows ZIP 0.12](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878/artifacts/12997088866)**:
+`goosecraft-windows-2022-x64-7431aaa4607f89cc9d6d3086bcaf1037cd0c9244`,
+10 347 327 байт. Release graphical/headless клиенты, `.cmd`-лаунчер, лицензии,
+документы и BUILD-INFO: 0.12.0, source SHA, formats [1,2,3], generator 1,
+profiling schema 1. [Первый запуск](first-play.md), [переходы, ожидание и ограничения](transfer-results.md).
+
+SHA-256 ZIP по GitHub API:
+`cbb08cb5ddba0902dd7908ac972607ec1fbc016bc681f7e5a7491a0e2ffdf313`.
+Хранение по API до `2027-01-28T17:29:15Z`, если артефакт не удалят раньше.
+ZIP локально не скачивался и не хешировался. Для Actions artifact в браузере
+может потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878/artifacts/12997367987): 5 487 байт.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878/artifacts/12998285785): 5 687 байт.
+- [Graphics/profile evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878/artifacts/12998550999): 1 478 052 байта.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878/artifacts/12997213245): 9 046 645 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41099234878.json)
+сохранены без credentials. Код проверен как source `7431aaa`; итоговый
+docs-only commit с `[skip ci]` меняет отчёты/evidence и ссылки. Документы в ZIP
+отражают момент сборки; актуальная ссылка и итог CI — здесь.
+
+`--paged-world DIR --deferred-respawn` включается отдельно: окно рисует прежнюю
+сцену с LOADING, пока worker готовит R, симуляция ждёт полной области.
+На файловом route main page reads=0, 19 incoming и budget admission=2.
+При искусственных 2 мс максимальный записанный кадр перехода около 2,5 мс
+вместо 64,9 мс у cached blocking R, но сумма recorded wall до завершения
+увеличилась с 64,9 до 77,2 мс. Это один Linux software-GPU прогон, не benchmark
+физического диска и не доказательство роста обычного FPS. Startup, walking
+fallback, automatic respawn и commit пока остаются синхронными.
+
+Дополнительно локально: default mesh radius 2, 49 CPU slots/27 incoming,
+exact PNG/ticks/export; самостоятельная Linux-поставка на UID 1000 из /tmp,
+network=none, исходный work tree/Goose compiler скрыты, 1100 кадров и 19
+admissions, main reads=0. Проверены binaries, 12 лицензий и сохранность страниц.
+Это не проверка скачанного Windows ZIP.
+
+Windows job не открывал окно. Builder — Windows Server 2022; пользовательская
+Windows 10/физическая видеокарта не проверены. UTF-8 argv использует manifest
+Windows 10 1903+. Графический CI — Linux Mesa/lavapipe/Xvfb. Сети Minecraft
+ещё нет; [приоритеты и оценка масштаба](roadmap.md).
+
+## Повторное использование preflight 0.11.1 (предыдущая версия)
 
 [Run 41095302452](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452)
 для `7ff602dddcfe93506134f87305f8a929bea16f22` завершился **success**.

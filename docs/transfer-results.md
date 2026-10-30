@@ -84,6 +84,13 @@ Control выполняется с тем же количеством logical fra
 [итог переходов](validation/transfer/transfer-results.json),
 [provenance](validation/transfer/provenance.json).
 
+После основного suite выполнена дополнительная локальная пара с обычным
+`--mesh-radius 2`: 49 CPU slots, 27 incoming/validated/admitted, main page reads 0,
+exact PNG/ticks/GCW export с control. Это две дополнительные Linux-проверки,
+не включённые в число 139 сценариев CI.
+[Результаты](validation/transfer/default-radius/results.json),
+[лог](validation/transfer/default-radius.log).
+
 ## Измерения и цена ожидания
 
 В завершённом обычном файловом route: 1100 настоящих кадров, **33 loading**,
@@ -119,3 +126,21 @@ end-to-end wall: между samples есть collector/loop overhead. Исход
 физического GPU, Windows 10 GUI или превосходства над Minecraft. Сеть Minecraft,
 полная высота/освещение/инвентарь ещё впереди; [приоритеты и оценка сроков](roadmap.md).
 Windows delivery отслеживается в [отчёте CI](github-ci.md).
+
+Все три jobs [Actions 41099234878](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878)
+для source `7431aaa4607f89cc9d6d3086bcaf1037cd0c9244` завершились **success**:
+Windows native/JIT/CLI и оба native-only suites release/debug, Linux и
+139 graphics scenarios. [Windows ZIP 0.12](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41099234878/artifacts/12997088866)
+создан. Окно на Windows не открывалось; builder — Windows Server 2022.
+
+Дополнительная Linux-поставка запущена как UID 1000 из `/tmp`, network=none,
+root filesystem read-only, исходный `/work` и Goose compiler скрыты tmpfs.
+Упакованные headless/client сами создали, импортировали, открыли и экспортировали
+файловый мир. 1100 кадров, 33 loading, 19 validated/admitted, max admission 2,
+main page reads в цикле 0; worker joined, misuse=0. PNG и GCW export совпали
+с полным suite. Inspection не изменил index/page hashes, бинарники совпали с
+тестовыми, 12 лицензий сохранены побайтно; миров/debug binaries в поставке нет.
+BUILD-INFO: 0.12.0, source `7431aaa`, formats [1,2,3]. Локальный владелец каталога
+поставки приведён к UID 1000 без изменения содержимого. Это Linux-проверка,
+не запуск скачанного Windows ZIP. [Итог](validation/transfer/package-results.json),
+[кадр](validation/transfer/package/frame.png), [raw profile](validation/transfer/package/frames.json).
