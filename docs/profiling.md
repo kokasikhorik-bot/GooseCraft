@@ -156,6 +156,24 @@ Raw columns/schema 1 остаются прежними.
 `main_page_read_ns` измеряет вызов `read_page`; поиск в кеше и копирование Chunk
 в этот таймер не входят, но входят в `game_ns` и полный wall кадра.
 
+В 0.12 optional `deferred_respawn` означает отдельную подготовку R. Добавлены
+`loading_frames`, `logical_frames`, `transfer_starts`, `transfer_completed`,
+`transfer_requests`, `transfer_incoming`, `transfer_validated`, `transfer_admitted`,
+`transfer_max_admitted` и `transfer_phase` (0 idle, 1 preflight, 2 admission,
+3 failed). Requests — subset общих worker submissions; prefetch_hits/fallback_reuses
+не включают admission через transfer. Старая формула read savings относится
+к режиму без deferred R.
+
+`--frames N` по-прежнему считает настоящие rendered frames. В replay input
+timeline стоит во время loading: `logical_frames=frames-loading_frames`.
+Для проверки физики reference запускается на этом же количестве logical frames,
+тики сравниваются строго. `paused=1` теперь также помечает loading; remesh=0.
+1 мс pacing во время loading входит в game_ns; это sleep, не page/qget wait.
+Windows scheduler не обещает точности sleep 1 мс. Commit всё ещё может блокировать
+game stage. Main-page counters не включают startup. Ring summaries проверяются
+по retained rows; накопленные remesh/upload totals сопоставимы с суммой rows
+только если ни warmup, ни overwrite не отбросили samples. Schema/columns прежние.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

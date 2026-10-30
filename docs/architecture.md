@@ -19,6 +19,7 @@ GooseCraft/
 │   │   ├── fileio.goose      # объявления тонкого системного I/O
 │   │   ├── prepared.goose    # bounded staging, подписи поколений и fallback metrics
 │   │   ├── prefetch.goose    # native Goose worker, очереди limit 1, кеш 8 страниц
+│   │   ├── transfer.goose    # deferred R: preflight, commit, <=2 admissions/frame
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # GCW v1/v2, транзакционная загрузка и atomic save
@@ -181,6 +182,18 @@ commit по-прежнему предшествуют eviction. При боль�
 страницы идут по прежнему пути с повторным чтением. `--sync-paging` оставляет
 uncached baseline, начальная загрузка также не использует staging.
 [Результаты и ограничения](fallback-results.md).
+
+В 0.12 opt-in `--deferred-respawn` использует тот же worker/кеш для требуемой
+области R. `transfer::pump` делает один nonblocking qpoll, отправляет не более
+одного Job и принимает максимум два Chunk за вызов. Все missing pages сначала
+проверяются worker; первые восемь удерживаются, остальные повторно читаются
+worker при admission. Save до eviction остаётся на main. После начала eviction
+прежний center cache инвалидируется, чтобы отменённый частичный переход не
+прошёл fast path `ensure`. Новый center публикуется только после полной загрузки.
+До этого scene рисует прежние GPU-меши/камеру, не вызывает physics, raycast,
+collides и remesh. При ошибке — fail closed/checkpoint, при выходе — drain/join.
+Обычные переходы при ходьбе и автоматический respawn пока используют старый путь.
+Режим явно включается пользователем и не обещает более короткое общее ожидание.
 
 Сохранение — отдельный версионный кодек на Goose. Проверяет весь ввод до
 замены мира; GPU-данные восстанавливаются из блоков. F5 и штатный выход

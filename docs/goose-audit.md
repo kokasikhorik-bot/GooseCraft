@@ -170,3 +170,10 @@ producer не застревает на заполненной очереди. �
 Он проверяется native release/debug на GCC 12.2/14.2 и в Windows CI; прежние
 12 suites остаются JIT/native. В worker не вызывается gfx; main-thread-only
 контракт графического пакета сохранён. [Результаты 0.11](prefetch-results.md).
+
+В 0.12 повторно проверены §22 (`qpoll` и `qput` не ждут; typed messages flat)
+и `stdlib/os.goose: sleep_ms` для ограниченного pacing. Новых thread/API и
+зависимостей нет; `transfer.goose` использует тот же worker. Добавленный native-only
+suite проверяет stale speculative result, preflight/commit/re-read failure,
+partial cancellation и повторный переход. Расширение metadata встретило лимит
+`str` в 99 аргументов; JSON собирается несколькими append, API не подменялся.

@@ -177,6 +177,28 @@ fn ensure(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: 
 }
 fn ensure(path: const u8[:], map: world::Map&, cx: i64, cz: i64, mesh_radius: i64) -> bool { true }
 
+// Used only after every incoming page has passed preflight. No reads here.
+fn shift(root: const u8[:], map: world::Paged&, wanted: bool[81]&) -> bool {
+    var flush = false;
+    for at in world::slots(map) { flush = flush || (!wanted[at] && map.changed[at]); }
+    if flush && !save(root, map) { return false; }
+    // A cancelled partial transition must never pass ensure's center fast path.
+    map.center_x = 100; map.center_z = 100; map.cpu_radius = 0;
+    for at in world::slots(map) {
+        if wanted[at] || map.locations[at] < 0 { continue; }
+        let pool = map.locations[at]; map.owners[pool] = -1; map.locations[at] = -1;
+        map.resident--; map.evictions++; map.dirty[at] = false;
+    }
+    return true;
+}
+fn install(map: world::Paged&, at: i64, chunk: world::Chunk&) {
+    assert(map.locations[at] < 0);
+    var pool: i64 = 0; while pool < 49 && map.owners[pool] >= 0 { pool++; } assert(pool < 49);
+    map.chunks[pool] = chunk; map.owners[pool] = at; map.locations[at] = pool; map.dirty[at] = true;
+    map.resident++; map.peak = max(map.peak, map.resident);
+    if map.index.generations[at] == 0 { map.generated++; } else { map.reads++; }
+}
+
 fn import_world(source: const u8[:], root: const u8[:]) -> bool {
     if file_exists(index_path(root)) { return false; }
     var raw: u8[331792] = [0; 331792]; let length = fileio::read_bounded(source, raw);

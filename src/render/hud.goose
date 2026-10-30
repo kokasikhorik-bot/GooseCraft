@@ -11,6 +11,7 @@ struct Key {
     broken: i64 = 0,
     placed: i64 = 0,
     save_status: i64 = 0,
+    loading: bool = false,
 }
 
 fn glyph(c: u8) -> u8[7] {
@@ -70,13 +71,13 @@ fn text(vertices: mesh::Vertex[>..]&, value: u8[:], x: f32, y: f32, size: int2, 
 }
 
 fn build(vertices: mesh::Vertex[>..]&, size: int2, active: bool, selected: u8,
-         hit: interaction::Hit, broken: i64, placed: i64, save_status: i64) {
+         hit: interaction::Hit, broken: i64, placed: i64, save_status: i64, loading: bool = false) {
     vertices.clear();
     let ink: u8[4] = [232, 239, 245, 255];
     let muted: u8[4] = [161, 182, 202, 255];
     let warning: u8[4] = [255, 128, 112, 255];
     rect(vertices, 0.0, 0.0, size.x, 52.0, size, [16, 24, 33, 255]);
-    text(vertices, "GOOSECRAFT 0.11.1", 12.0, 10.0, size, ink);
+    text(vertices, "GOOSECRAFT 0.12.0", 12.0, 10.0, size, ink);
     text(vertices, if save_status == 0 { "TEMP" } else if save_status == 1 { "UNSAVED" }
                   else if save_status == 2 { "SAVED" } else { "SAVE ERROR" }, 224.0, 10.0, size,
          if save_status == 3 { warning } else { muted });
@@ -97,7 +98,10 @@ fn build(vertices: mesh::Vertex[>..]&, size: int2, active: bool, selected: u8,
     rect(vertices, x - 2.0, y - 7.0, 5.0, 15.0, size, [16, 24, 33, 255]);
     rect(vertices, x - 6.0, y, 13.0, 1.0, size, ink);
     rect(vertices, x, y - 6.0, 1.0, 13.0, size, ink);
-    if !active {
+    if loading {
+        rect(vertices, x - 100.0, y - 30.0, 200.0, 54.0, size, [16, 24, 33, 255]);
+        text(vertices, "LOADING", x - 42.0, y - 10.0, size, ink);
+    } else if !active {
         rect(vertices, x - 210.0, y - 42.0, 420.0, 76.0, size, [16, 24, 33, 255]);
         text(vertices, "PAUSED", x - 36.0, y - 26.0, size, ink);
         text(vertices, "CLICK OR ENTER TO RESUME", x - 138.0, y + 2.0, size, muted);

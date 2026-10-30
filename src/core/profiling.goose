@@ -39,6 +39,10 @@ struct Context {
     diagnostic_page_delay_ms: i64 = 0, diagnostic_worker_delay_ms: i64 = 0,
     main_disk_page_reads: i64 = 0, worker_disk_page_reads: i64 = 0,
     fallback_reuses: i64 = 0,
+    deferred_respawn: bool = false, loading_frames: i64 = 0,
+    transfer_starts: i64 = 0, transfer_completed: i64 = 0, transfer_requests: i64 = 0,
+    transfer_incoming: i64 = 0, transfer_validated: i64 = 0, transfer_admitted: i64 = 0,
+    transfer_max_admitted: i64 = 0, transfer_phase: i64 = 0,
 }
 
 fn value(s: Sample, metric: i64) -> i64 {
@@ -100,7 +104,7 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
     if context.driver != "headless" && context.driver != "vulkan" && context.driver != "metal" &&
        context.driver != "direct3d12" && context.driver != "unknown" { return false; }
     let warmup = min(log.seen, log.warmup);
-    output.append(str("{\"schema\":1,\"client_version\":\"0.11.1\",\"clock\":\"os.clock_ns\",",
+    output.append(str("{\"schema\":1,\"client_version\":\"0.12.0\",\"clock\":\"os.clock_ns\",",
         "\"scope\":\"CPU loop wall time; pump includes previous-frame submission/presentation; not GPU timestamps\",",
         "\"percentiles\":\"nearest-rank on retained samples\",\"driver\":\"", context.driver,
         "\",\"offscreen\":", context.offscreen, ",\"replay\":", context.replay,
@@ -133,7 +137,13 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
         ",\"diagnostic_page_delay_ms\":", context.diagnostic_page_delay_ms,
         ",\"diagnostic_worker_delay_ms\":", context.diagnostic_worker_delay_ms,
         ",\"main_disk_page_reads\":", context.main_disk_page_reads,
-        ",\"worker_disk_page_reads\":", context.worker_disk_page_reads,
+        ",\"worker_disk_page_reads\":", context.worker_disk_page_reads));
+    output.append(str(",\"deferred_respawn\":", context.deferred_respawn, ",\"loading_frames\":", context.loading_frames,
+        ",\"logical_frames\":", log.seen - context.loading_frames, ",\"transfer_starts\":", context.transfer_starts,
+        ",\"transfer_completed\":", context.transfer_completed, ",\"transfer_requests\":", context.transfer_requests,
+        ",\"transfer_incoming\":", context.transfer_incoming, ",\"transfer_validated\":", context.transfer_validated,
+        ",\"transfer_admitted\":", context.transfer_admitted, ",\"transfer_max_admitted\":", context.transfer_max_admitted,
+        ",\"transfer_phase\":", context.transfer_phase,
         ",\"overlay_buffer_capacity_bytes\":", context.overlay_buffer_capacity_bytes,
         ",\"overlay_buffer_creations\":", context.overlay_buffer_creations, ","));
     output.append("\"memory_scope\":\"known block storage and requested GPU buffer bytes; excludes allocator, driver, RSS/VRAM totals\",\"summary\":{");

@@ -1,5 +1,6 @@
 import core.core;
 import core.prefetch;
+import core.transfer;
 import .hud;
 import .replay;
 import .chunks;
@@ -18,6 +19,7 @@ struct Options {
     mesh_radius: i64 = 2, retain_meshes: bool = false, stream_replay: bool = false,
     paged: bool = false, paging_replay: bool = false,
     sync_paging: bool = false, prefetch_delay: i64 = 0, page_delay: i64 = 0,
+    deferred_respawn: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -74,6 +76,8 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     while player::collides(chunk, state.position) { state.position.y += 1.0; }
     var background: prefetch::State[>..] = [];
     var synchronous = prepared::None {};
+    var transition = transfer::State {};
+    var loading_frames: i64 = 0;
     if options.paged && !options.sync_paging {
         background.push(prefetch::State {});
         prefetch::start(options.world_path, background[0], state.position.x, state.position.z, options.prefetch_delay);
@@ -84,7 +88,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.11.1", 640, 480) };
+                 else { gfx::open("GooseCraft 0.12.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -158,11 +162,12 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     let loop_begin = if profiled { clock_ns() } else { 0 };
     let startup_ns = if profiled { loop_begin - startup_begin } else { 0 };
     while true {
-        if replay_input {
-            if options.paging_replay { replay::paging_input(drawn); }
-            else if options.stream_replay { replay::stream_input(drawn); }
-            else if options.terrain_replay { replay::terrain_input(drawn); }
-            else { replay::inject(drawn, options.seam_replay); }
+        if replay_input && !transfer::pending(transition) {
+            let logical = drawn - loading_frames;
+            if options.paging_replay { replay::paging_input(logical); }
+            else if options.stream_replay { replay::stream_input(logical); }
+            else if options.terrain_replay { replay::terrain_input(logical); }
+            else { replay::inject(logical, options.seam_replay); }
         }
         let t0 = if profiled { clock_ns() } else { 0 };
         if !gfx::frame() { break; }
@@ -187,9 +192,21 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                     write_stderr(str("mouse capture unavailable: ", gfx::error(), "; use arrows to look\n"));
                 }
             }
+            if active && options.deferred_respawn && !transfer::pending(transition) && gfx::key_pressed("R") {
+                transfer::begin(chunk, background[0], transition, 0, 0, options.mesh_radius);
+            }
+            if transfer::pending(transition) {
+                if !transfer::pump(options.world_path, chunk, background[0], transition) {
+                    let saved = pages::save(options.world_path, chunk);
+                    write_stderr(str("deferred transition failed; stopped before using missing blocks; checkpoint=", saved, "\n")); exit(8);
+                }
+                if !transfer::pending(transition) { player::respawn(chunk, state); state.yaw = 0.0; state.pitch = 0.0; }
+            }
             if !active {
                 if gfx::mouse_relative() { gfx::set_mouse_relative(false); }
                 accumulator = 0.0; jump_pending = false; paused_frames++;
+            } else if transfer::pending(transition) {
+                accumulator = 0.0; jump_pending = false;
             } else {
                 let elapsed: f32 = if replay_input { 1.0 / 60.0 } else { clamp(gfx::delta_time(), 0.0, 0.1) as! f32 };
                 if drawn > 0 && !resumed && (replay_input || gfx::mouse_relative()) {
@@ -201,7 +218,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 let turn_y: f32 = (if gfx::key_down("Down") { 1.0 } else { 0.0 }) -
                                    (if gfx::key_down("Up") { 1.0 } else { 0.0 });
                 player::look(state, turn_x * elapsed * 720.0, turn_y * elapsed * 720.0);
-                if gfx::key_pressed("R") {
+                if !options.deferred_respawn && gfx::key_pressed("R") {
                     player::respawn(chunk, state); state.yaw = 0.0; state.pitch = 0.0;
                 }
                 if gfx::key_pressed("1") { selected = 1; }
@@ -231,15 +248,21 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 }
                 if dirty && options.persistent { save_status = 1; }
             }
-            hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
-            assert(!player::collides(chunk, state.position));
+            if !transfer::pending(transition) {
+                hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
+                assert(!player::collides(chunk, state.position));
+            }
         }
+        let loading = transfer::pending(transition);
+        if loading { loading_frames++; sleep_ms(1); } // Bounded pacing, not a page wait or queue wait.
         let t2 = if profiled { clock_ns() } else { 0 };
         let cx = world::chunk_coord(floor(state.position.x) as i64);
         let cz = world::chunk_coord(floor(state.position.z) as i64);
-        residency::update(chunk, resident, cx, cz, cache_radius);
-        for at in buffers.len { if !resident.wanted[at] { chunks::evict(buffers[at]); } }
-        let rebuilt = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, 2, reference, options.raw);
+        if !loading {
+            residency::update(chunk, resident, cx, cz, cache_radius);
+            for at in buffers.len { if !resident.wanted[at] { chunks::evict(buffers[at]); } }
+        }
+        let rebuilt = if loading { 0 } else { chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, 2, reference, options.raw) };
         peak_mesh_capacity = max(peak_mesh_capacity, chunks::stats(buffers).capacity);
         remeshes += rebuilt;
         let t3 = if profiled { clock_ns() } else { 0 };
@@ -267,9 +290,9 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, max(192.0, 64.0 * (2 * chunk.radius + 1)) as! f32),
             gfx::look_at(eye, target, float3 { 0.0, 1.0, 0.0 })) };
         if !preview {
-            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed, save_status };
+            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed, save_status, loading };
             if reference || key != hud_key {
-                hud::build(hud_vertices, size, active, selected, hit, broken, placed, save_status);
+                hud::build(hud_vertices, size, active, selected, hit, broken, placed, save_status, loading);
                 let bytes = bytes_of(hud_vertices);
                 if !gfx::update_buffer(hud_buffer, bytes) { abort(str("HUD upload: ", gfx::error())); }
                 hud_uploads++; hud_uploaded_bytes += bytes.len; hud_key = key;
@@ -317,7 +340,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 frame: drawn, wall_ns: t5 - t0, pump_ns: t1 - t0, game_ns: t2 - t1,
                 mesh_ns: t3 - t2, save_ns: t4 - t3, submit_ns: t5 - t4,
                 rebuilt: rebuilt, draw_calls: draws, uploaded_bytes: total_uploads - last_upload_total,
-                paused: if active { 0 } else { 1 }, save_calls: save_calls,
+                paused: if active && !loading { 0 } else { 1 }, save_calls: save_calls,
             }));
             last_upload_total = total_uploads;
             collector_ns_total += clock_ns() - t5;
@@ -383,6 +406,10 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             prefetch_staging_bytes: prepared_stats.staging_bytes,
             diagnostic_page_delay_ms: options.page_delay, diagnostic_worker_delay_ms: options.prefetch_delay,
             main_disk_page_reads: prepared_stats.main_disk_reads, worker_disk_page_reads: prepared_stats.worker_disk_reads,
+            deferred_respawn: options.deferred_respawn, loading_frames: loading_frames,
+            transfer_starts: transition.starts, transfer_completed: transition.completed, transfer_requests: transition.requests,
+            transfer_incoming: transition.incoming, transfer_validated: transition.validated, transfer_admitted: transition.admitted,
+            transfer_max_admitted: transition.max_admitted, transfer_phase: transition.phase,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -433,6 +460,12 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     }
     rebuild_report.append("]"); rebuild_report.append(pages::report(chunk));
     rebuild_report.append(prefetch::report(prepared_stats));
+    rebuild_report.append(str(",\"deferred_respawn\":", options.deferred_respawn, ",\"loading_frames\":", loading_frames,
+        ",\"logical_frames\":", drawn - loading_frames, ",\"transfer_starts\":", transition.starts,
+        ",\"transfer_completed\":", transition.completed, ",\"transfer_requests\":", transition.requests,
+        ",\"transfer_incoming\":", transition.incoming, ",\"transfer_validated\":", transition.validated,
+        ",\"transfer_admitted\":", transition.admitted, ",\"transfer_max_admitted\":", transition.max_admitted,
+        ",\"transfer_phase\":", transition.phase));
     rebuild_report.append(str(",\"cpu_block_capacity_bytes\":", bytes_of(chunk.chunks).len, "}"));
     print(rendering_report, gameplay_report, rebuild_report);
 }

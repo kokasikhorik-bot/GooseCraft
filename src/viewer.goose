@@ -21,7 +21,7 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.11.1: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.12.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
@@ -29,6 +29,7 @@ fn main() {
             print("       [--profile NEW-FILE.json [--profile-warmup N]]");
             print("       [--mesh-radius 0..4] (regular games default to 2; 0 keeps the whole world)");
             print("       --paged-world DIR enables bounded CPU paging; mesh-radius must be 1 or 2. Existing GCW files stay separate.");
+            print("       --deferred-respawn keeps drawing while R prepares pages (paged worker mode only).");
             print("Paged diagnostics require new .png screenshot files and .json profile files.");
             print("Paged preparation uses one Goose worker; --sync-paging selects the synchronous baseline.");
             print("Diagnostics: --prefetch-delay-ms 0..100 delays the worker; --page-delay-ms 0..20 delays each page preparation.");
@@ -75,6 +76,10 @@ fn main() {
         else if flag == "--raw-greedy" { options.raw = true; }
         else if flag == "--retain-meshes" { options.retain_meshes = true; }
         else if flag == "--sync-paging" { options.sync_paging = true; }
+        else if flag == "--deferred-respawn" {
+            if options.deferred_respawn { abort_args(); }
+            options.deferred_respawn = true;
+        }
         else if flag == "--prefetch-delay-ms" || flag == "--page-delay-ms" {
             let worker = flag == "--prefetch-delay-ms";
             if i + 1 >= argv.len || (worker && prefetch_delay_given) || (!worker && page_delay_given) { abort_args(); }
@@ -155,6 +160,7 @@ fn main() {
     if options.paged && (options.mesh_radius < 1 || options.mesh_radius > 2 || options.preview || options.demo || options.empty || options.single || options.retain_meshes) { abort_args(); }
     if !options.paged && (options.sync_paging || prefetch_delay_given || page_delay_given) { abort_args(); }
     if options.sync_paging && prefetch_delay_given { abort_args(); }
+    if options.deferred_respawn && (!options.paged || options.sync_paging) { abort_args(); }
     // Page/index/lock names cannot collide with diagnostic outputs. New PNGs
     // also avoid accidental replacement of a user's existing diagnostic file.
     if options.paged && output.len > 0 && (output.len < 4 || output[output.len - 4..] != ".png" || file_exists(output) || is_dir(output)) { abort_args(); }

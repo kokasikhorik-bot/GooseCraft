@@ -90,7 +90,7 @@ def build():
 def test():
     sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
-         ROOT / "tests/prefetch.goose", ROOT / "tests/support", ROOT / "benchmarks"])
+         ROOT / "tests/prefetch.goose", ROOT / "tests/transfer.goose", ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
     bad = run([GOOSE, "check", ROOT / "tests/fixtures/type_error.goose", "--offline"], expected=1)
     if "expected a value of type i64" not in bad.stderr:
@@ -141,17 +141,18 @@ def test():
                     raise RuntimeError("Save lost blocks or contains unsupported IDs")
                 if blocked.read_bytes() != b"retain this file":
                     raise RuntimeError("Failed save modified an unrelated file")
-    unsupported = run([GOOSE, "run", ROOT / "tests/prefetch.goose", "--offline"], expected=1)
-    if "JIT mode does not support threads" not in unsupported.stderr:
-        raise RuntimeError("Thread JIT probe failed for an unexpected reason")
-    for flags in ([], ["--debug"]):
-        path = save_folder / "native worker" / "мир"
-        if path.parent.exists(): shutil.rmtree(path.parent)
-        path.parent.mkdir(parents=True)
-        binary = BUILD / ("prefetch-tests" + ("-debug" if flags else "") + EXT)
-        native_build(ROOT / "tests/prefetch.goose", binary, flags)
-        if run([binary, path]).stdout.strip() != "headless prefetch: ok":
-            raise RuntimeError("Missing native worker test result")
+    for source in ("prefetch", "transfer"):
+        unsupported = run([GOOSE, "run", ROOT / f"tests/{source}.goose", "--offline"], expected=1)
+        if "JIT mode does not support threads" not in unsupported.stderr:
+            raise RuntimeError("Thread JIT probe failed for an unexpected reason")
+        for flags in ([], ["--debug"]):
+            path = save_folder / ("native worker " + source) / "мир"
+            if path.parent.exists(): shutil.rmtree(path.parent)
+            path.parent.mkdir(parents=True)
+            binary = BUILD / (source + "-tests" + ("-debug" if flags else "") + EXT)
+            native_build(ROOT / f"tests/{source}.goose", binary, flags)
+            if run([binary, path]).stdout.strip() != f"headless {source}: ok":
+                raise RuntimeError("Missing native worker test result")
     inspected = json.loads(run([CLIENT, "--headless", "--inspect-world", save_path]).stdout)
     if inspected != {"mode": "world-inspect", "chunks": 9, "solid_blocks": 2333, "format": 1}:
         raise RuntimeError("Native saved-world inspection failed")
@@ -438,6 +439,8 @@ def render_build():
                  ["--paged-world", "x", "--profile", "index.gci"]):
         run([VIEWER, *args], expected=2)
     for args in (["--sync-paging"], ["--prefetch-delay-ms", "1"], ["--page-delay-ms", "1"],
+                 ["--deferred-respawn"], ["--paged-world", "x", "--sync-paging", "--deferred-respawn"],
+                 ["--paged-world", "x", "--deferred-respawn", "--deferred-respawn"],
                  ["--paged-world", "x", "--sync-paging", "--prefetch-delay-ms", "1"],
                  ["--paged-world", "x", "--prefetch-delay-ms", "101"],
                  ["--paged-world", "x", "--page-delay-ms", "21"]):
@@ -586,6 +589,18 @@ def render_test(evidence):
         ("prefetch-quit", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-quit", "--prefetch-delay-ms", "50"], 15, 0),
         ("fallback-file-delayed", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "fallback-file-delayed", "--prefetch-delay-ms", "10"], 680, 0),
     ]
+    transfer_pairs = {}
+    for label, prefix, extra in (("window", xvfb, []), ("offscreen", [], ["--offscreen"]),
+                                 ("debug", [], ["--offscreen"]),
+                                 ("latency", xvfb, ["--page-delay-ms", "2"]),
+                                 ("delayed", xvfb, ["--prefetch-delay-ms", "10"])):
+        name, reference_name = "transfer-" + label, "transfer-" + label + "-reference"
+        transfer_pairs[reference_name] = name
+        profile_specs.append((name, prefix, [*extra, "--paging-replay", "--paged-world", saves / name, "--deferred-respawn"], 1100, 0))
+        control = ["--offscreen"] if not prefix else []
+        if label == "latency": control += ["--page-delay-ms", "2"]
+        profile_specs.append((reference_name, prefix, [*control, "--paging-replay", "--paged-world", saves / reference_name, "--sync-paging"], 1100, 0))
+    profile_specs.append(("transfer-quit", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "transfer-quit", "--deferred-respawn", "--prefetch-delay-ms", "50"], 630, 0))
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
     cache_retained_save = saves / "cache-retained" / "world.gcw"
@@ -615,8 +630,14 @@ def render_test(evidence):
     origin_before = origin.read_bytes()
     for name in ("pages-imported", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync", "fallback-file-delayed"):
         run([CLIENT, "--headless", "--import-world", origin, saves / name])
+    for name, *_ in profile_specs:
+        if name.startswith("transfer-"): run([CLIENT, "--headless", "--import-world", origin, saves / name])
     no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big", "cache-idle", "cache-idle-retained", "pages-idle"}
+    actual_frames = {}
     for name, prefix, flags, frames in cases:
+        if name in transfer_pairs:
+            frames -= results[transfer_pairs[name]]["loading_frames"]
+        actual_frames[name] = frames
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
         case_env = {**env, "SDL_VIDEODRIVER": "x11" if prefix else "offscreen"}
@@ -632,7 +653,7 @@ def render_test(evidence):
             persisted_cache = cache_save.read_bytes()
         if name == "pages-reopen":
             pages_before = {p.name: p.read_bytes() for p in (saves / "pages-route").iterdir() if p.suffix in (".gci", ".gcp")}
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug") else VIEWER
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -841,7 +862,7 @@ def render_test(evidence):
         raise RuntimeError("Save error damaged an unrelated file or missed the diagnostic")
     profiles = {}
     for name, _, _, frames, _ in profile_specs:
-        trace = validate_profile(profile_paths[name], frames)
+        trace = validate_profile(profile_paths[name], actual_frames[name])
         rows = [dict(zip(trace["columns"], row)) for row in trace["rows"]]
         if any(row["rebuilt"] > 2 or row["draw_calls"] > results[name]["chunks"] + 2 for row in rows):
             raise RuntimeError("Profile violated remesh/draw bounds")
@@ -854,7 +875,7 @@ def render_test(evidence):
             raise RuntimeError("Known storage capacities changed")
         if (trace["world_radius"], trace["world_chunks"], trace["world_format"]) != (stdout["world_radius"], stdout["chunks"], stdout["world_format"]):
             raise RuntimeError("Profile world metadata disagrees with the actual world")
-        if trace["warmup_requested"] == 0:
+        if trace["warmup_requested"] == 0 and trace["overwritten"] == 0:
             if sum(row["rebuilt"] for row in rows) + stdout["initial_meshes"] != stdout["remeshes"]:
                 raise RuntimeError("Per-frame remesh events were lost")
             expected_uploads = stdout["mesh_uploaded_bytes"] - stdout["initial_uploaded_bytes"] + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
@@ -871,6 +892,9 @@ def render_test(evidence):
                           "summary": trace["summary"], "collector_ns_total": trace["collector_ns_total"],
                           "loop_session_ns": trace["loop_session_ns"], "startup_ns": trace["startup_ns"],
                           "tail_flush_ns": trace["tail_flush_ns"], "exit_readback_ns": trace["exit_readback_ns"]}
+        for key in ("deferred_respawn", "loading_frames", "logical_frames", "transfer_starts", "transfer_completed", "transfer_requests",
+                    "transfer_incoming", "transfer_validated", "transfer_admitted", "transfer_max_admitted", "transfer_phase"):
+            if trace[key] != stdout[key]: raise RuntimeError(f"Transfer profile metadata disagrees: {name}: {key}")
     for name in ("timing-offscreen", "timing-window", "timing-debug"):
         if results[name]["png_sha256"] != results["terrain-replay"]["png_sha256"] or any(results[name][k] != results["terrain-replay"][k] for k in keys):
             raise RuntimeError("Profiling changed terrain replay pixels or gameplay")
@@ -1000,6 +1024,36 @@ def render_test(evidence):
         "controlled_main_reads_sync": slow["main_page_reads"], "controlled_prefetch_hits": fast["prefetch_hits"],
         "controlled_fallback_reuses": fast["fallback_reuses"],
         "scope": "Real Goose worker and file I/O; explicit artificial latency is a robustness scenario, not a hardware benchmark",
+    }, indent=2) + "\n")
+    for reference_name, name in transfer_pairs.items():
+        d, control = results[name], results[reference_name]
+        if d["transfer_completed"] != 1 or d["transfer_phase"] != 0 or d["loading_frames"] < 1 or d["logical_frames"] <= 680:
+            raise RuntimeError(f"Deferred transfer did not finish its full input route: {name}")
+        if d["transfer_max_admitted"] > 2 or d["transfer_admitted"] != d["transfer_incoming"] or d["transfer_validated"] != d["transfer_incoming"]:
+            raise RuntimeError("Deferred admission violated preflight or per-frame budget")
+        if d["png_sha256"] != control["png_sha256"] or any(d[k] != control[k] for k in (*keys, "revision", "chunk_rebuilds", "max_x")):
+            raise RuntimeError(f"Deferred transfer changed pixels or fixed-step gameplay: {name}")
+        if d["main_page_reads"] >= control["main_page_reads"]:
+            raise RuntimeError("Deferred page preparation was not moved off main")
+        a = saves / (name + "-export.gcw"); b = saves / (reference_name + "-export.gcw")
+        run([CLIENT, "--headless", "--export-pages", saves / name, a])
+        run([CLIENT, "--headless", "--export-pages", saves / reference_name, b])
+        if a.read_bytes() != b.read_bytes(): raise RuntimeError("Deferred transfer changed persistent blocks")
+        trace = validate_profile(profile_paths[name], d["frames"])
+        rows = [dict(zip(trace["columns"], row)) for row in trace["rows"]]
+        if any(row["rebuilt"] != 0 for row in rows if row["paused"]): raise RuntimeError("Rebuilt meshes while CPU pages were incomplete")
+    quit_result = results["transfer-quit"]
+    if quit_result["transfer_completed"] != 0 or quit_result["transfer_phase"] not in (1, 2) or quit_result["loading_frames"] < 1:
+        raise RuntimeError("Early close did not interrupt the pending transition")
+    if quit_result["prefetch_completed"] != quit_result["prefetch_submitted"]:
+        raise RuntimeError("Early close left a live worker job")
+    run([CLIENT, "--headless", "--export-pages", saves / "transfer-quit", saves / "transfer-quit-export.gcw"])
+    if (saves / "transfer-quit-export.gcw").read_bytes() != (saves / "pages-route.gcw").read_bytes():
+        raise RuntimeError("Early close during transfer lost saved edits")
+    (evidence / "transfer-results.json").write_text(json.dumps({
+        "pairs": transfer_pairs, "png_gameplay_and_export_equal": True, "same_logical_input_frames_compared": True,
+        "admission_budget": 2, "staging_slots": 8, "one_worker": True,
+        "early_close_saved_and_joined": True, "scope": "Opt-in R transition only; synchronous commit and normal movement fallback remain",
     }, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "

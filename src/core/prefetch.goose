@@ -49,12 +49,15 @@ fn wanted(map: world::Paged&, state: State&, at: i64) -> bool {
     world::active(map, at) && abs(world::chunk_x(map, at) - state.target_x) <= state.radius &&
         abs(world::chunk_z(map, at) - state.target_z) <= state.radius
 }
-fn accept(map: world::Paged&, state: State&, result: Result&) {
+fn finish(state: State&, result: Result&) {
     assert(state.busy && result.ticket == state.ticket);
     state.busy = false; state.completed++; state.worker_ns += result.elapsed_ns;
     if result.page.generation != 0 { state.disk_reads++; }
-    let at = result.page.at;
     if !result.page.ok { state.errors++; }
+}
+fn accept(map: world::Paged&, state: State&, result: Result&) {
+    finish(state, result);
+    let at = result.page.at;
     if !prepared::matches(result.page, map.index, at) || map.locations[at] >= 0 || !wanted(map, state, at) {
         state.cache.discarded++; return;
     }
@@ -62,6 +65,11 @@ fn accept(map: world::Paged&, state: State&, result: Result&) {
         if state.cache.entries[i].at < 0 { state.cache.entries[i] = result.page; return; }
     }
     state.cache.discarded++;
+}
+fn request(map: world::Paged&, state: State&, at: i64) {
+    assert(!state.busy && state.worker >= 0 && world::active(map, at));
+    assert(qput(Job { ticket: state.ticket + 1, at: at, index: map.index }));
+    state.ticket++; state.submitted++; state.busy = true;
 }
 fn collect(map: world::Paged&, state: State&) {
     if !state.busy { return; }

@@ -1,0 +1,396 @@
++ /work/.cache/toolchain/build/goose check /work/src/viewer.goose --offline
+/work/.cache/upstream/goose_gfx/gfx.goose:287: warning: extern "gs_gfx_available" fn is deprecated: write the symbol after the signature, extern fn available(...) = "gs_gfx_available"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:293: warning: extern "gs_gfx_open" fn is deprecated: write the symbol after the signature, extern fn open(...) = "gs_gfx_open"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:297: warning: extern "gs_gfx_open_headless" fn is deprecated: write the symbol after the signature, extern fn open_headless(...) = "gs_gfx_open_headless"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:299: warning: extern "gs_gfx_close" fn is deprecated: write the symbol after the signature, extern fn close_raw(...) = "gs_gfx_close"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:305: warning: extern "gs_gfx_error" fn is deprecated: write the symbol after the signature, extern fn error_into(...) = "gs_gfx_error"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:306: warning: extern "gs_gfx_misuse_count" fn is deprecated: write the symbol after the signature, extern fn misuse_count(...) = "gs_gfx_misuse_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:320: warning: extern "gs_gfx_driver" fn is deprecated: write the symbol after the signature, extern fn driver_into(...) = "gs_gfx_driver"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:334: warning: extern "gs_gfx_frame" fn is deprecated: write the symbol after the signature, extern fn frame_raw(...) = "gs_gfx_frame"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:340: warning: extern "gs_gfx_quit" fn is deprecated: write the symbol after the signature, extern fn quit(...) = "gs_gfx_quit"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:342: warning: extern "gs_gfx_flush" fn is deprecated: write the symbol after the signature, extern fn flush_raw(...) = "gs_gfx_flush"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:347: warning: extern "gs_gfx_set_title" fn is deprecated: write the symbol after the signature, extern fn set_title(...) = "gs_gfx_set_title"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:352: warning: extern "gs_gfx_screen" fn is deprecated: write the symbol after the signature, extern fn screen(...) = "gs_gfx_screen"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:353: warning: extern "gs_gfx_screen_depth" fn is deprecated: write the symbol after the signature, extern fn screen_depth(...) = "gs_gfx_screen_depth"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:354: warning: extern "gs_gfx_screen_size" fn is deprecated: write the symbol after the signature, extern fn screen_size_into(...) = "gs_gfx_screen_size"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:361: warning: extern "gs_gfx_time" fn is deprecated: write the symbol after the signature, extern fn time(...) = "gs_gfx_time"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:362: warning: extern "gs_gfx_delta_time" fn is deprecated: write the symbol after the signature, extern fn delta_time(...) = "gs_gfx_delta_time"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:363: warning: extern "gs_gfx_frame_count" fn is deprecated: write the symbol after the signature, extern fn frame_count(...) = "gs_gfx_frame_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:366: warning: extern "gs_gfx_open_count" fn is deprecated: write the symbol after the signature, extern fn open_count(...) = "gs_gfx_open_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:380: warning: extern "gs_gfx_key_down" fn is deprecated: write the symbol after the signature, extern fn key_down(...) = "gs_gfx_key_down"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:381: warning: extern "gs_gfx_key_pressed" fn is deprecated: write the symbol after the signature, extern fn key_pressed(...) = "gs_gfx_key_pressed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:382: warning: extern "gs_gfx_key_released" fn is deprecated: write the symbol after the signature, extern fn key_released(...) = "gs_gfx_key_released"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:383: warning: extern "gs_gfx_mouse_down" fn is deprecated: write the symbol after the signature, extern fn mouse_down(...) = "gs_gfx_mouse_down"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:384: warning: extern "gs_gfx_mouse_pressed" fn is deprecated: write the symbol after the signature, extern fn mouse_pressed(...) = "gs_gfx_mouse_pressed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:385: warning: extern "gs_gfx_mouse_released" fn is deprecated: write the symbol after the signature, extern fn mouse_released(...) = "gs_gfx_mouse_released"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:386: warning: extern "gs_gfx_mouse_pos" fn is deprecated: write the symbol after the signature, extern fn mouse_pos_into(...) = "gs_gfx_mouse_pos"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:387: warning: extern "gs_gfx_mouse_delta" fn is deprecated: write the symbol after the signature, extern fn mouse_delta_into(...) = "gs_gfx_mouse_delta"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:388: warning: extern "gs_gfx_mouse_wheel" fn is deprecated: write the symbol after the signature, extern fn mouse_wheel(...) = "gs_gfx_mouse_wheel"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:395: warning: extern "gs_gfx_mouse_in_window" fn is deprecated: write the symbol after the signature, extern fn mouse_in_window(...) = "gs_gfx_mouse_in_window"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:413: warning: extern "gs_gfx_focused" fn is deprecated: write the symbol after the signature, extern fn focused(...) = "gs_gfx_focused"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:422: warning: extern "gs_gfx_set_mouse_relative" fn is deprecated: write the symbol after the signature, extern fn set_mouse_relative(...) = "gs_gfx_set_mouse_relative"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:423: warning: extern "gs_gfx_mouse_relative" fn is deprecated: write the symbol after the signature, extern fn mouse_relative(...) = "gs_gfx_mouse_relative"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:430: warning: extern "gs_gfx_set_cursor_visible" fn is deprecated: write the symbol after the signature, extern fn set_cursor_visible(...) = "gs_gfx_set_cursor_visible"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:431: warning: extern "gs_gfx_cursor_visible" fn is deprecated: write the symbol after the signature, extern fn cursor_visible(...) = "gs_gfx_cursor_visible"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:436: warning: extern "gs_gfx_inject_key" fn is deprecated: write the symbol after the signature, extern fn inject_key(...) = "gs_gfx_inject_key"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:437: warning: extern "gs_gfx_inject_mouse" fn is deprecated: write the symbol after the signature, extern fn inject_mouse(...) = "gs_gfx_inject_mouse"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:439: warning: extern "gs_gfx_inject_text" fn is deprecated: write the symbol after the signature, extern fn inject_text(...) = "gs_gfx_inject_text"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:442: warning: extern "gs_gfx_inject_focus" fn is deprecated: write the symbol after the signature, extern fn inject_focus(...) = "gs_gfx_inject_focus"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:447: warning: extern "gs_gfx_events" fn is deprecated: write the symbol after the signature, extern fn events_into(...) = "gs_gfx_events"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:457: warning: extern "gs_gfx_text_input" fn is deprecated: write the symbol after the signature, extern fn text_input(...) = "gs_gfx_text_input"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:460: warning: extern "gs_gfx_scancode" fn is deprecated: write the symbol after the signature, extern fn scancode(...) = "gs_gfx_scancode"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:461: warning: extern "gs_gfx_key_name" fn is deprecated: write the symbol after the signature, extern fn key_name_into(...) = "gs_gfx_key_name"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:471: warning: extern "gs_gfx_clipboard" fn is deprecated: write the symbol after the signature, extern fn clipboard_into(...) = "gs_gfx_clipboard"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:479: warning: extern "gs_gfx_set_clipboard" fn is deprecated: write the symbol after the signature, extern fn set_clipboard(...) = "gs_gfx_set_clipboard"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:485: warning: extern "gs_gfx_create_buffer" fn is deprecated: write the symbol after the signature, extern fn buffer(...) = "gs_gfx_create_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:489: warning: extern "gs_gfx_update_buffer" fn is deprecated: write the symbol after the signature, extern fn update_buffer(...) = "gs_gfx_update_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:491: warning: extern "gs_gfx_read_buffer" fn is deprecated: write the symbol after the signature, extern fn read_buffer_into(...) = "gs_gfx_read_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:492: warning: extern "gs_gfx_buffer_size" fn is deprecated: write the symbol after the signature, extern fn buffer_size(...) = "gs_gfx_buffer_size"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:493: warning: extern "gs_gfx_release_buffer" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:516: warning: extern "gs_gfx_create_texture" fn is deprecated: write the symbol after the signature, extern fn create_texture(...) = "gs_gfx_create_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:545: warning: extern "gs_gfx_load_texture" fn is deprecated: write the symbol after the signature, extern fn load_texture(...) = "gs_gfx_load_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:547: warning: extern "gs_gfx_update_texture" fn is deprecated: write the symbol after the signature, extern fn update_texture_region(...) = "gs_gfx_update_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:554: warning: extern "gs_gfx_read_texture" fn is deprecated: write the symbol after the signature, extern fn read_texture_into(...) = "gs_gfx_read_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:581: warning: extern "gs_gfx_save_png" fn is deprecated: write the symbol after the signature, extern fn save_png_raw(...) = "gs_gfx_save_png"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:589: warning: extern "gs_gfx_generate_mips" fn is deprecated: write the symbol after the signature, extern fn generate_mips(...) = "gs_gfx_generate_mips"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:590: warning: extern "gs_gfx_texture_info" fn is deprecated: write the symbol after the signature, extern fn texture_info_into(...) = "gs_gfx_texture_info"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:596: warning: extern "gs_gfx_release_texture" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:607: warning: extern "gs_gfx_create_sampler" fn is deprecated: write the symbol after the signature, extern fn create_sampler(...) = "gs_gfx_create_sampler"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:618: warning: extern "gs_gfx_release_sampler" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_sampler"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:623: warning: extern "gs_gfx_create_pipeline" fn is deprecated: write the symbol after the signature, extern fn create_pipeline(...) = "gs_gfx_create_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:629: warning: extern "gs_gfx_release_pipeline" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:630: warning: extern "gs_gfx_create_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn compute_pipeline(...) = "gs_gfx_create_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:631: warning: extern "gs_gfx_release_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:637: warning: extern "gs_gfx_begin_pass" fn is deprecated: write the symbol after the signature, extern fn begin_pass_desc(...) = "gs_gfx_begin_pass"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:639: warning: extern "gs_gfx_end_pass" fn is deprecated: write the symbol after the signature, extern fn end_pass(...) = "gs_gfx_end_pass"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:649: warning: extern "gs_gfx_bind_pipeline" fn is deprecated: write the symbol after the signature, extern fn bind(...) = "gs_gfx_bind_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:651: warning: extern "gs_gfx_bind_vertex_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_vertex_buffer(...) = "gs_gfx_bind_vertex_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:654: warning: extern "gs_gfx_bind_index_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_index_buffer(...) = "gs_gfx_bind_index_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:658: warning: extern "gs_gfx_bind_texture" fn is deprecated: write the symbol after the signature, extern fn bind_texture(...) = "gs_gfx_bind_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:661: warning: extern "gs_gfx_bind_storage_texture" fn is deprecated: write the symbol after the signature, extern fn bind_storage_texture(...) = "gs_gfx_bind_storage_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:662: warning: extern "gs_gfx_bind_storage_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_storage_buffer(...) = "gs_gfx_bind_storage_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:665: warning: extern "gs_gfx_push_uniforms" fn is deprecated: write the symbol after the signature, extern fn push_uniforms(...) = "gs_gfx_push_uniforms"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:671: warning: extern "gs_gfx_viewport" fn is deprecated: write the symbol after the signature, extern fn viewport(...) = "gs_gfx_viewport"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:673: warning: extern "gs_gfx_scissor" fn is deprecated: write the symbol after the signature, extern fn scissor(...) = "gs_gfx_scissor"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:675: warning: extern "gs_gfx_draw" fn is deprecated: write the symbol after the signature, extern fn draw(...) = "gs_gfx_draw"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:679: warning: extern "gs_gfx_draw_indexed" fn is deprecated: write the symbol after the signature, extern fn draw_indexed(...) = "gs_gfx_draw_indexed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:688: warning: extern "gs_gfx_begin_compute" fn is deprecated: write the symbol after the signature, extern fn begin_compute(...) = "gs_gfx_begin_compute"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:694: warning: extern "gs_gfx_end_compute" fn is deprecated: write the symbol after the signature, extern fn end_compute(...) = "gs_gfx_end_compute"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:695: warning: extern "gs_gfx_bind_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn bind(...) = "gs_gfx_bind_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:697: warning: extern "gs_gfx_dispatch" fn is deprecated: write the symbol after the signature, extern fn dispatch(...) = "gs_gfx_dispatch"; (§7.10)
++ /work/.cache/toolchain/build/goose build /work/src/viewer.goose --offline -o /work/build/goosecraft-client
+/work/.cache/upstream/goose_gfx/gfx.goose:287: warning: extern "gs_gfx_available" fn is deprecated: write the symbol after the signature, extern fn available(...) = "gs_gfx_available"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:293: warning: extern "gs_gfx_open" fn is deprecated: write the symbol after the signature, extern fn open(...) = "gs_gfx_open"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:297: warning: extern "gs_gfx_open_headless" fn is deprecated: write the symbol after the signature, extern fn open_headless(...) = "gs_gfx_open_headless"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:299: warning: extern "gs_gfx_close" fn is deprecated: write the symbol after the signature, extern fn close_raw(...) = "gs_gfx_close"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:305: warning: extern "gs_gfx_error" fn is deprecated: write the symbol after the signature, extern fn error_into(...) = "gs_gfx_error"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:306: warning: extern "gs_gfx_misuse_count" fn is deprecated: write the symbol after the signature, extern fn misuse_count(...) = "gs_gfx_misuse_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:320: warning: extern "gs_gfx_driver" fn is deprecated: write the symbol after the signature, extern fn driver_into(...) = "gs_gfx_driver"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:334: warning: extern "gs_gfx_frame" fn is deprecated: write the symbol after the signature, extern fn frame_raw(...) = "gs_gfx_frame"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:340: warning: extern "gs_gfx_quit" fn is deprecated: write the symbol after the signature, extern fn quit(...) = "gs_gfx_quit"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:342: warning: extern "gs_gfx_flush" fn is deprecated: write the symbol after the signature, extern fn flush_raw(...) = "gs_gfx_flush"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:347: warning: extern "gs_gfx_set_title" fn is deprecated: write the symbol after the signature, extern fn set_title(...) = "gs_gfx_set_title"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:352: warning: extern "gs_gfx_screen" fn is deprecated: write the symbol after the signature, extern fn screen(...) = "gs_gfx_screen"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:353: warning: extern "gs_gfx_screen_depth" fn is deprecated: write the symbol after the signature, extern fn screen_depth(...) = "gs_gfx_screen_depth"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:354: warning: extern "gs_gfx_screen_size" fn is deprecated: write the symbol after the signature, extern fn screen_size_into(...) = "gs_gfx_screen_size"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:361: warning: extern "gs_gfx_time" fn is deprecated: write the symbol after the signature, extern fn time(...) = "gs_gfx_time"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:362: warning: extern "gs_gfx_delta_time" fn is deprecated: write the symbol after the signature, extern fn delta_time(...) = "gs_gfx_delta_time"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:363: warning: extern "gs_gfx_frame_count" fn is deprecated: write the symbol after the signature, extern fn frame_count(...) = "gs_gfx_frame_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:366: warning: extern "gs_gfx_open_count" fn is deprecated: write the symbol after the signature, extern fn open_count(...) = "gs_gfx_open_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:380: warning: extern "gs_gfx_key_down" fn is deprecated: write the symbol after the signature, extern fn key_down(...) = "gs_gfx_key_down"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:381: warning: extern "gs_gfx_key_pressed" fn is deprecated: write the symbol after the signature, extern fn key_pressed(...) = "gs_gfx_key_pressed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:382: warning: extern "gs_gfx_key_released" fn is deprecated: write the symbol after the signature, extern fn key_released(...) = "gs_gfx_key_released"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:383: warning: extern "gs_gfx_mouse_down" fn is deprecated: write the symbol after the signature, extern fn mouse_down(...) = "gs_gfx_mouse_down"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:384: warning: extern "gs_gfx_mouse_pressed" fn is deprecated: write the symbol after the signature, extern fn mouse_pressed(...) = "gs_gfx_mouse_pressed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:385: warning: extern "gs_gfx_mouse_released" fn is deprecated: write the symbol after the signature, extern fn mouse_released(...) = "gs_gfx_mouse_released"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:386: warning: extern "gs_gfx_mouse_pos" fn is deprecated: write the symbol after the signature, extern fn mouse_pos_into(...) = "gs_gfx_mouse_pos"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:387: warning: extern "gs_gfx_mouse_delta" fn is deprecated: write the symbol after the signature, extern fn mouse_delta_into(...) = "gs_gfx_mouse_delta"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:388: warning: extern "gs_gfx_mouse_wheel" fn is deprecated: write the symbol after the signature, extern fn mouse_wheel(...) = "gs_gfx_mouse_wheel"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:395: warning: extern "gs_gfx_mouse_in_window" fn is deprecated: write the symbol after the signature, extern fn mouse_in_window(...) = "gs_gfx_mouse_in_window"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:413: warning: extern "gs_gfx_focused" fn is deprecated: write the symbol after the signature, extern fn focused(...) = "gs_gfx_focused"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:422: warning: extern "gs_gfx_set_mouse_relative" fn is deprecated: write the symbol after the signature, extern fn set_mouse_relative(...) = "gs_gfx_set_mouse_relative"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:423: warning: extern "gs_gfx_mouse_relative" fn is deprecated: write the symbol after the signature, extern fn mouse_relative(...) = "gs_gfx_mouse_relative"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:430: warning: extern "gs_gfx_set_cursor_visible" fn is deprecated: write the symbol after the signature, extern fn set_cursor_visible(...) = "gs_gfx_set_cursor_visible"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:431: warning: extern "gs_gfx_cursor_visible" fn is deprecated: write the symbol after the signature, extern fn cursor_visible(...) = "gs_gfx_cursor_visible"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:436: warning: extern "gs_gfx_inject_key" fn is deprecated: write the symbol after the signature, extern fn inject_key(...) = "gs_gfx_inject_key"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:437: warning: extern "gs_gfx_inject_mouse" fn is deprecated: write the symbol after the signature, extern fn inject_mouse(...) = "gs_gfx_inject_mouse"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:439: warning: extern "gs_gfx_inject_text" fn is deprecated: write the symbol after the signature, extern fn inject_text(...) = "gs_gfx_inject_text"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:442: warning: extern "gs_gfx_inject_focus" fn is deprecated: write the symbol after the signature, extern fn inject_focus(...) = "gs_gfx_inject_focus"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:447: warning: extern "gs_gfx_events" fn is deprecated: write the symbol after the signature, extern fn events_into(...) = "gs_gfx_events"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:457: warning: extern "gs_gfx_text_input" fn is deprecated: write the symbol after the signature, extern fn text_input(...) = "gs_gfx_text_input"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:460: warning: extern "gs_gfx_scancode" fn is deprecated: write the symbol after the signature, extern fn scancode(...) = "gs_gfx_scancode"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:461: warning: extern "gs_gfx_key_name" fn is deprecated: write the symbol after the signature, extern fn key_name_into(...) = "gs_gfx_key_name"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:471: warning: extern "gs_gfx_clipboard" fn is deprecated: write the symbol after the signature, extern fn clipboard_into(...) = "gs_gfx_clipboard"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:479: warning: extern "gs_gfx_set_clipboard" fn is deprecated: write the symbol after the signature, extern fn set_clipboard(...) = "gs_gfx_set_clipboard"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:485: warning: extern "gs_gfx_create_buffer" fn is deprecated: write the symbol after the signature, extern fn buffer(...) = "gs_gfx_create_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:489: warning: extern "gs_gfx_update_buffer" fn is deprecated: write the symbol after the signature, extern fn update_buffer(...) = "gs_gfx_update_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:491: warning: extern "gs_gfx_read_buffer" fn is deprecated: write the symbol after the signature, extern fn read_buffer_into(...) = "gs_gfx_read_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:492: warning: extern "gs_gfx_buffer_size" fn is deprecated: write the symbol after the signature, extern fn buffer_size(...) = "gs_gfx_buffer_size"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:493: warning: extern "gs_gfx_release_buffer" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:516: warning: extern "gs_gfx_create_texture" fn is deprecated: write the symbol after the signature, extern fn create_texture(...) = "gs_gfx_create_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:545: warning: extern "gs_gfx_load_texture" fn is deprecated: write the symbol after the signature, extern fn load_texture(...) = "gs_gfx_load_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:547: warning: extern "gs_gfx_update_texture" fn is deprecated: write the symbol after the signature, extern fn update_texture_region(...) = "gs_gfx_update_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:554: warning: extern "gs_gfx_read_texture" fn is deprecated: write the symbol after the signature, extern fn read_texture_into(...) = "gs_gfx_read_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:581: warning: extern "gs_gfx_save_png" fn is deprecated: write the symbol after the signature, extern fn save_png_raw(...) = "gs_gfx_save_png"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:589: warning: extern "gs_gfx_generate_mips" fn is deprecated: write the symbol after the signature, extern fn generate_mips(...) = "gs_gfx_generate_mips"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:590: warning: extern "gs_gfx_texture_info" fn is deprecated: write the symbol after the signature, extern fn texture_info_into(...) = "gs_gfx_texture_info"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:596: warning: extern "gs_gfx_release_texture" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:607: warning: extern "gs_gfx_create_sampler" fn is deprecated: write the symbol after the signature, extern fn create_sampler(...) = "gs_gfx_create_sampler"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:618: warning: extern "gs_gfx_release_sampler" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_sampler"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:623: warning: extern "gs_gfx_create_pipeline" fn is deprecated: write the symbol after the signature, extern fn create_pipeline(...) = "gs_gfx_create_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:629: warning: extern "gs_gfx_release_pipeline" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:630: warning: extern "gs_gfx_create_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn compute_pipeline(...) = "gs_gfx_create_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:631: warning: extern "gs_gfx_release_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:637: warning: extern "gs_gfx_begin_pass" fn is deprecated: write the symbol after the signature, extern fn begin_pass_desc(...) = "gs_gfx_begin_pass"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:639: warning: extern "gs_gfx_end_pass" fn is deprecated: write the symbol after the signature, extern fn end_pass(...) = "gs_gfx_end_pass"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:649: warning: extern "gs_gfx_bind_pipeline" fn is deprecated: write the symbol after the signature, extern fn bind(...) = "gs_gfx_bind_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:651: warning: extern "gs_gfx_bind_vertex_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_vertex_buffer(...) = "gs_gfx_bind_vertex_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:654: warning: extern "gs_gfx_bind_index_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_index_buffer(...) = "gs_gfx_bind_index_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:658: warning: extern "gs_gfx_bind_texture" fn is deprecated: write the symbol after the signature, extern fn bind_texture(...) = "gs_gfx_bind_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:661: warning: extern "gs_gfx_bind_storage_texture" fn is deprecated: write the symbol after the signature, extern fn bind_storage_texture(...) = "gs_gfx_bind_storage_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:662: warning: extern "gs_gfx_bind_storage_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_storage_buffer(...) = "gs_gfx_bind_storage_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:665: warning: extern "gs_gfx_push_uniforms" fn is deprecated: write the symbol after the signature, extern fn push_uniforms(...) = "gs_gfx_push_uniforms"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:671: warning: extern "gs_gfx_viewport" fn is deprecated: write the symbol after the signature, extern fn viewport(...) = "gs_gfx_viewport"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:673: warning: extern "gs_gfx_scissor" fn is deprecated: write the symbol after the signature, extern fn scissor(...) = "gs_gfx_scissor"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:675: warning: extern "gs_gfx_draw" fn is deprecated: write the symbol after the signature, extern fn draw(...) = "gs_gfx_draw"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:679: warning: extern "gs_gfx_draw_indexed" fn is deprecated: write the symbol after the signature, extern fn draw_indexed(...) = "gs_gfx_draw_indexed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:688: warning: extern "gs_gfx_begin_compute" fn is deprecated: write the symbol after the signature, extern fn begin_compute(...) = "gs_gfx_begin_compute"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:694: warning: extern "gs_gfx_end_compute" fn is deprecated: write the symbol after the signature, extern fn end_compute(...) = "gs_gfx_end_compute"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:695: warning: extern "gs_gfx_bind_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn bind(...) = "gs_gfx_bind_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:697: warning: extern "gs_gfx_dispatch" fn is deprecated: write the symbol after the signature, extern fn dispatch(...) = "gs_gfx_dispatch"; (§7.10)
+building the package gfx's C with CMake
+built /work/build/goosecraft-client
++ /work/build/goosecraft-client --help
+GooseCraft 0.12.0: graphical scene and seeded terrain prototype
+usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]
+       [--offscreen] [--empty] [--frames N] [--screenshot FILE]
+       [--seed 0..4294967295 | --demo-world] [--terrain-replay]
+       [--radius 1..4] (new regular games default to 4: 81 chunks, 144x144)
+       [--profile NEW-FILE.json [--profile-warmup N]]
+       [--mesh-radius 0..4] (regular games default to 2; 0 keeps the whole world)
+       --paged-world DIR enables bounded CPU paging; mesh-radius must be 1 or 2. Existing GCW files stay separate.
+Paged diagnostics require new .png screenshot files and .json profile files.
+Paged preparation uses one Goose worker; --sync-paging selects the synchronous baseline.
+Diagnostics: --prefetch-delay-ms 0..100 delays the worker; --page-delay-ms 0..20 delays each page preparation.
+Diagnostics: --paging-replay walks farther before returning; default 680 frames.
+Diagnostics: --retain-meshes keeps all GPU meshes but draws the same mesh-radius window; --stream-replay walks out and respawns.
+WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.
+Escape pauses; click/Enter resumes; R respawns; F5 saves; F10 quits and saves.
+Default world: user profile / GooseCraft/worlds/default-v1.gcw. Player position is not saved.
+New worlds: terrain v1, seed 12345. --seed applies only to a new world; existing saves are preserved.
+Diagnostics: --single-chunk; --reference-renderer; --view-away (preview only); --seam-replay requires --demo-world.
+Diagnostics: --raw-greedy disables edge stitching; --preview-view 0..3 changes overview direction.
+Replay, preview and single-chunk modes are temporary unless --world is explicit.
+Preview/replay/demo default to radius 1. Existing saves keep their size; --radius must match when reopening.
+Diagnostics: --far-replay starts at x=31.5 to cross the old boundary; requires radius >=2.
+Profile: wall-clock CPU loop samples, last 1024 after 30 warmup frames; exported on clean exit. Use a new path.
++ /work/build/goosecraft-client --frames 0
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --replay --empty
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --preview --replay
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seam-replay --single-chunk
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --world
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --world x --no-save
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --view-away
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed -1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed 4294967296
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed 1.5
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed 1 --seed 2
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed 1 --demo-world
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --seed 1 --empty
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --terrain-replay --demo-world
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --preview-view
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --preview-view -1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --offscreen --preview-view 4
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --preview-view 0
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --offscreen --view-away --preview-view 1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --raw-greedy --reference-renderer
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile 
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile x --profile y
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile-warmup 0
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile x --profile-warmup -1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile x --profile-warmup 10001
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile x --profile-warmup 1.5
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile x --screenshot x
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --profile x --world x
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --radius
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --radius 0
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --radius 5
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --radius abc
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --radius 1 --radius 2
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --radius 1 --single-chunk
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --far-replay --radius 1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --mesh-radius
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --mesh-radius -1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --mesh-radius 5
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --mesh-radius abc
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --mesh-radius 1 --mesh-radius 2
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --preview --mesh-radius 1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --retain-meshes --mesh-radius 0
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --no-save
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --world y
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --preview
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --demo-world
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --single-chunk
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --mesh-radius 0
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --mesh-radius 3
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --retain-meshes
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --screenshot index.gci
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --profile index.gci
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --sync-paging
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --prefetch-delay-ms 1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --page-delay-ms 1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --sync-paging --prefetch-delay-ms 1
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --prefetch-delay-ms 101
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --paged-world x --page-delay-ms 21
+invalid graphics arguments: use --help
++ /work/build/goosecraft-client --no-save --profile /work/build/existing profile with spaces/профили/frames.json --frames 1
+profile path already exists; original file was not changed
++ /work/build/goosecraft-client --world /work/build/invalid load.gcw --frames 1
+invalid or unreadable world file; original file was not changed
++ /work/build/goosecraft-client --world /work/build/invalid load.gcw --seed 1
+--seed requires a new world path; existing save was not changed
++ /work/.cache/toolchain/build/goose build /work/src/viewer.goose --offline --debug -o /work/build/goosecraft-client-debug
+/work/.cache/upstream/goose_gfx/gfx.goose:287: warning: extern "gs_gfx_available" fn is deprecated: write the symbol after the signature, extern fn available(...) = "gs_gfx_available"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:293: warning: extern "gs_gfx_open" fn is deprecated: write the symbol after the signature, extern fn open(...) = "gs_gfx_open"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:297: warning: extern "gs_gfx_open_headless" fn is deprecated: write the symbol after the signature, extern fn open_headless(...) = "gs_gfx_open_headless"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:299: warning: extern "gs_gfx_close" fn is deprecated: write the symbol after the signature, extern fn close_raw(...) = "gs_gfx_close"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:305: warning: extern "gs_gfx_error" fn is deprecated: write the symbol after the signature, extern fn error_into(...) = "gs_gfx_error"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:306: warning: extern "gs_gfx_misuse_count" fn is deprecated: write the symbol after the signature, extern fn misuse_count(...) = "gs_gfx_misuse_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:320: warning: extern "gs_gfx_driver" fn is deprecated: write the symbol after the signature, extern fn driver_into(...) = "gs_gfx_driver"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:334: warning: extern "gs_gfx_frame" fn is deprecated: write the symbol after the signature, extern fn frame_raw(...) = "gs_gfx_frame"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:340: warning: extern "gs_gfx_quit" fn is deprecated: write the symbol after the signature, extern fn quit(...) = "gs_gfx_quit"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:342: warning: extern "gs_gfx_flush" fn is deprecated: write the symbol after the signature, extern fn flush_raw(...) = "gs_gfx_flush"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:347: warning: extern "gs_gfx_set_title" fn is deprecated: write the symbol after the signature, extern fn set_title(...) = "gs_gfx_set_title"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:352: warning: extern "gs_gfx_screen" fn is deprecated: write the symbol after the signature, extern fn screen(...) = "gs_gfx_screen"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:353: warning: extern "gs_gfx_screen_depth" fn is deprecated: write the symbol after the signature, extern fn screen_depth(...) = "gs_gfx_screen_depth"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:354: warning: extern "gs_gfx_screen_size" fn is deprecated: write the symbol after the signature, extern fn screen_size_into(...) = "gs_gfx_screen_size"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:361: warning: extern "gs_gfx_time" fn is deprecated: write the symbol after the signature, extern fn time(...) = "gs_gfx_time"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:362: warning: extern "gs_gfx_delta_time" fn is deprecated: write the symbol after the signature, extern fn delta_time(...) = "gs_gfx_delta_time"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:363: warning: extern "gs_gfx_frame_count" fn is deprecated: write the symbol after the signature, extern fn frame_count(...) = "gs_gfx_frame_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:366: warning: extern "gs_gfx_open_count" fn is deprecated: write the symbol after the signature, extern fn open_count(...) = "gs_gfx_open_count"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:380: warning: extern "gs_gfx_key_down" fn is deprecated: write the symbol after the signature, extern fn key_down(...) = "gs_gfx_key_down"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:381: warning: extern "gs_gfx_key_pressed" fn is deprecated: write the symbol after the signature, extern fn key_pressed(...) = "gs_gfx_key_pressed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:382: warning: extern "gs_gfx_key_released" fn is deprecated: write the symbol after the signature, extern fn key_released(...) = "gs_gfx_key_released"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:383: warning: extern "gs_gfx_mouse_down" fn is deprecated: write the symbol after the signature, extern fn mouse_down(...) = "gs_gfx_mouse_down"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:384: warning: extern "gs_gfx_mouse_pressed" fn is deprecated: write the symbol after the signature, extern fn mouse_pressed(...) = "gs_gfx_mouse_pressed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:385: warning: extern "gs_gfx_mouse_released" fn is deprecated: write the symbol after the signature, extern fn mouse_released(...) = "gs_gfx_mouse_released"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:386: warning: extern "gs_gfx_mouse_pos" fn is deprecated: write the symbol after the signature, extern fn mouse_pos_into(...) = "gs_gfx_mouse_pos"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:387: warning: extern "gs_gfx_mouse_delta" fn is deprecated: write the symbol after the signature, extern fn mouse_delta_into(...) = "gs_gfx_mouse_delta"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:388: warning: extern "gs_gfx_mouse_wheel" fn is deprecated: write the symbol after the signature, extern fn mouse_wheel(...) = "gs_gfx_mouse_wheel"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:395: warning: extern "gs_gfx_mouse_in_window" fn is deprecated: write the symbol after the signature, extern fn mouse_in_window(...) = "gs_gfx_mouse_in_window"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:413: warning: extern "gs_gfx_focused" fn is deprecated: write the symbol after the signature, extern fn focused(...) = "gs_gfx_focused"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:422: warning: extern "gs_gfx_set_mouse_relative" fn is deprecated: write the symbol after the signature, extern fn set_mouse_relative(...) = "gs_gfx_set_mouse_relative"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:423: warning: extern "gs_gfx_mouse_relative" fn is deprecated: write the symbol after the signature, extern fn mouse_relative(...) = "gs_gfx_mouse_relative"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:430: warning: extern "gs_gfx_set_cursor_visible" fn is deprecated: write the symbol after the signature, extern fn set_cursor_visible(...) = "gs_gfx_set_cursor_visible"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:431: warning: extern "gs_gfx_cursor_visible" fn is deprecated: write the symbol after the signature, extern fn cursor_visible(...) = "gs_gfx_cursor_visible"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:436: warning: extern "gs_gfx_inject_key" fn is deprecated: write the symbol after the signature, extern fn inject_key(...) = "gs_gfx_inject_key"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:437: warning: extern "gs_gfx_inject_mouse" fn is deprecated: write the symbol after the signature, extern fn inject_mouse(...) = "gs_gfx_inject_mouse"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:439: warning: extern "gs_gfx_inject_text" fn is deprecated: write the symbol after the signature, extern fn inject_text(...) = "gs_gfx_inject_text"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:442: warning: extern "gs_gfx_inject_focus" fn is deprecated: write the symbol after the signature, extern fn inject_focus(...) = "gs_gfx_inject_focus"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:447: warning: extern "gs_gfx_events" fn is deprecated: write the symbol after the signature, extern fn events_into(...) = "gs_gfx_events"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:457: warning: extern "gs_gfx_text_input" fn is deprecated: write the symbol after the signature, extern fn text_input(...) = "gs_gfx_text_input"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:460: warning: extern "gs_gfx_scancode" fn is deprecated: write the symbol after the signature, extern fn scancode(...) = "gs_gfx_scancode"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:461: warning: extern "gs_gfx_key_name" fn is deprecated: write the symbol after the signature, extern fn key_name_into(...) = "gs_gfx_key_name"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:471: warning: extern "gs_gfx_clipboard" fn is deprecated: write the symbol after the signature, extern fn clipboard_into(...) = "gs_gfx_clipboard"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:479: warning: extern "gs_gfx_set_clipboard" fn is deprecated: write the symbol after the signature, extern fn set_clipboard(...) = "gs_gfx_set_clipboard"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:485: warning: extern "gs_gfx_create_buffer" fn is deprecated: write the symbol after the signature, extern fn buffer(...) = "gs_gfx_create_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:489: warning: extern "gs_gfx_update_buffer" fn is deprecated: write the symbol after the signature, extern fn update_buffer(...) = "gs_gfx_update_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:491: warning: extern "gs_gfx_read_buffer" fn is deprecated: write the symbol after the signature, extern fn read_buffer_into(...) = "gs_gfx_read_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:492: warning: extern "gs_gfx_buffer_size" fn is deprecated: write the symbol after the signature, extern fn buffer_size(...) = "gs_gfx_buffer_size"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:493: warning: extern "gs_gfx_release_buffer" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:516: warning: extern "gs_gfx_create_texture" fn is deprecated: write the symbol after the signature, extern fn create_texture(...) = "gs_gfx_create_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:545: warning: extern "gs_gfx_load_texture" fn is deprecated: write the symbol after the signature, extern fn load_texture(...) = "gs_gfx_load_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:547: warning: extern "gs_gfx_update_texture" fn is deprecated: write the symbol after the signature, extern fn update_texture_region(...) = "gs_gfx_update_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:554: warning: extern "gs_gfx_read_texture" fn is deprecated: write the symbol after the signature, extern fn read_texture_into(...) = "gs_gfx_read_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:581: warning: extern "gs_gfx_save_png" fn is deprecated: write the symbol after the signature, extern fn save_png_raw(...) = "gs_gfx_save_png"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:589: warning: extern "gs_gfx_generate_mips" fn is deprecated: write the symbol after the signature, extern fn generate_mips(...) = "gs_gfx_generate_mips"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:590: warning: extern "gs_gfx_texture_info" fn is deprecated: write the symbol after the signature, extern fn texture_info_into(...) = "gs_gfx_texture_info"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:596: warning: extern "gs_gfx_release_texture" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:607: warning: extern "gs_gfx_create_sampler" fn is deprecated: write the symbol after the signature, extern fn create_sampler(...) = "gs_gfx_create_sampler"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:618: warning: extern "gs_gfx_release_sampler" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_sampler"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:623: warning: extern "gs_gfx_create_pipeline" fn is deprecated: write the symbol after the signature, extern fn create_pipeline(...) = "gs_gfx_create_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:629: warning: extern "gs_gfx_release_pipeline" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:630: warning: extern "gs_gfx_create_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn compute_pipeline(...) = "gs_gfx_create_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:631: warning: extern "gs_gfx_release_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn release(...) = "gs_gfx_release_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:637: warning: extern "gs_gfx_begin_pass" fn is deprecated: write the symbol after the signature, extern fn begin_pass_desc(...) = "gs_gfx_begin_pass"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:639: warning: extern "gs_gfx_end_pass" fn is deprecated: write the symbol after the signature, extern fn end_pass(...) = "gs_gfx_end_pass"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:649: warning: extern "gs_gfx_bind_pipeline" fn is deprecated: write the symbol after the signature, extern fn bind(...) = "gs_gfx_bind_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:651: warning: extern "gs_gfx_bind_vertex_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_vertex_buffer(...) = "gs_gfx_bind_vertex_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:654: warning: extern "gs_gfx_bind_index_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_index_buffer(...) = "gs_gfx_bind_index_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:658: warning: extern "gs_gfx_bind_texture" fn is deprecated: write the symbol after the signature, extern fn bind_texture(...) = "gs_gfx_bind_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:661: warning: extern "gs_gfx_bind_storage_texture" fn is deprecated: write the symbol after the signature, extern fn bind_storage_texture(...) = "gs_gfx_bind_storage_texture"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:662: warning: extern "gs_gfx_bind_storage_buffer" fn is deprecated: write the symbol after the signature, extern fn bind_storage_buffer(...) = "gs_gfx_bind_storage_buffer"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:665: warning: extern "gs_gfx_push_uniforms" fn is deprecated: write the symbol after the signature, extern fn push_uniforms(...) = "gs_gfx_push_uniforms"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:671: warning: extern "gs_gfx_viewport" fn is deprecated: write the symbol after the signature, extern fn viewport(...) = "gs_gfx_viewport"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:673: warning: extern "gs_gfx_scissor" fn is deprecated: write the symbol after the signature, extern fn scissor(...) = "gs_gfx_scissor"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:675: warning: extern "gs_gfx_draw" fn is deprecated: write the symbol after the signature, extern fn draw(...) = "gs_gfx_draw"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:679: warning: extern "gs_gfx_draw_indexed" fn is deprecated: write the symbol after the signature, extern fn draw_indexed(...) = "gs_gfx_draw_indexed"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:688: warning: extern "gs_gfx_begin_compute" fn is deprecated: write the symbol after the signature, extern fn begin_compute(...) = "gs_gfx_begin_compute"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:694: warning: extern "gs_gfx_end_compute" fn is deprecated: write the symbol after the signature, extern fn end_compute(...) = "gs_gfx_end_compute"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:695: warning: extern "gs_gfx_bind_compute_pipeline" fn is deprecated: write the symbol after the signature, extern fn bind(...) = "gs_gfx_bind_compute_pipeline"; (§7.10)
+/work/.cache/upstream/goose_gfx/gfx.goose:697: warning: extern "gs_gfx_dispatch" fn is deprecated: write the symbol after the signature, extern fn dispatch(...) = "gs_gfx_dispatch"; (§7.10)
+building the package gfx's C with CMake
+built /work/build/goosecraft-client-debug

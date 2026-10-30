@@ -3,7 +3,7 @@ import os;
 import core.core;
 
 fn usage() {
-    print("GooseCraft 0.11.1 (headless harness)");
+    print("GooseCraft 0.12.0 (headless harness)");
     print("usage: goosecraft-headless --headless [--ticks N | --inspect-world FILE] | --version | --help");
     print("Graphical client: goosecraft-client.");
     print("Generate: --headless --generate-world SEED FILE [--radius 1..4], default 1; never replaces existing files.");
@@ -20,7 +20,7 @@ fn main() {
     if argv.len == 1 { usage(); return; }
     if argv.len == 2 && argv[1] == "--help" { usage(); return; }
     if argv.len == 2 && argv[1] == "--version" {
-        print("GooseCraft 0.11.1");
+        print("GooseCraft 0.12.0");
         return;
     }
     if argv[1] != "--headless" { invalid_args(); }

@@ -1,0 +1,41 @@
+{
+  "scope": "Single Linux lavapipe run; latency=2 injected; sums exclude inter-sample overhead; not an FPS claim",
+  "results": [
+    {
+      "scenario": "prefetch-latency",
+      "loading_frames": 0,
+      "request_frame_wall_ns": 64859715,
+      "max_recorded_frame_ns": 64859715,
+      "sum_recorded_event_to_completion_ns": 64859715,
+      "main_page_reads_loop": 30,
+      "worker_disk_reads_loop": 5
+    },
+    {
+      "scenario": "transfer-latency",
+      "loading_frames": 33,
+      "request_frame_wall_ns": 2437232,
+      "max_recorded_frame_ns": 2499185,
+      "sum_recorded_event_to_completion_ns": 77227168,
+      "main_page_reads_loop": 0,
+      "worker_disk_reads_loop": 35
+    },
+    {
+      "scenario": "transfer-window",
+      "loading_frames": 33,
+      "request_frame_wall_ns": 2694749,
+      "max_recorded_frame_ns": 2874058,
+      "sum_recorded_event_to_completion_ns": 89651099,
+      "main_page_reads_loop": 0,
+      "worker_disk_reads_loop": 35
+    },
+    {
+      "scenario": "transfer-delayed",
+      "loading_frames": 123,
+      "request_frame_wall_ns": 2864459,
+      "max_recorded_frame_ns": 3655292,
+      "sum_recorded_event_to_completion_ns": 350118590,
+      "main_page_reads_loop": 1,
+      "worker_disk_reads_loop": 34
+    }
+  ]
+}
