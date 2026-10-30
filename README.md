@@ -56,10 +56,10 @@ docker run --rm --network=none \
 Goose, Python, Java или локальная среда разработки. Ожидаемый вызов лаунчера:
 `goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
 
-Приватный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
-Код загружен в `main`. Первый Actions run зарегистрирован, но GitHub не выделил
-runners из-за платежей/лимита расходов аккаунта. Шаги сборки не выполнялись,
-Windows-артефактов нет. [Точный результат и условия продолжения](docs/github-ci.md).
+Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
+Код загружен в `main`. По решению владельца 2026-10-30 репозиторий открыт
+для повторной проверки Actions. Первоначальный запуск в приватном репозитории
+был заблокирован платежами/лимитом аккаунта. [Текущий статус CI](docs/github-ci.md).
 Запуск на пользовательской Windows 10 ещё не подтверждён.
 
 ## Документация

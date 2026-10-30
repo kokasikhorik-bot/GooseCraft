@@ -1,6 +1,6 @@
-# GitHub и первый запуск CI — 2026-10-29
+# GitHub и проверка CI
 
-Создан приватный репозиторий
+2026-10-29 создан приватный репозиторий
 [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
 Оба коммита этапов 1–2 загружены в `main`, локальный `origin` настроен на
 `https://github.com/kokasikhorik-bot/GooseCraft.git` без учётных данных в URL.
@@ -32,7 +32,7 @@ Windows-лаунчер и Windows GUI по-прежнему не подтвер�
 [github-actions-40947702634.json](validation/github-actions-40947702634.json).
 Секреты и заголовки авторизации в отчёт не включены.
 
-## Условия продолжения
+## Историческая блокировка приватного запуска
 
 Для приватного репозитория владелец должен проверить
 [GitHub Billing & plans](https://github.com/settings/billing): состояние платежей
@@ -46,3 +46,18 @@ workflow вручную через workflow_dispatch.
 
 Документационные обновления этого статуса отправляются с `[skip ci]`, чтобы
 не повторять заведомо заблокированные запуски без изменения условий.
+
+## Публикация — 2026-10-30
+
+Владелец явно разрешил сделать GooseCraft публичным. GitHub API подтвердил
+`private: false`, `visibility: public` для
+[kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
+Настройки оплаты не менялись. Выполняется повторная проверка CI в публичном
+репозитории; первоначальный отказ приватного запуска сохранён выше как история.
+
+Первый публичный запуск
+[41009915165](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41009915165)
+получил runners. Windows остановился на setup-python: 3.12.14 не найден для
+Windows 2022. В matrix закреплён доступный Windows Python 3.12.10; Linux
+остаётся на 3.12.14. Причина подтверждена аннотацией Actions и официальным
+[manifest](https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json).

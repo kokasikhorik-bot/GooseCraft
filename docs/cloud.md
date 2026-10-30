@@ -7,7 +7,7 @@
 
 - Goose: полный commit и отключённые builtin packages в `toolchain.lock.json`.
 - CMake: 3.31.6, SHA-256 Linux/Windows wheels в `tools/requirements.txt`.
-- Python в CI: 3.12.14 x64; GitHub Actions закреплены по commit SHA.
+- Python в CI: Linux 3.12.14 x64, Windows 3.12.10 x64; GitHub Actions закреплены по commit SHA.
 - CI runners: `ubuntu-22.04` и `windows-2022`; их обновления управляются GitHub.
 - Linux-контейнер: `.devcontainer/Dockerfile`, amd64-образ Python 3.12.14 /
   Debian bookworm закреплён manifest digest
@@ -66,6 +66,7 @@ Workflow строит Goose из того же commit, затем нативны
 Компилятор Goose, Python и TinyCC в пользовательскую поставку не входят.
 
 GitHub-репозиторий создан, `origin` настроен и исходники загружены в `main`.
+По решению владельца 2026-10-30 он сделан публичным для повторной проверки CI.
 Первый запуск зарегистрирован, но jobs не получили runners из-за платежей/лимита
 расходов аккаунта. Подробности и ссылка на run — в [github-ci.md](github-ci.md).
 Наличие YAML не означает, что Windows-сборка уже прошла. Windows Server runner
@@ -113,5 +114,14 @@ headless-бинарник, если первый аргумент `--headless`; 
 Windows job теперь получает gfx, собирает графический бинарник и запускает
 его `--help`/некорректные аргументы без GUI. Отдельный Linux job запускает
 render-test в graphics-контейнере и публикует PNG/JSON как Actions artifacts.
-В первом запуске ни один шаг GitHub jobs не выполнился: блокировка аккаунта
+В первом приватном запуске ни один шаг GitHub jobs не выполнился: блокировка аккаунта
 описана в [github-ci.md](github-ci.md). Windows GUI не проверен.
+
+### Доступность Python на Windows runner
+
+Реальный повторный CI 2026-10-30 показал, что setup-python не предоставляет
+3.12.14 для Windows 2022. Проверен официальный versions-manifest.json проекта
+actions/python-versions: 3.12.14 опубликован для Linux, 3.12.10 есть для win32 x64.
+Поэтому CI закрепляет Python отдельно по платформам. Linux/Docker остаётся на
+3.12.14; версии Goose, CMake, SDL и Nuklear не менялись. Python нужен только
+сценариям сборки и не включается в клиентскую поставку.
