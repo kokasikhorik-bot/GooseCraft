@@ -82,5 +82,22 @@ hit bounds/gaps при ширинах 320/640/1280 и неизменность �
 GUI проверен на Linux software Vulkan/Xvfb с настоящим pinned gfx input API,
 инъекцией событий и framebuffer readback; физические устройства и Windows 10
 GUI не проверены. Windows build/test delivery — в [отчёте CI](github-ci.md).
+Workflow [41103646909](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41103646909)
+для source `57d22499cca708bc6b8934260106e36188d05486` завершился success;
+Windows/Ubuntu native checks и Linux graphics job подтверждены.
+[Windows ZIP 0.13](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41103646909/artifacts/12998514724)
+создан, Windows GUI не открывался.
 Сети Java Edition, высокой модели мира и освещения пока нет;
 [план следующих функциональных этапов](roadmap.md).
+
+Дополнительная Linux-поставка проверена как UID 1000 из `/tmp`, network=none,
+root filesystem read-only, `/work` и Goose compiler скрыты tmpfs. Упакованный
+client прошёл полный replay 90 кадров и snapshot 14 кадров с held cursor.
+PNG обоих запусков совпали с полным suite; native headless подтвердил 267
+блоков/GCW v1, повторный inspection не изменил SHA-256 мира. Бинарники совпали
+с тестовыми, 12 лицензий сохранены побайтно, миров/debug binaries в поставке
+нет. Локальный владелец каталога приведён к UID 1000 без изменения файлов.
+BUILD-INFO: 0.13.0, source `57d2249`, formats [1,2,3]. Это Linux-проверка,
+не запуск скачанного Windows ZIP. [Итог](validation/inventory/package-results.json),
+[финальный кадр](validation/inventory/package/frame.png),
+[held cursor](validation/inventory/package/held.png).
