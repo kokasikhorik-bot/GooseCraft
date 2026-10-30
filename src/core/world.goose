@@ -4,14 +4,39 @@ namespace world;
 
 struct Chunk { blocks: u8[4096] = [0; 4096] }
 
-// Explicit fixed owners, with no heap graph or per-block allocations.
-// Chunk coordinates -1..1, x-major inside each z row; center slot is 4.
+// One growable tail owns all block storage; bounded metadata has no heap graph.
+// A minimum 3x3 pool preserves diagnostic radius=0 center slot 4.
 struct Map {
-    chunks: Chunk[9] = [Chunk {}; 9],
-    dirty: bool[9] = [false; 9],
+    dirty: bool[81] = [false; 81],
     radius: i64 = 1,
     revision: i64 = 0,
+    chunks: Chunk[>..] = [Chunk {}; 9],
 }
+
+fn width(radius: i64) -> i64 { 2 * max(radius, 1) + 1 }
+fn pool_count(radius: i64) -> i64 { width(radius) * width(radius) }
+fn count(map: Map&) -> i64 { if map.radius == 0 { 1 } else { pool_count(map.radius) } }
+
+fn valid(map: Map&) -> bool {
+    map.radius >= 0 && map.radius <= 4 && map.chunks.len == pool_count(map.radius)
+}
+
+// The pinned compiler does not generate == for a growable-tail struct.
+fn equal(a: Map&, b: Map&) -> bool {
+    if a.radius != b.radius || a.revision != b.revision || a.dirty != b.dirty || a.chunks.len != b.chunks.len { return false; }
+    for at in a.chunks.len { if a.chunks[at].blocks != b.chunks[at].blocks { return false; } }
+    return true;
+}
+
+fn create(radius: i64) -> Map {
+    assert(radius >= 0 && radius <= 4);
+    var map = Map { radius: radius };
+    map.chunks.resize(pool_count(radius), Chunk {});
+    return map;
+}
+
+fn chunk_x(map: Map&, at: i64) -> i64 { at % width(map.radius) - max(map.radius, 1) }
+fn chunk_z(map: Map&, at: i64) -> i64 { at / width(map.radius) - max(map.radius, 1) }
 
 // Local coordinates -1..16: a bounded snapshot for neighbor-aware meshing.
 struct Halo { blocks: u8[5832] = [0; 5832] }
@@ -46,14 +71,15 @@ fn upper(chunk: Chunk&) -> i64 { 16 }
 // Goose / truncates, while % is Euclidean (never negative).
 fn chunk_coord(value: i64) -> i64 { div_euclid(value, 16) }
 
-fn slot(cx: i64, cz: i64) -> i64 {
-    assert(cx >= -1 && cx <= 1 && cz >= -1 && cz <= 1);
-    cx + 1 + (cz + 1) * 3
+fn slot(cx: i64, cz: i64, radius: i64 = 1) -> i64 {
+    let r = max(radius, 1);
+    assert(cx >= -r && cx <= r && cz >= -r && cz <= r);
+    cx + r + (cz + r) * width(radius)
 }
 
 fn active(map: Map&, at: i64) -> bool {
-    assert(at >= 0 && at < 9);
-    map.radius == 1 || at == 4
+    assert(at >= 0 && at < map.chunks.len);
+    map.radius != 0 || at == 4
 }
 
 fn lower(map: Map&) -> i64 { -map.radius * 16 }
@@ -67,14 +93,14 @@ fn get(map: Map&, x: i64, y: i64, z: i64) -> u8 {
     if !contains(map, x, y, z) { return 0; }
     let cx = chunk_coord(x);
     let cz = chunk_coord(z);
-    return get(map.chunks[slot(cx, cz)], x - cx * 16, y, z - cz * 16);
+    return get(map.chunks[slot(cx, cz, map.radius)], x - cx * 16, y, z - cz * 16);
 }
 
 fn sample(map: Map&, x: i64, y: i64, z: i64) -> u8 { get(map, x, y, z) }
 
 fn mark(map: Map&, cx: i64, cz: i64) {
     if cx < -map.radius || cx > map.radius || cz < -map.radius || cz > map.radius { return; }
-    map.dirty[slot(cx, cz)] = true;
+    map.dirty[slot(cx, cz, map.radius)] = true;
 }
 
 fn set(map: Map&, x: i64, y: i64, z: i64, value: u8) -> bool {
@@ -83,7 +109,7 @@ fn set(map: Map&, x: i64, y: i64, z: i64, value: u8) -> bool {
     let cz = chunk_coord(z);
     let lx = x - cx * 16;
     let lz = z - cz * 16;
-    let at = slot(cx, cz);
+    let at = slot(cx, cz, map.radius);
     if get(map.chunks[at], lx, y, lz) == value { return true; }
     set(map.chunks[at], lx, y, lz, value);
     mark(map, cx, cz);
@@ -95,16 +121,19 @@ fn set(map: Map&, x: i64, y: i64, z: i64, value: u8) -> bool {
     return true;
 }
 
-fn mark_all(map: Map&) { for at in 9 { map.dirty[at] = active(map, at); } }
+fn mark_all(map: Map&) {
+    for at in 81 { map.dirty[at] = false; }
+    for at in map.chunks.len { map.dirty[at] = active(map, at); }
+}
 
 fn pending(map: Map&) -> i64 {
     var count: i64 = 0;
-    for at in 9 { if active(map, at) && map.dirty[at] { count++; } }
+    for at in map.chunks.len { if active(map, at) && map.dirty[at] { count++; } }
     return count;
 }
 
 fn pop_dirty(map: Map&) -> i64 {
-    for at in 9 {
+    for at in map.chunks.len {
         if active(map, at) && map.dirty[at] { map.dirty[at] = false; return at; }
     }
     return -1;
@@ -112,15 +141,15 @@ fn pop_dirty(map: Map&) -> i64 {
 
 fn solid_count(map: Map&) -> i64 {
     var count: i64 = 0;
-    for at in 9 { if active(map, at) { count += solid_count(map.chunks[at]); } }
+    for at in map.chunks.len { if active(map, at) { count += solid_count(map.chunks[at]); } }
     return count;
 }
 
-fn region(single: bool, empty: bool) -> Map {
-    var map = Map { radius: if single { 0 } else { 1 } };
+fn region(single: bool, empty: bool, radius: i64 = 1) -> Map {
+    var map = create(if single { 0 } else { radius });
     if !empty {
-        for at in 9 { if active(map, at) { map.chunks[at] = flat_fixture(); } }
-        map.chunks[4] = demo_fixture();
+        for at in map.chunks.len { if active(map, at) { map.chunks[at] = flat_fixture(); } }
+        map.chunks[slot(0, 0, map.radius)] = demo_fixture();
         if !single {
             for y in 1..5 { set(map, 15, y, 9, 2); set(map, 16, y, 9, 2); }
             for y in 1..4 { set(map, -8, y, -8, 2); }
@@ -141,8 +170,8 @@ fn sample(halo: Halo&, x: i64, y: i64, z: i64) -> u8 { get(halo, x, y, z) }
 
 fn neighborhood(map: Map&, at: i64) -> Halo {
     assert(active(map, at));
-    let ox = (at % 3 - 1) * 16;
-    let oz = (at / 3 - 1) * 16;
+    let ox = chunk_x(map, at) * 16;
+    let oz = chunk_z(map, at) * 16;
     var halo = Halo {};
     for y in -1..17 { for z in -1..17 { for x in -1..17 {
         halo.blocks[(x + 1) + 18 * ((z + 1) + 18 * (y + 1))] = get(map, ox + x, y, oz + z);

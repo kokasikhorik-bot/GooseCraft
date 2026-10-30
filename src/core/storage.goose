@@ -1,9 +1,12 @@
 // GooseCraft's own bounded world format, unrelated to Minecraft save formats.
-// Header (16 bytes): GOOSEWLD, version=1, radius, chunk count, zero, Adler32 LE.
+// Header: GOOSEWLD, version 1 (radius 0..1) / 2 (radius 2..4), radius,
+// chunk count, zero, Adler32 LE. Sixteen bytes, then complete chunk payloads.
 // Payload: active chunks in slot order, each 4096 raw IDs (0/1/2).
 import os;
 import .world;
 namespace storage;
+
+fn version(map: world::Map&) -> i64 { if map.radius <= 1 { 1 } else { 2 } }
 
 fn checksum(data: const u8[:]) -> u32 {
     var a: i64 = 1;
@@ -18,41 +21,42 @@ fn checksum(data: const u8[:]) -> u32 {
 
 fn encode(map: world::Map&, output: u8[>..]&) -> bool {
     assert(output.len == 0);
-    if map.radius != 0 && map.radius != 1 { return false; }
-    for at in 9 {
+    if !world::valid(map) { return false; }
+    for at in map.chunks.len {
         if world::active(map, at) {
             for value in map.chunks[at].blocks { if value > 2 { return false; } }
         }
     }
     output.append("GOOSEWLD");
-    output.append([1, map.radius as u8, if map.radius == 0 { 1 } else { 9 }, 0, 0, 0, 0, 0]);
-    for at in 9 { if world::active(map, at) { output.append(map.chunks[at].blocks); } }
+    output.append([version(map) as u8, map.radius as u8, world::count(map) as u8, 0, 0, 0, 0, 0]);
+    for at in map.chunks.len { if world::active(map, at) { output.append(map.chunks[at].blocks); } }
     let sum = checksum(output);
     for i in 4 { output[12 + i] = (sum >> (i * 8)) as! u8; }
     return true;
 }
 
 fn decode(data: const u8[:], map: world::Map&) -> bool {
-    if data.len < 16 || data[..8] != "GOOSEWLD" || data[8] != 1 || data[9] > 1 || data[11] != 0 {
+    if data.len < 16 || data[..8] != "GOOSEWLD" || data[11] != 0 {
         return false;
     }
-    let count: i64 = if data[9] == 0 { 1 } else { 9 };
+    if !((data[8] == 1 && data[9] <= 1) || (data[8] == 2 && data[9] >= 2 && data[9] <= 4)) { return false; }
+    let count: i64 = if data[9] == 0 { 1 } else { world::pool_count(data[9]) };
     if data[10] != count || data.len != 16 + count * 4096 { return false; }
     var expected: u32 = 0;
     for i in 4 { expected |= (data[12 + i] as u32) << (i * 8); }
     if expected != checksum(data) { return false; }
     for i in 16..data.len { if data[i] > 2 { return false; } }
     // Validate completely before assigning: errors preserve live world/dirty state.
-    var candidate = world::Map { radius: data[9] };
+    var candidate = world::create(data[9]);
     var cursor: i64 = 16;
-    for at in 9 {
+    for at in candidate.chunks.len {
         if world::active(candidate, at) {
             for i in 4096 { candidate.chunks[at].blocks[i] = data[cursor + i]; }
             cursor += 4096;
         }
     }
     world::mark_all(candidate);
-    map = candidate;
+    map = copy(candidate);
     return true;
 }
 

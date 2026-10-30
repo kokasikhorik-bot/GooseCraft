@@ -1,0 +1,47 @@
+{
+  "generator": 1,
+  "format": 2,
+  "provenance": "Independently calculated with Python arbitrary-precision integers, explicit 32-bit hash masks and zlib Adler32; full GCW v2 SHA-256.",
+  "vectors": [
+    {
+      "radius": 2,
+      "seed": 12345,
+      "chunks": 25,
+      "bytes": 102416,
+      "solid_blocks": 47699,
+      "min_height": 3,
+      "max_height": 11,
+      "sha256": "d78c3996d1642cf0a757a820320107f1ef98e226bd410a6ee4f592188a544810"
+    },
+    {
+      "radius": 3,
+      "seed": 12345,
+      "chunks": 49,
+      "bytes": 200720,
+      "solid_blocks": 88087,
+      "min_height": 3,
+      "max_height": 11,
+      "sha256": "3fb609d80aa4932769cd8ef104d94d949fec76c78954a182721fd732515fa04d"
+    },
+    {
+      "radius": 4,
+      "seed": 12345,
+      "chunks": 81,
+      "bytes": 331792,
+      "solid_blocks": 144444,
+      "min_height": 3,
+      "max_height": 11,
+      "sha256": "774ffefe091a29ee8a94ada408a8288bac4157349cf645637dd642fa10f36752"
+    },
+    {
+      "radius": 4,
+      "seed": 4294967295,
+      "chunks": 81,
+      "bytes": 331792,
+      "solid_blocks": 138914,
+      "min_height": 3,
+      "max_height": 10,
+      "sha256": "52b30606d43a2ae704d6516f5b9bf5d94185eb97faedaf5f305547aa98cb5204"
+    }
+  ]
+}

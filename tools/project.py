@@ -87,7 +87,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -159,6 +159,25 @@ def test():
         run([CLIENT, "--headless", "--generate-world", seed, path], expected=5)
         if path.read_bytes() != generated[-1]:
             raise RuntimeError("Generation replaced an existing world")
+    large_vectors = json.loads((ROOT / "tests/fixtures/large-world-vectors.json").read_text())["vectors"]
+    for vector in large_vectors:
+        seed, radius = vector["seed"], vector["radius"]
+        generated = []
+        for label, command in (("native", [CLIENT]), ("jit", [GOOSE, "run", ROOT / "src/client.goose", "--offline", "--"])):
+            path = save_folder / f"large-{radius}-{seed}-{label}.gcw"
+            path.unlink(missing_ok=True)
+            report = json.loads(run([*command, "--headless", "--generate-world", seed, path, "--radius", radius]).stdout)
+            raw = path.read_bytes()
+            if (report["chunks"], report["solid_blocks"], len(raw)) != (vector["chunks"], vector["solid_blocks"], vector["bytes"]):
+                raise RuntimeError("Large world report/size differs from independent vector")
+            if hashlib.sha256(raw).hexdigest() != vector["sha256"]:
+                raise RuntimeError("Large world bytes differ from independent integer generator vector")
+            checked = json.loads(run([CLIENT, "--headless", "--inspect-world", path]).stdout)
+            if checked != {"mode": "world-inspect", "chunks": vector["chunks"], "solid_blocks": vector["solid_blocks"], "format": 2}:
+                raise RuntimeError("GCW v2 inspection differs")
+            generated.append(raw)
+        if generated[0] != generated[1]:
+            raise RuntimeError("Native/JIT large world bytes differ")
     # Test the built executable from a different working directory, including spaces.
     scratch = BUILD / "unrelated working directory"
     scratch.mkdir(exist_ok=True)
@@ -182,6 +201,8 @@ def test():
         ["--headless", "--ticks", "9999999999999999999999999999"],
         *(["--headless", "--generate-world", seed, str(save_folder / "invalid-seed.gcw")]
           for seed in ("-1", "4294967296", "abc", "1.5")),
+        *(["--headless", "--generate-world", "1", str(save_folder / "invalid-radius.gcw"), "--radius", radius]
+          for radius in ("0", "5", "abc", "1.5")),
     ]
     for args in invalid:
         if "invalid arguments" not in run([CLIENT, *args], expected=2).stderr:
@@ -207,7 +228,8 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling (JIT/native, release/debug), "
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling/large (JIT/native, release/debug), "
+          "growable world owners and v1/v2 vectors, "
           "profile ring and independent percentile recomputation, "
           "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
           "independent save checksum and world inspection, CLI" +
@@ -333,6 +355,10 @@ def render_build():
                  ["--profile", "x", "--profile-warmup", "1.5"],
                  ["--profile", "x", "--screenshot", "x"], ["--profile", "x", "--world", "x"]):
         run([VIEWER, *args], expected=2)
+    for args in (["--radius"], ["--radius", "0"], ["--radius", "5"], ["--radius", "abc"],
+                 ["--radius", "1", "--radius", "2"], ["--radius", "1", "--single-chunk"],
+                 ["--far-replay", "--radius", "1"]):
+        run([VIEWER, *args], expected=2)
     old_profile = BUILD / "existing profile with spaces" / "профили" / "frames.json"
     old_profile.parent.mkdir(parents=True, exist_ok=True)
     old_profile.write_bytes(b"retain profile")
@@ -447,12 +473,29 @@ def render_test(evidence):
         ("timing-ring", [], ["--offscreen", "--preview"], 1100, 3),
         ("timing-save", [], ["--offscreen", "--terrain-replay", "--world", saves / "timing-world.gcw"], 120, 0),
         ("timing-paused", [], ["--offscreen", "--replay", "--demo-world", "--single-chunk", "--no-save"], 110, 0),
+        ("large-timing-small", xvfb, ["--no-save", "--radius", "1"], 180, 30),
+        ("large-timing-big", xvfb, ["--no-save", "--radius", "4"], 180, 30),
+        ("large-travel", [], ["--offscreen", "--far-replay", "--no-save"], 120, 0),
+        ("large-travel-window", xvfb, ["--far-replay", "--no-save"], 120, 0),
+    ]
+    large_save = saves / "large" / "world.gcw"
+    cases += [
+        ("large-preview", [], ["--offscreen", "--preview", "--radius", "4"], 3),
+        ("large-window", xvfb, ["--preview", "--radius", "4", "--no-save"], 3),
+        ("large-debug", [], ["--offscreen", "--preview", "--radius", "4"], 3),
+        ("large-reference", [], ["--offscreen", "--preview", "--radius", "4", "--reference-renderer"], 3),
+        ("large-other-view", [], ["--offscreen", "--preview", "--radius", "4", "--preview-view", "2"], 3),
+        ("large-other-reference", [], ["--offscreen", "--preview", "--radius", "4", "--preview-view", "2", "--reference-renderer"], 3),
+        ("radius2-preview", [], ["--offscreen", "--preview", "--radius", "2"], 3),
+        ("radius3-preview", [], ["--offscreen", "--preview", "--radius", "3"], 3),
+        ("large-save", [], ["--offscreen", "--terrain-replay", "--radius", "4", "--world", large_save], 120),
+        ("large-load", [], ["--offscreen", "--world", large_save], 3),
     ]
     profile_paths = {name: evidence / "profiles" / (name + ".json") for name, *_ in profile_specs}
     for name, prefix, flags, frames, warmup in profile_specs:
         profile_paths[name].unlink(missing_ok=True)
         cases.append((name, prefix, [*flags, "--profile", profile_paths[name], "--profile-warmup", str(warmup)], frames))
-    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save"}
+    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big"}
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
@@ -463,7 +506,9 @@ def render_test(evidence):
             persisted_region = multi_save.read_bytes()
         if name == "terrain-load":
             persisted_terrain = terrain_save.read_bytes()
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug") else VIEWER
+        if name == "large-load":
+            persisted_large = large_save.read_bytes()
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -491,7 +536,7 @@ def render_test(evidence):
             raise RuntimeError("Invalid screenshot")
         data["png_sha256"] = hashlib.sha256(raw).hexdigest()
         results[name] = data
-    if single_save.read_bytes() != persisted_single or multi_save.read_bytes() != persisted_region or terrain_save.read_bytes() != persisted_terrain:
+    if single_save.read_bytes() != persisted_single or multi_save.read_bytes() != persisted_region or terrain_save.read_bytes() != persisted_terrain or large_save.read_bytes() != persisted_large:
         raise RuntimeError("Loading a save rewrote its bytes without edits")
     if results["offscreen"]["png_sha256"] != results["window"]["png_sha256"]:
         raise RuntimeError("Window and offscreen rendering disagree")
@@ -572,6 +617,29 @@ def render_test(evidence):
     if results["multi-replay"]["culled_chunks"] < 1 or results["multi-reference"]["drawn_chunks"] != 9:
         raise RuntimeError("Playable camera did not exercise culling")
     vectors = json.loads((ROOT / "tests/fixtures/terrain-v1.json").read_text())["seeds"]
+    large_vector = next(v for v in json.loads((ROOT / "tests/fixtures/large-world-vectors.json").read_text())["vectors"]
+                        if v["radius"] == 4 and v["seed"] == 12345)
+    for name, count in (("large-preview", 81), ("large-window", 81), ("large-debug", 81), ("large-reference", 81),
+                        ("radius2-preview", 25), ("radius3-preview", 49)):
+        if results[name]["chunks"] != count or results[name]["world_format"] != 2 or results[name]["remeshes"] != count:
+            raise RuntimeError("Large preview did not build every active chunk")
+    for name in ("large-window", "large-debug"):
+        if results[name]["png_sha256"] != results["large-preview"]["png_sha256"]:
+            raise RuntimeError("Large overview differs between window/offscreen/debug")
+    if results["large-travel"]["png_sha256"] != results["large-travel-window"]["png_sha256"]:
+        raise RuntimeError("Large travel replay differs between window/offscreen")
+    for name in ("large-travel", "large-travel-window"):
+        if results[name]["max_x"] <= 33.0 or results[name]["breaks"] != 1 or results[name]["places"] != 1 or results[name]["dirty_remaining"] != 0:
+            raise RuntimeError(f"Large replay failed to cross/edit beyond the old world edge: {results[name]}")
+    large_pixels = {}
+    for a_name, b_name in (("large-preview", "large-reference"), ("large-other-view", "large-other-reference")):
+        holes, reference_holes = enclosed_clear(evidence / (a_name + ".png")), enclosed_clear(evidence / (b_name + ".png"))
+        if holes or reference_holes:
+            raise RuntimeError(f"Enclosed clear pixels in large solid terrain: {holes}, reference: {reference_holes}")
+        large_pixels[a_name] = {"enclosed_clear": holes, "reference_enclosed_clear": reference_holes,
+                               "differences": differences(evidence / (a_name + ".png"), evidence / (b_name + ".png")),
+                               "pixel_equivalence_claimed": False}
+    (evidence / "large-surface-results.json").write_text(json.dumps(large_pixels, indent=2) + "\n")
     if results["terrain-preview"]["solid_blocks"] != vectors["12345"]["solid_blocks"]:
         raise RuntimeError("Renderer did not use the default terrain generator")
     if results["terrain-other-seed"]["solid_blocks"] != vectors["1"]["solid_blocks"] or results["terrain-preview"]["png_sha256"] == results["terrain-other-seed"]["png_sha256"]:
@@ -611,7 +679,7 @@ def render_test(evidence):
             raise RuntimeError("Terrain gameplay differs between build/render modes")
     for name, expected_chunks, expected_size, expected_count in (
         ("single", 1, 4112, 267), ("region", 9, 36880, 2332),
-        ("profile", 9, 36880, vectors["12345"]["solid_blocks"]), ("terrain", 9, 36880, vectors["12345"]["solid_blocks"])):
+        ("profile", 81, 331792, large_vector["solid_blocks"]), ("terrain", 9, 36880, vectors["12345"]["solid_blocks"])):
         path = {"single": single_save, "region": multi_save,
                 "profile": profile_root / "GooseCraft/worlds/default-v1.gcw", "terrain": terrain_save}[name]
         data = path.read_bytes()
@@ -623,13 +691,22 @@ def render_test(evidence):
         first, second = results[name + "-save"], results[name + "-load"]
         if first["loaded"] or first["save_writes"] != 1 or not second["loaded"] or second["save_writes"] != 0:
             raise RuntimeError("Manual/default save and reopen behavior disagrees")
-    if hashlib.sha256((profile_root / "GooseCraft/worlds/default-v1.gcw").read_bytes()).hexdigest() != vectors["12345"]["sha256"]:
+    if hashlib.sha256((profile_root / "GooseCraft/worlds/default-v1.gcw").read_bytes()).hexdigest() != large_vector["sha256"]:
         raise RuntimeError("Default GUI world bytes differ from headless golden terrain")
     refused = run([VIEWER, "--world", terrain_save, "--seed", "1"], expected=2, extra_env=env)
     if "requires a new world" not in refused.stderr or terrain_save.read_bytes() != persisted_terrain:
         raise RuntimeError("Seed replaced a saved terrain world")
     if single_save.read_bytes()[16 + 10 + 16 * (9 + 16 * 2)] != 0 or single_save.read_bytes()[16 + 10 + 16 * (10 + 16 * 3)] != 2:
         raise RuntimeError("Saved voxel edits were not preserved")
+    before_large = large_save.read_bytes()
+    checked_large = json.loads(run([CLIENT, "--headless", "--inspect-world", large_save]).stdout)
+    if checked_large != {"mode": "world-inspect", "chunks": 81, "solid_blocks": large_vector["solid_blocks"], "format": 2}:
+        raise RuntimeError("Edited large save did not reopen through the native inspector")
+    if not results["large-load"]["loaded"] or results["large-load"]["save_writes"] != 0 or results["large-save"]["save_writes"] != 1:
+        raise RuntimeError("Large F5/reopen behavior differs")
+    run([VIEWER, "--world", large_save, "--radius", "1"], expected=2)
+    if large_save.read_bytes() != before_large:
+        raise RuntimeError("Radius mismatch overwrote the large save")
     blocked = saves / "blocked"
     blocked.write_bytes(b"retain")
     failed = run([VIEWER, "--offscreen", "--frames", "1", "--world", blocked / "world.gcw"],
@@ -640,19 +717,21 @@ def render_test(evidence):
     for name, _, _, frames, _ in profile_specs:
         trace = validate_profile(profile_paths[name], frames)
         rows = [dict(zip(trace["columns"], row)) for row in trace["rows"]]
-        if any(row["rebuilt"] > 2 or row["draw_calls"] > 11 for row in rows):
+        if any(row["rebuilt"] > 2 or row["draw_calls"] > results[name]["chunks"] + 2 for row in rows):
             raise RuntimeError("Profile violated remesh/draw bounds")
         stdout = results[name]
         if trace["readback_performed"] != stdout["readback_performed"] or trace["mesh_bytes"] != stdout["mesh_bytes"]:
             raise RuntimeError("Profile state does not match the renderer")
         if trace["mesh_capacity_bytes"] != stdout["mesh_capacity_bytes"] or trace["mesh_buffer_creations"] != stdout["mesh_allocations"]:
             raise RuntimeError("Profile mesh accounting disagrees")
-        if trace["world_block_capacity_bytes"] != 36864 or trace["overlay_buffer_capacity_bytes"] != 524672:
+        if trace["world_block_capacity_bytes"] != max(9, stdout["chunks"]) * 4096 or trace["overlay_buffer_capacity_bytes"] != 524672:
             raise RuntimeError("Known storage capacities changed")
+        if (trace["world_radius"], trace["world_chunks"], trace["world_format"]) != (stdout["world_radius"], stdout["chunks"], stdout["world_format"]):
+            raise RuntimeError("Profile world metadata disagrees with the actual world")
         if trace["warmup_requested"] == 0:
             if sum(row["rebuilt"] for row in rows) + stdout["chunks"] != stdout["remeshes"]:
                 raise RuntimeError("Per-frame remesh events were lost")
-            expected_uploads = stdout["mesh_uploaded_bytes"] - 158944 + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
+            expected_uploads = stdout["mesh_uploaded_bytes"] - results["terrain-preview"]["mesh_uploaded_bytes"] + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
             # The exact initial mesh differs in reference/one-chunk modes;
             # check the comparable full-terrain stitched replay here.
             if name in ("timing-offscreen", "timing-window", "timing-debug", "timing-save") and sum(row["uploaded_bytes"] for row in rows) != expected_uploads:
@@ -728,7 +807,7 @@ def package(graphics=False):
         "source_commit": revision, "source_dirty": bool(status.stdout) if status.returncode == 0 else None,
         "ci_url": ci_url,
         "target": "windows-x64" if WINDOWS else "linux-x64", "graphics": graphics,
-        "world_format": 1,
+        "world_format": 2, "world_formats": [1, 2],
         "terrain_generator": 1,
         "profiling_schema": 1,
     }, indent=2) + "\n")

@@ -10,6 +10,7 @@ fn main() {
     var no_save = false;
     var view_given = false;
     var warmup_given = false;
+    var radius_given = false;
     var output: u8[>..] = [];
     var world_path: u8[>..] = [];
     var profile_path: u8[>..] = [];
@@ -17,10 +18,11 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.7.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.8.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
+            print("       [--radius 1..4] (new regular games default to 4: 81 chunks, 144x144)");
             print("       [--profile NEW-FILE.json [--profile-warmup N]]");
             print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.");
             print("Escape pauses; click/Enter resumes; R respawns; F5 saves; F10 quits and saves.");
@@ -29,16 +31,19 @@ fn main() {
             print("Diagnostics: --single-chunk; --reference-renderer; --view-away (preview only); --seam-replay requires --demo-world.");
             print("Diagnostics: --raw-greedy disables edge stitching; --preview-view 0..3 changes overview direction.");
             print("Replay, preview and single-chunk modes are temporary unless --world is explicit.");
+            print("Preview/replay/demo default to radius 1. Existing saves keep their size; --radius must match when reopening.");
+            print("Diagnostics: --far-replay starts at x=31.5 to cross the old boundary; requires radius >=2.");
             print("Profile: wall-clock CPU loop samples, last 1024 after 30 warmup frames; exported on clean exit. Use a new path.");
             return;
         } else if flag == "--offscreen" { options.offscreen = true; }
         else if flag == "--empty" { options.empty = true; }
         else if flag == "--preview" { options.preview = true; }
-        else if flag == "--replay" || flag == "--seam-replay" || flag == "--terrain-replay" {
+        else if flag == "--replay" || flag == "--seam-replay" || flag == "--terrain-replay" || flag == "--far-replay" {
             if options.replay_input { abort_args(); }
             options.replay_input = true;
             options.seam_replay = flag == "--seam-replay";
-            options.terrain_replay = flag == "--terrain-replay";
+            options.terrain_replay = flag == "--terrain-replay" || flag == "--far-replay";
+            options.far_replay = flag == "--far-replay";
         }
         else if flag == "--demo-world" { options.demo = true; }
         else if flag == "--seed" {
@@ -49,6 +54,12 @@ fn main() {
             options.seed = n as u32; options.seed_explicit = true;
         }
         else if flag == "--reference-renderer" { options.reference = true; }
+        else if flag == "--radius" {
+            if i + 1 >= argv.len || radius_given { abort_args(); }
+            i++; let n, ok = parse_int(argv[i]);
+            if !ok || n < 1 || n > 4 { abort_args(); }
+            options.radius = n; radius_given = true; options.radius_explicit = true;
+        }
         else if flag == "--raw-greedy" { options.raw = true; }
         else if flag == "--preview-view" {
             if i + 1 >= argv.len { abort_args(); }
@@ -102,6 +113,11 @@ fn main() {
     if view_given && (!options.preview || options.away) { abort_args(); }
     if options.raw && options.reference { abort_args(); }
     if warmup_given && profile_path.len == 0 { abort_args(); }
+    if radius_given && options.single { abort_args(); }
+    if !radius_given {
+        options.radius = if options.far_replay { 4 } else if options.preview || options.replay_input || options.demo || options.single { 1 } else { 4 };
+    }
+    if options.far_replay && (options.radius < 2 || options.single) { abort_args(); }
     if options.offscreen && options.frames < 0 { options.frames = 3; }
     options.persistent = world_path.len > 0 || !(no_save || options.offscreen || options.preview || options.replay_input || options.single);
     if options.persistent && world_path.len == 0 { world_path.append(storage::default_path()); }

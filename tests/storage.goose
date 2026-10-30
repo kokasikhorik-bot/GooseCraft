@@ -16,21 +16,21 @@ fn codec(single: bool) {
     assert(storage::decode(data, loaded) && loaded.radius == map.radius);
     for at in 9 { if world::active(map, at) { assert(map.chunks[at] == loaded.chunks[at]); } }
     assert(world::pending(loaded) == (if single { 1 } else { 9 }));
-    let before = loaded;
-    for length in 16 { assert(!storage::decode(data[..length], loaded) && loaded == before); }
-    assert(!storage::decode(data[..data.len - 1], loaded) && loaded == before);
+    let before = copy(loaded);
+    for length in 16 { assert(!storage::decode(data[..length], loaded) && world::equal(loaded, before)); }
+    assert(!storage::decode(data[..data.len - 1], loaded) && world::equal(loaded, before));
     data.push(0);
-    assert(!storage::decode(data, loaded) && loaded == before);
+    assert(!storage::decode(data, loaded) && world::equal(loaded, before));
     data.resize(data.len - 1, 0);
     let original = data[100]; data[100] ^= 1;
-    assert(!storage::decode(data, loaded) && loaded == before);
+    assert(!storage::decode(data, loaded) && world::equal(loaded, before));
     data[100] = original;
     data[8] = 2; repair_checksum(data);
-    assert(!storage::decode(data, loaded) && loaded == before);
+    assert(!storage::decode(data, loaded) && world::equal(loaded, before));
     data[8] = 1; data[10] = 8; repair_checksum(data);
-    assert(!storage::decode(data, loaded) && loaded == before);
+    assert(!storage::decode(data, loaded) && world::equal(loaded, before));
     data[10] = if single { 1 } else { 9 }; data[100] = 3; repair_checksum(data);
-    assert(!storage::decode(data, loaded) && loaded == before);
+    assert(!storage::decode(data, loaded) && world::equal(loaded, before));
 }
 
 fn disk(path: u8[:], blocked: u8[:]) {
@@ -49,9 +49,9 @@ fn disk(path: u8[:], blocked: u8[:]) {
     assert(read_file(path, retained) && retained == original);
     map.chunks[4].blocks[0] = 1;
     assert(!storage::save(blocked, map));
-    let before = loaded;
+    let before = copy(loaded);
     assert(write_file(path, "bad world"));
-    assert(!storage::load(path, loaded) && loaded == before);
+    assert(!storage::load(path, loaded) && world::equal(loaded, before));
     assert(write_file_atomic(path, original));
     assert(storage::load(path, loaded));
     assert(delete_file(path));

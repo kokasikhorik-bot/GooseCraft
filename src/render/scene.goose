@@ -12,6 +12,8 @@ struct Options {
     single: bool = false, persistent: bool = false, away: bool = false, frames: i64 = -1,
     demo: bool = false, terrain_replay: bool = false, seed_explicit: bool = false, seed: u32 = terrain::DEFAULT_SEED,
     raw: bool = false, preview_view: i64 = 0,
+    radius: i64 = 4, radius_explicit: bool = false,
+    far_replay: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -41,12 +43,15 @@ fn run(options: Options) {
             if !storage::load(options.world_path, chunk) || (options.single && chunk.radius != 0) {
                 write_stderr("invalid or unreadable world file; original file was not changed\n"); exit(5);
             }
+            if options.radius_explicit && chunk.radius != options.radius {
+                write_stderr("existing world radius differs; use a new world path to change size\n"); exit(2);
+            }
             loaded = true;
         }
     }
     if !loaded {
-        chunk = if options.demo || options.empty { world::region(options.single, options.empty) }
-                else { terrain::generate(options.seed, options.single) };
+        chunk = if options.demo || options.empty { world::region(options.single, options.empty, options.radius) }
+                else { terrain::generate(options.seed, options.single, options.radius) };
     }
     let generated = !loaded && !options.demo && !options.empty;
     let seed_report: i64 = if generated { options.seed } else { -1 };
@@ -54,15 +59,16 @@ fn run(options: Options) {
     var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
     var save_writes: i64 = 0;
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.7.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.8.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
-    var buffers: chunks::Cache[9] = [chunks::Cache {}; 9];
+    var buffers: chunks::Cache[>..] = [];
+    buffers.resize(chunk.chunks.len, chunks::Cache {});
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
     let initial_mesh_begin = if profiled { clock_ns() } else { 0 };
-    var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 9, reference, options.raw);
+    var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, chunk.chunks.len, reference, options.raw);
     let initial_mesh_ns = if profiled { clock_ns() - initial_mesh_begin } else { 0 };
     let vs = embed_shader("vert", """
         layout(location = 0) in vec3 position;
@@ -104,6 +110,7 @@ fn run(options: Options) {
     var outline_uploaded_bytes: i64 = 0;
     var state = player::State {};
     if options.seam_replay { state.position.x = 15.5; }
+    if options.far_replay { state.position.x = 31.5; }
     while player::collides(chunk, state.position) { state.position.y += 1.0; }
     var active = true;
     var was_focused = true;
@@ -213,8 +220,10 @@ fn run(options: Options) {
         }
         let t4 = if profiled { clock_ns() } else { 0 };
         let size = gfx::screen_size();
+        let overview_scale: f32 = (2 * chunk.radius + 1) / 3.0;
         var eye = if options.away { float3 { 80.0, 40.0, 80.0 } } else if preview {
-            if chunk.radius == 0 { float3 { 25.0, 23.0, 29.0 } } else { float3 { 52.0, 43.0, 55.0 } }
+            if chunk.radius == 0 { float3 { 25.0, 23.0, 29.0 } }
+            else { float3 { 8.0 + 44.0 * overview_scale, 43.0 * overview_scale, 8.0 + 47.0 * overview_scale } }
         } else { player::eye(state) };
         if preview && !options.away {
             if options.preview_view % 2 == 1 { eye.x = 16.0 - eye.x; }
@@ -223,7 +232,7 @@ fn run(options: Options) {
         let target = if options.away { float3 { 96.0, 40.0, 96.0 } }
                      else if preview { float3 { 8.0, 0.0, 8.0 } } else { eye + player::direction(state) };
         let camera = Camera { view_projection: gfx::mul(
-            gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, 192.0),
+            gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, max(192.0, 64.0 * (2 * chunk.radius + 1)) as! f32),
             gfx::look_at(eye, target, float3 { 0.0, 1.0, 0.0 })) };
         if !preview {
             let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed, save_status };
@@ -246,9 +255,9 @@ fn run(options: Options) {
         drawn_chunks = 0; culled_chunks = 0; drawn_vertices = 0;
         let rows: float4[4] = [gfx::row(camera.view_projection, 0), gfx::row(camera.view_projection, 1),
                                 gfx::row(camera.view_projection, 2), gfx::row(camera.view_projection, 3)];
-        for at in 9 {
+        for at in chunk.chunks.len {
             if !world::active(chunk, at) || buffers[at].indices == 0 { continue; }
-            let origin = chunks::origin(at);
+            let origin = chunks::origin(chunk, at);
             if !reference && !visibility::intersects(rows, origin, origin + float3 { 16.0, 16.0, 16.0 }) {
                 culled_chunks++; continue;
             }
@@ -322,10 +331,11 @@ fn run(options: Options) {
             tail_flush_ns: tail_flush_ns, exit_readback_ns: readback_ns, exit_save_ns: exit_save_ns,
             loop_session_ns: loop_session_ns, collector_ns_total: collector_ns_total,
             readback: output.len > 0, world_block_capacity_bytes: bytes_of(chunk.chunks).len,
-            active_world_block_bytes: (if chunk.radius == 0 { 1 } else { 9 }) * 4096,
+            active_world_block_bytes: world::count(chunk) * 4096,
             mesh_bytes: totals.vertices * 16 + totals.indices * 4, mesh_capacity_bytes: totals.capacity,
             mesh_buffer_creations: totals.allocations, overlay_buffer_capacity_bytes: 512 * 1024 + 24 * 16,
             overlay_buffer_creations: 2,
+            world_radius: chunk.radius, world_chunks: world::count(chunk), world_format: storage::version(chunk),
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -355,13 +365,17 @@ fn run(options: Options) {
         ",\"resumes\":", resumes, ",\"walked\":", walked, ",\"max_y\":", max_y,
         ",\"player_x\":", state.position.x, ",\"player_y\":", state.position.y,
         ",\"player_z\":", state.position.z, ",\"max_x\":", max_x,
-        ",\"chunks\":", if chunk.radius == 0 { 1 } else { 9 },
+        ",\"chunks\":", world::count(chunk),
         ",\"drawn_chunks\":", drawn_chunks, ",\"culled_chunks\":", culled_chunks,
         ",\"drawn_vertices\":", drawn_vertices, ",\"dirty_remaining\":", world::pending(chunk),
         ",\"revision\":", chunk.revision, ",\"save_enabled\":", options.persistent,
         ",\"loaded\":", loaded, ",\"save_writes\":", save_writes,
-        ",\"chunk_rebuilds\":[", buffers[0].rebuilds, ",", buffers[1].rebuilds, ",", buffers[2].rebuilds,
-        ",", buffers[3].rebuilds, ",", buffers[4].rebuilds, ",", buffers[5].rebuilds,
-        ",", buffers[6].rebuilds, ",", buffers[7].rebuilds, ",", buffers[8].rebuilds, "]}");
-    print(rendering_report, gameplay_report);
+        ",\"world_radius\":", chunk.radius, ",\"world_format\":", storage::version(chunk), ",\"chunk_rebuilds\":[");
+    var rebuild_report: u8[>..] = [];
+    for at in buffers.len {
+        if at > 0 { rebuild_report.push(','); }
+        rebuild_report.append(str(buffers[at].rebuilds));
+    }
+    rebuild_report.append("]}");
+    print(rendering_report, gameplay_report, rebuild_report);
 }

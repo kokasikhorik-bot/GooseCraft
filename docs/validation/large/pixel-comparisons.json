@@ -1,0 +1,27 @@
+{
+  "offscreen": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "play-window": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "replay-paused": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "replay-offscreen": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  },
+  "multi-replay": {
+    "changed_pixels": 0,
+    "limit": 4,
+    "pixels": []
+  }
+}

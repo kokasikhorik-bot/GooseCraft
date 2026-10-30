@@ -35,7 +35,7 @@ fn height(seed: u32, x: i64, z: i64) -> i64 {
 
 fn chunk(seed: u32, cx: i64, cz: i64) -> world::Chunk {
     // This version generates only the bounded world; avoid coordinate overflow.
-    assert(cx >= -1 && cx <= 1 && cz >= -1 && cz <= 1);
+    assert(cx >= -4 && cx <= 4 && cz >= -4 && cz <= 4);
     var result = world::Chunk {};
     for z in 16 { for x in 16 {
         let h = height(seed, cx * 16 + x, cz * 16 + z);
@@ -44,10 +44,10 @@ fn chunk(seed: u32, cx: i64, cz: i64) -> world::Chunk {
     return result;
 }
 
-fn generate(seed: u32, single: bool = false) -> world::Map {
-    var result = world::Map { radius: if single { 0 } else { 1 } };
-    for at in 9 {
-        if world::active(result, at) { result.chunks[at] = chunk(seed, at % 3 - 1, at / 3 - 1); }
+fn generate(seed: u32, single: bool = false, radius: i64 = 1) -> world::Map {
+    var result = world::create(if single { 0 } else { radius });
+    for at in result.chunks.len {
+        if world::active(result, at) { result.chunks[at] = chunk(seed, world::chunk_x(result, at), world::chunk_z(result, at)); }
     }
     world::mark_all(result);
     return result;

@@ -109,6 +109,12 @@ JSON-массив и служебные значения. Размер samples �
 `overlay_buffer_creations`. Это запросы к GPU API и storage блоков, не все
 аллокации клиента, не RSS/VRAM процесса и не данные системного профайлера.
 
+В 0.8 добавлены metadata `world_radius`, `world_chunks`, `world_format`.
+У синтетических headless fixtures без мира это -1/0/0. `world_block_capacity_bytes`
+теперь описывает логические выделенные слоты расширяемого массива (минимум
+девять для старого single-chunk diagnostic), а не размер всего Map/резерва
+data stack. Дополнительные metadata не меняют порядок columns/rows schema 1.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

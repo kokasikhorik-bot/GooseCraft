@@ -1,0 +1,1572 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "architecture": "x86_64",
+  "lock": {
+    "schema": 1,
+    "goose": {
+      "repository": "https://github.com/aardappel/goose.git",
+      "commit": "cce94b919d27458856ae2685974049eac78debcf",
+      "builtin_libs": ""
+    },
+    "cmake": "3.31.6",
+    "reference_only": {
+      "horizon": {
+        "repository": "https://github.com/horizon-rust/horizon.git",
+        "commit": "7ebf7d26cbe58d65ef873767c639f144dc403554"
+      }
+    },
+    "graphics": {
+      "repository": "https://github.com/aardappel/goose_gfx.git",
+      "commit": "6cfa3dec2ef2a6cb19ee71548b38151094e947bd",
+      "submodules": {
+        "third_party/SDL": "fa2c02bb6e21974a89ea9824bc53c9932abe5f9c",
+        "third_party/nuklear": "9f7750296f176e506c2b24ff55bc24495e2db750"
+      }
+    }
+  },
+  "sources": {
+    "src/core/mesh.goose": "24cf710be9448681cafaac8a34612ae8077ac7bf3d3de5e53128e107adf69f73",
+    "src/core/stitch.goose": "ece9e40a512ca79b934d41ba0427b75f5ebed118b2b03f4604e4d493fa9e51a8",
+    "src/core/terrain.goose": "6fcf0175efafd67f89469399fb9166585a2159c1501235aa4936cce1976878d2",
+    "benchmarks/stitch.goose": "76b8454d60302cf03adabd53a6e8e1cc566ff5f45ec48f8c3e7218c6456c31e1"
+  },
+  "method": {
+    "samples": 7,
+    "iterations_per_sample": 1000,
+    "warmup_builds_per_chunk": 8,
+    "clock": "os.clock_ns, monotonic",
+    "build": "native release",
+    "rotating_order": true,
+    "scope": "CPU meshing, prepared halos; excludes generation/halo snapshots, GPU, frames",
+    "memory_scope": "logical vertex/index bytes; excludes capacity, scratch, RSS/VRAM",
+    "stitch_scratch_bytes": 5169
+  },
+  "scenes": {
+    "empty": {
+      "reference": {
+        "vertices": 0,
+        "indices": 0,
+        "chunks": 1,
+        "mesh_bytes": 0,
+        "median_us": 1.139384
+      },
+      "raw-greedy": {
+        "vertices": 0,
+        "indices": 0,
+        "chunks": 1,
+        "mesh_bytes": 0,
+        "median_us": 1.394235
+      },
+      "stitched": {
+        "vertices": 0,
+        "indices": 0,
+        "chunks": 1,
+        "mesh_bytes": 0,
+        "median_us": 1.379994
+      }
+    },
+    "flat": {
+      "reference": {
+        "vertices": 2304,
+        "indices": 3456,
+        "chunks": 1,
+        "mesh_bytes": 50688,
+        "median_us": 8.079654
+      },
+      "raw-greedy": {
+        "vertices": 24,
+        "indices": 36,
+        "chunks": 1,
+        "mesh_bytes": 528,
+        "median_us": 5.1807479999999995
+      },
+      "stitched": {
+        "vertices": 270,
+        "indices": 792,
+        "chunks": 1,
+        "mesh_bytes": 7488,
+        "median_us": 8.157779999999999
+      }
+    },
+    "full": {
+      "reference": {
+        "vertices": 6144,
+        "indices": 9216,
+        "chunks": 1,
+        "mesh_bytes": 135168,
+        "median_us": 47.461849
+      },
+      "raw-greedy": {
+        "vertices": 24,
+        "indices": 36,
+        "chunks": 1,
+        "mesh_bytes": 528,
+        "median_us": 39.84558
+      },
+      "stitched": {
+        "vertices": 390,
+        "indices": 1152,
+        "chunks": 1,
+        "mesh_bytes": 10848,
+        "median_us": 43.419945
+      }
+    },
+    "demo": {
+      "reference": {
+        "vertices": 2480,
+        "indices": 3720,
+        "chunks": 1,
+        "mesh_bytes": 54560,
+        "median_us": 8.594463
+      },
+      "raw-greedy": {
+        "vertices": 88,
+        "indices": 132,
+        "chunks": 1,
+        "mesh_bytes": 1936,
+        "median_us": 6.224569000000001
+      },
+      "stitched": {
+        "vertices": 341,
+        "indices": 924,
+        "chunks": 1,
+        "mesh_bytes": 9152,
+        "median_us": 10.597248
+      }
+    },
+    "terrain-region": {
+      "reference": {
+        "vertices": 26792,
+        "indices": 40188,
+        "chunks": 9,
+        "mesh_bytes": 589424,
+        "median_us": 227.324566
+      },
+      "raw-greedy": {
+        "vertices": 3268,
+        "indices": 4902,
+        "chunks": 9,
+        "mesh_bytes": 71896,
+        "median_us": 230.44747700000002
+      },
+      "stitched": {
+        "vertices": 6208,
+        "indices": 14904,
+        "chunks": 9,
+        "mesh_bytes": 158944,
+        "median_us": 301.45102399999996
+      }
+    },
+    "checker": {
+      "reference": {
+        "vertices": 49152,
+        "indices": 73728,
+        "chunks": 1,
+        "mesh_bytes": 1081344,
+        "median_us": 127.082303
+      },
+      "raw-greedy": {
+        "vertices": 49152,
+        "indices": 73728,
+        "chunks": 1,
+        "mesh_bytes": 1081344,
+        "median_us": 156.51147500000002
+      },
+      "stitched": {
+        "vertices": 49152,
+        "indices": 73728,
+        "chunks": 1,
+        "mesh_bytes": 1081344,
+        "median_us": 173.095126
+      }
+    }
+  },
+  "raw_samples": [
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1104162,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1392653,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1376028,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1415687,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1383119,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1128338,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1406434,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1139384,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1377710,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1151342,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1401446,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1381015,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1501045,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1379994,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1228467,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1348457,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1135028,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1394235,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "reference",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1164442,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "raw-greedy",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1349708,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "empty",
+      "mode": "stitched",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 1336018,
+      "vertices": 0,
+      "indices": 0,
+      "checksum": 0
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 7880145,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5173417,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8114666,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5268499,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8285361,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8093274,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8093293,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 7876459,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5066206,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8079654,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5078435,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 7903349,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5288630,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8624428,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 7902738,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8187855,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8101285,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5480976,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "reference",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8322817,
+      "vertices": 2304,
+      "indices": 3456,
+      "checksum": 8113000
+    },
+    {
+      "scene": "flat",
+      "mode": "raw-greedy",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 5180748,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "flat",
+      "mode": "stitched",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8157780,
+      "vertices": 270,
+      "indices": 792,
+      "checksum": 1126000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47520898,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 41019185,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 43419945,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 39826461,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 43284272,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47656591,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 44764535,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47117715,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 39874764,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47321159,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 39572461,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 43488508,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 39464790,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 43486905,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47863781,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 43389410,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47115131,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 39888713,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "reference",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 47461849,
+      "vertices": 6144,
+      "indices": 9216,
+      "checksum": 21553000
+    },
+    {
+      "scene": "full",
+      "mode": "raw-greedy",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 39845580,
+      "vertices": 24,
+      "indices": 36,
+      "checksum": 127000
+    },
+    {
+      "scene": "full",
+      "mode": "stitched",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 43376771,
+      "vertices": 390,
+      "indices": 1152,
+      "checksum": 1606000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8366161,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6209336,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10489327,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6213843,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10597248,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8289778,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 11094482,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8632229,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6164159,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8287444,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6249195,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10710829,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6234854,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10414084,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10132984,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10900042,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8594463,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6224569,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "reference",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 8764337,
+      "vertices": 2480,
+      "indices": 3720,
+      "checksum": 8827000
+    },
+    {
+      "scene": "demo",
+      "mode": "raw-greedy",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 6226051,
+      "vertices": 88,
+      "indices": 132,
+      "checksum": 455000
+    },
+    {
+      "scene": "demo",
+      "mode": "stitched",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 10408096,
+      "vertices": 341,
+      "indices": 924,
+      "checksum": 1396000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 226182919,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 229040793,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 302117019,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 229629724,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 301109502,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 228851160,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 300080384,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 227022435,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 230100017,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 230831241,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 242946529,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 303543693,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 230447477,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 303541610,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 227324566,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 301451024,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 228635167,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 233517348,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "reference",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 224890487,
+      "vertices": 26792,
+      "indices": 40188,
+      "checksum": 94223000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "raw-greedy",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 230464141,
+      "vertices": 3268,
+      "indices": 4902,
+      "checksum": 11825000
+    },
+    {
+      "scene": "terrain-region",
+      "mode": "stitched",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 9,
+      "ns": 300051511,
+      "vertices": 6208,
+      "indices": 14904,
+      "checksum": 24888000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 127082303,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 156511475,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 0,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 172744241,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 156698053,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 174904742,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 1,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 132618813,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 175170490,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 130697870,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 2,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 155481855,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 125544615,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 157139764,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 3,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 172426035,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 160258539,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 176536120,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 4,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 126340664,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 171943173,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 129132580,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 5,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 155335937,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "reference",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 126355165,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "raw-greedy",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 155608575,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    },
+    {
+      "scene": "checker",
+      "mode": "stitched",
+      "sample": 6,
+      "iterations": 1000,
+      "chunks": 1,
+      "ns": 173095126,
+      "vertices": 49152,
+      "indices": 73728,
+      "checksum": 172075000
+    }
+  ]
+}

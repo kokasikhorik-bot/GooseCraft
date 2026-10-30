@@ -61,7 +61,9 @@ fn rebuild_dirty(map: world::Map&, caches: Cache[:], vertices: mesh::Vertex[>..]
     return done;
 }
 
-fn origin(at: i64) -> float3 { float3 { (at % 3 - 1) * 16, 0.0, (at / 3 - 1) * 16 } }
+fn origin(map: world::Map&, at: i64) -> float3 {
+    float3 { world::chunk_x(map, at) * 16, 0.0, world::chunk_z(map, at) * 16 }
+}
 
 fn stats(caches: Cache[:]) -> Stats {
     var result = Stats {};
