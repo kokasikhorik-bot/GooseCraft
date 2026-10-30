@@ -198,14 +198,14 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 1936,
     "hud_uploads": 1,
-    "hud_uploaded_bytes": 201504,
+    "hud_uploaded_bytes": 201408,
     "outline_uploads": 1,
     "terrain_generated": false,
     "terrain_seed": -1,
     "terrain_generator": 0,
     "interactive": true,
     "replay": false,
-    "ticks": 13,
+    "ticks": 14,
     "breaks": 0,
     "places": 0,
     "remeshes": 1,
@@ -241,7 +241,7 @@
       0,
       0
     ],
-    "png_sha256": "ca56164939785f97c845bcc47d4cebe8c8ea8a4d99b3c0edc36e8309f481c422"
+    "png_sha256": "e4b3bd33aeaf84c8b96e832d84615ddf3ac2cbc373abc9da2c9360e142030306"
   },
   "replay-before": {
     "mode": "offscreen",
@@ -259,7 +259,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 1936,
     "hud_uploads": 1,
-    "hud_uploaded_bytes": 201504,
+    "hud_uploaded_bytes": 201408,
     "outline_uploads": 1,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -302,7 +302,7 @@
       0,
       0
     ],
-    "png_sha256": "ca56164939785f97c845bcc47d4cebe8c8ea8a4d99b3c0edc36e8309f481c422"
+    "png_sha256": "e4b3bd33aeaf84c8b96e832d84615ddf3ac2cbc373abc9da2c9360e142030306"
   },
   "replay-broken": {
     "mode": "offscreen",
@@ -320,7 +320,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 4400,
     "hud_uploads": 2,
-    "hud_uploaded_bytes": 388032,
+    "hud_uploaded_bytes": 387840,
     "outline_uploads": 1,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -363,7 +363,7 @@
       0,
       0
     ],
-    "png_sha256": "3d820bdf8ea1391262b1e9381279a779b662b95d3da79541c9475cbaba64b7be"
+    "png_sha256": "16782dd0361201dfb0b2c3930c313370d6e6fa595bc518be21506a91b58c099a"
   },
   "replay-paused": {
     "mode": "offscreen",
@@ -381,7 +381,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 7216,
     "hud_uploads": 7,
-    "hud_uploaded_bytes": 1433280,
+    "hud_uploaded_bytes": 1432608,
     "outline_uploads": 3,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -424,7 +424,7 @@
       0,
       0
     ],
-    "png_sha256": "358f727f081db42fe938d1112335338df2464070b8ac0b0883280ebde270731b"
+    "png_sha256": "152a6d56174abad60c3b45cdbd1289da6651192535b8ff940544ce224acee93d"
   },
   "replay-offscreen": {
     "mode": "offscreen",
@@ -442,7 +442,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 7216,
     "hud_uploads": 13,
-    "hud_uploaded_bytes": 2669280,
+    "hud_uploaded_bytes": 2668032,
     "outline_uploads": 4,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -485,7 +485,7 @@
       0,
       0
     ],
-    "png_sha256": "6df31654fcabbfa0b196aeff7c096034c09a85f9249be06058f81e7de32fd149"
+    "png_sha256": "1cc8b4fa3b79442c5124ef2d326f6c974b251becf852461f78861f64f02c1a24"
   },
   "replay-window": {
     "mode": "window",
@@ -503,7 +503,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 7216,
     "hud_uploads": 15,
-    "hud_uploaded_bytes": 3056064,
+    "hud_uploaded_bytes": 3054624,
     "outline_uploads": 5,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -546,7 +546,7 @@
       0,
       0
     ],
-    "png_sha256": "6df31654fcabbfa0b196aeff7c096034c09a85f9249be06058f81e7de32fd149"
+    "png_sha256": "1cc8b4fa3b79442c5124ef2d326f6c974b251becf852461f78861f64f02c1a24"
   },
   "replay-debug": {
     "mode": "offscreen",
@@ -564,7 +564,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 7216,
     "hud_uploads": 13,
-    "hud_uploaded_bytes": 2669280,
+    "hud_uploaded_bytes": 2668032,
     "outline_uploads": 4,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -607,7 +607,7 @@
       0,
       0
     ],
-    "png_sha256": "6df31654fcabbfa0b196aeff7c096034c09a85f9249be06058f81e7de32fd149"
+    "png_sha256": "1cc8b4fa3b79442c5124ef2d326f6c974b251becf852461f78861f64f02c1a24"
   },
   "reference-preview": {
     "mode": "offscreen",
@@ -686,7 +686,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 54560,
     "hud_uploads": 60,
-    "hud_uploaded_bytes": 12090240,
+    "hud_uploaded_bytes": 12084480,
     "outline_uploads": 60,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -729,7 +729,7 @@
       0,
       0
     ],
-    "png_sha256": "ca56164939785f97c845bcc47d4cebe8c8ea8a4d99b3c0edc36e8309f481c422"
+    "png_sha256": "e4b3bd33aeaf84c8b96e832d84615ddf3ac2cbc373abc9da2c9360e142030306"
   },
   "reference-paused": {
     "mode": "offscreen",
@@ -747,7 +747,7 @@
     "mesh_allocations": 6,
     "mesh_uploaded_bytes": 163680,
     "hud_uploads": 63,
-    "hud_uploaded_bytes": 12748032,
+    "hud_uploaded_bytes": 12741984,
     "outline_uploads": 60,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -790,7 +790,7 @@
       0,
       0
     ],
-    "png_sha256": "358f727f081db42fe938d1112335338df2464070b8ac0b0883280ebde270731b"
+    "png_sha256": "152a6d56174abad60c3b45cdbd1289da6651192535b8ff940544ce224acee93d"
   },
   "reference-replay": {
     "mode": "offscreen",
@@ -808,7 +808,7 @@
     "mesh_allocations": 6,
     "mesh_uploaded_bytes": 163680,
     "hud_uploads": 110,
-    "hud_uploaded_bytes": 22080768,
+    "hud_uploaded_bytes": 22070208,
     "outline_uploads": 72,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -851,7 +851,7 @@
       0,
       0
     ],
-    "png_sha256": "3f7830a64dfdc8aa7ad49574f0c0a1312451cebe672740937cafd9c89d411079"
+    "png_sha256": "3326c9a489991df1e37087309d233d19d07ab0a340e06ea66a5aa894b1a3b0dd"
   },
   "multi-preview": {
     "mode": "offscreen",
@@ -991,7 +991,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 11616,
     "hud_uploads": 13,
-    "hud_uploaded_bytes": 2669280,
+    "hud_uploaded_bytes": 2668032,
     "outline_uploads": 4,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1034,7 +1034,7 @@
       1,
       1
     ],
-    "png_sha256": "1a0668476399d25d17b9d70288ca6dbf492ac884b42fe15755c37118f8201df2"
+    "png_sha256": "006a02563aa21641f220b2683754af42e6cd3693f18ee8ed0ea01158a336d057"
   },
   "multi-replay-window": {
     "mode": "window",
@@ -1052,7 +1052,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 11616,
     "hud_uploads": 15,
-    "hud_uploaded_bytes": 3056064,
+    "hud_uploaded_bytes": 3054624,
     "outline_uploads": 5,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1095,7 +1095,7 @@
       1,
       1
     ],
-    "png_sha256": "1a0668476399d25d17b9d70288ca6dbf492ac884b42fe15755c37118f8201df2"
+    "png_sha256": "006a02563aa21641f220b2683754af42e6cd3693f18ee8ed0ea01158a336d057"
   },
   "multi-reference": {
     "mode": "offscreen",
@@ -1113,7 +1113,7 @@
     "mesh_allocations": 22,
     "mesh_uploaded_bytes": 531520,
     "hud_uploads": 110,
-    "hud_uploaded_bytes": 22080768,
+    "hud_uploaded_bytes": 22070208,
     "outline_uploads": 72,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1156,7 +1156,7 @@
       1,
       1
     ],
-    "png_sha256": "617d33bb284212e6f07a10a7e3b542a15904c8879acbabb845b88d7b4b0b4e61"
+    "png_sha256": "5c792172ca586bac3ad8b98e2670335d996fa61b669c69baa47072526a1bc88e"
   },
   "multi-away": {
     "mode": "offscreen",
@@ -1296,7 +1296,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 13200,
     "hud_uploads": 15,
-    "hud_uploaded_bytes": 3105888,
+    "hud_uploaded_bytes": 3104448,
     "outline_uploads": 6,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1339,7 +1339,7 @@
       1,
       1
     ],
-    "png_sha256": "d73462ddb2c758faec870840490ecee177ab7e5ef7033ed57bba0d177954bd76"
+    "png_sha256": "490b443648bb4c601667b2068686af2c9697646f623407474539836a2cabf4ab"
   },
   "seam-window": {
     "mode": "window",
@@ -1357,7 +1357,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 13200,
     "hud_uploads": 16,
-    "hud_uploaded_bytes": 3305472,
+    "hud_uploaded_bytes": 3303936,
     "outline_uploads": 7,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1400,7 +1400,7 @@
       1,
       1
     ],
-    "png_sha256": "d73462ddb2c758faec870840490ecee177ab7e5ef7033ed57bba0d177954bd76"
+    "png_sha256": "490b443648bb4c601667b2068686af2c9697646f623407474539836a2cabf4ab"
   },
   "seam-debug": {
     "mode": "offscreen",
@@ -1418,7 +1418,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 13200,
     "hud_uploads": 15,
-    "hud_uploaded_bytes": 3105888,
+    "hud_uploaded_bytes": 3104448,
     "outline_uploads": 6,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1461,7 +1461,7 @@
       1,
       1
     ],
-    "png_sha256": "d73462ddb2c758faec870840490ecee177ab7e5ef7033ed57bba0d177954bd76"
+    "png_sha256": "490b443648bb4c601667b2068686af2c9697646f623407474539836a2cabf4ab"
   },
   "single-save": {
     "mode": "offscreen",
@@ -1479,7 +1479,7 @@
     "mesh_allocations": 2,
     "mesh_uploaded_bytes": 7216,
     "hud_uploads": 14,
-    "hud_uploaded_bytes": 2921760,
+    "hud_uploaded_bytes": 2920416,
     "outline_uploads": 4,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1522,7 +1522,7 @@
       0,
       0
     ],
-    "png_sha256": "cd08409109c0c687f74500c360afb9148635e4e20c2c8584edb19ffd82228323"
+    "png_sha256": "6a12145c4836b533b890c22eb18180860b2d3a8a63add4a2b7466e5b709203d1"
   },
   "single-load": {
     "mode": "offscreen",
@@ -1601,7 +1601,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 13200,
     "hud_uploads": 16,
-    "hud_uploaded_bytes": 3382464,
+    "hud_uploaded_bytes": 3380928,
     "outline_uploads": 6,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1644,7 +1644,7 @@
       1,
       1
     ],
-    "png_sha256": "6af13f459e972fde80f7e989ef260feb7ea609f48c6b25f9f9342fc0ae3be9b5"
+    "png_sha256": "8d8bb40837628c71771ab4d943e0697b30765f51eac7bf2934604e4f95ed3c8e"
   },
   "region-load": {
     "mode": "offscreen",
@@ -1723,7 +1723,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 71896,
     "hud_uploads": 1,
-    "hud_uploaded_bytes": 192384,
+    "hud_uploaded_bytes": 192288,
     "outline_uploads": 0,
     "terrain_generated": true,
     "terrain_seed": 12345,
@@ -1766,7 +1766,7 @@
       1,
       1
     ],
-    "png_sha256": "b7b095944d2a2c8457b43e9f8b9736152a3a3a9071f92c9a959e8f89d8f230af"
+    "png_sha256": "ad523a9687fc5004f8d253e4c21ff1dce46828f251085368017de421eefe9e7f"
   },
   "profile-load": {
     "mode": "window",
@@ -1784,7 +1784,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 71896,
     "hud_uploads": 1,
-    "hud_uploaded_bytes": 189312,
+    "hud_uploaded_bytes": 189216,
     "outline_uploads": 0,
     "terrain_generated": false,
     "terrain_seed": -1,
@@ -1827,7 +1827,7 @@
       1,
       1
     ],
-    "png_sha256": "24821f4ba04bd10f33f193b69b8b8e337fb5d11e5bee458c67977d911e34f20b"
+    "png_sha256": "902fa9d99490f65a55e1a7adf3ca6a82f8d19fe49b2a04ec68a991f23a2fe4ba"
   },
   "terrain-preview": {
     "mode": "offscreen",
@@ -2150,7 +2150,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 79200,
     "hud_uploads": 10,
-    "hud_uploaded_bytes": 1983168,
+    "hud_uploaded_bytes": 1982208,
     "outline_uploads": 7,
     "terrain_generated": true,
     "terrain_seed": 12345,
@@ -2193,7 +2193,7 @@
       1,
       1
     ],
-    "png_sha256": "fdaf3b24617803d7c25db41565710e98537b8c4d741a9e2f82f673e8d1caacb5"
+    "png_sha256": "c6f79967a9fa69137329f33dce2e7b847b8561bb0f95482e41a94dbf8d8b8e2f"
   },
   "terrain-replay-window": {
     "mode": "window",
@@ -2211,7 +2211,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 79200,
     "hud_uploads": 10,
-    "hud_uploaded_bytes": 1983168,
+    "hud_uploaded_bytes": 1982208,
     "outline_uploads": 7,
     "terrain_generated": true,
     "terrain_seed": 12345,
@@ -2254,7 +2254,7 @@
       1,
       1
     ],
-    "png_sha256": "fdaf3b24617803d7c25db41565710e98537b8c4d741a9e2f82f673e8d1caacb5"
+    "png_sha256": "c6f79967a9fa69137329f33dce2e7b847b8561bb0f95482e41a94dbf8d8b8e2f"
   },
   "terrain-replay-debug": {
     "mode": "offscreen",
@@ -2272,7 +2272,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 79200,
     "hud_uploads": 10,
-    "hud_uploaded_bytes": 1983168,
+    "hud_uploaded_bytes": 1982208,
     "outline_uploads": 7,
     "terrain_generated": true,
     "terrain_seed": 12345,
@@ -2315,7 +2315,7 @@
       1,
       1
     ],
-    "png_sha256": "fdaf3b24617803d7c25db41565710e98537b8c4d741a9e2f82f673e8d1caacb5"
+    "png_sha256": "c6f79967a9fa69137329f33dce2e7b847b8561bb0f95482e41a94dbf8d8b8e2f"
   },
   "terrain-save": {
     "mode": "offscreen",
@@ -2333,7 +2333,7 @@
     "mesh_allocations": 18,
     "mesh_uploaded_bytes": 79200,
     "hud_uploads": 11,
-    "hud_uploaded_bytes": 2221344,
+    "hud_uploaded_bytes": 2220288,
     "outline_uploads": 7,
     "terrain_generated": true,
     "terrain_seed": 12345,
@@ -2376,7 +2376,7 @@
       1,
       1
     ],
-    "png_sha256": "06d2714c68f106c63edf24f194d145505e7e13fe59c71d1f887cda9a49272175"
+    "png_sha256": "12da0062d50b7df7d680aeaf240555b828a87688449bccc2484b532f7e8d763e"
   },
   "terrain-load": {
     "mode": "offscreen",

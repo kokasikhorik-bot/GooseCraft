@@ -37,7 +37,7 @@
     "src/core/visibility.goose": "c9dbbd952d7d9abeb445a829430694e5e7f1c15a467d51351b47db0b0a7a7e57",
     "src/core/world.goose": "618458792bdcbb2a72f1a155defb1fca487dba4e14821cc19f3c37776eb17c47",
     "src/render/chunks.goose": "ce962c39aaa86a9d5d4aece63287975e4efd0e7bfc8c75011d05bbe32bc9e74c",
-    "src/render/hud.goose": "c18b280fda4138e9975b41d008245a62cae789737456d9de2ef7825fbc1e0bfc",
+    "src/render/hud.goose": "33ca3bb99cfbf738eb87a2ac5b3fdc7e07a787cdf373a9a927db9dcb2d8a4345",
     "src/render/replay.goose": "2ed20e68a63b7c034c55a3df43c149d97c23bae10db04a0fee57ad29d911ead2",
     "src/render/scene.goose": "ff12258de7a2e61485bd5c27423c1b0f83795e18c15edcfd2f5696b87caa129f",
     "src/viewer.goose": "97b5acbe4b3ea7a71a54415ce2ce5d3cdba173b2c754d44a37a2f09f35ab18e3",
