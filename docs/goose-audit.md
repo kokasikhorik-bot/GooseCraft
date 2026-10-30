@@ -92,3 +92,11 @@ GUI на Windows из успешного Linux-теста не выводитс�
 interaction инстанцируются для Chunk/Map/Halo там, где это нужно; мировая
 логика не перенесена в другой язык. `gfx.row`, `translate`, `mul` взяты из
 действительного math API gfx; CPU frustum-тесты не зависят от него.
+
+Обнаружена разница JIT/AOT на Windows: `gs_os_arg` переводит narrow main argv
+из CP_ACP через UTF-16 в UTF-8. Без process UTF-8 manifest символы вне ANSI
+страницы теряются до этого преобразования. Сам Goose compiler содержит
+`src/goose.manifest` (CMakeLists.txt:85), а команда native build его не добавляет.
+Наш helper встраивает собственный manifest SDK mt.exe в каждый Windows EXE,
+затем извлекает и проверяет ресурс. Это настройка приложения, не придуманный
+Goose API и не изменение pinned upstream. Эффект на целевой Windows проверяется CI.

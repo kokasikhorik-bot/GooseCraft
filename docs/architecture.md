@@ -30,6 +30,7 @@ GooseCraft/
 │   ├── support/surface.goose # независимая проверка покрытия меша
 │   └── fixtures/type_error.goose
 ├── benchmarks/mesh.goose     # native CPU benchmark: reference/greedy
+├── resources/windows/       # process UTF-8 manifest, встраивается SDK mt.exe
 ├── tools/
 │   ├── bootstrap.py         # закреплённый Goose и опциональный gfx
 │   ├── project.py           # build/test/render-build/render-test/package

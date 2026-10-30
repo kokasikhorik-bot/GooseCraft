@@ -24,6 +24,25 @@ Workflow явно задаёт `PYTHONUTF8=1`/`PYTHONIOENCODING=utf-8`, entry po
 Повторный Windows CI будет записан после запуска; ZIP 0.5 пока не подтверждён.
 Ниже — история успешного 0.4, до Map/сохранения.
 
+Повтор [41033278248](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41033278248)
+также прошёл оба Linux jobs. Новая диагностика дала точную Windows-ошибку:
+TinyCC storage test прошёл, а `storage-tests.exe` остановился на первом
+`storage::save`, tests/storage.goose:38. [Аннотации](validation/github-actions-41033278248-annotations.json),
+[jobs/steps](validation/github-actions-41033278248.json). Настройка Python UTF-8
+устраняет отдельный воспроизведённый дефект логирования, но её недостаточно
+для нативного argv приложения.
+
+Проверены pinned `runtime_os.h:gs_os_arg`, `build.h` и CMakeLists.txt Goose:
+native `main(argc,char** argv)` получает ANSI argv, из которого кириллица уже
+потеряна; compiler/JIT содержит свой UTF-8 activeCodePage manifest.
+Нативная команда Goose build не переносит этот manifest в наши программы.
+Добавлен собственный `resources/windows/GooseCraft.manifest`, встраиваемый
+Windows SDK mt.exe во все наши AOT EXE до их запуска. Helper извлекает PE
+manifest обратно и проверяет `activeCodePage=UTF-8`. Upstream не патчится,
+запись мира остаётся на Goose и исходные Unicode I/O тесты выполняются полностью.
+Проверка этого исправления выполняется следующим CI; успешная Windows-сборка
+0.5 ещё не заявляется.
+
 ## История: успешный CI 0.4 — 2026-10-30
 
 ## Оптимизация 0.4

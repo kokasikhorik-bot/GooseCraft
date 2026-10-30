@@ -12,6 +12,7 @@ import subprocess
 import sys
 import zlib
 import traceback
+import xml.etree.ElementTree as ET
 from png_readback import compare_boundary_pixels
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,10 +56,33 @@ def run(args, expected=0, cwd=ROOT, extra_env=None, timeout=180):
     return p
 
 
+def native_build(source, binary, flags=(), timeout=180):
+    run([GOOSE, "build", source, "--offline", *flags, "-o", binary], timeout=timeout)
+    if WINDOWS:
+        # Goose embeds UTF-8 in the compiler's own manifest, but its native
+        # build command doesn't propagate that setting to generated programs.
+        # Activate it before the CRT constructs argv, not in game main().
+        manifest_tool = shutil.which("mt.exe")
+        if not manifest_tool:
+            sdk = Path(os.environ.get("ProgramFiles(x86)", "C:/Program Files (x86)")) / "Windows Kits/10/bin"
+            candidates = list(sdk.glob("*/x64/mt.exe"))
+            candidates.sort(key=lambda p: tuple(int(x) for x in p.parent.parent.name.split(".")))
+            if candidates: manifest_tool = candidates[-1]
+        if not manifest_tool:
+            raise RuntimeError("Windows SDK mt.exe is required to embed the UTF-8 application manifest")
+        manifest = ROOT / "resources/windows/GooseCraft.manifest"
+        run([manifest_tool, "-nologo", "-manifest", manifest, f"-outputresource:{binary};#1"])
+        extracted = Path(str(binary) + ".manifest")
+        run([manifest_tool, "-nologo", f"-inputresource:{binary};#1", "-out:" + str(extracted)])
+        nodes = ET.parse(extracted).findall(".//{http://schemas.microsoft.com/SMI/2019/WindowsSettings}activeCodePage")
+        if len(nodes) != 1 or nodes[0].text.strip() != "UTF-8":
+            raise RuntimeError("Native PE does not contain the required UTF-8 activeCodePage")
+
+
 def build():
     BUILD.mkdir(exist_ok=True)
     run([GOOSE, "check", ROOT / "src/client.goose", "--offline"])
-    run([GOOSE, "build", ROOT / "src/client.goose", "--offline", "-o", CLIENT])
+    native_build(ROOT / "src/client.goose", CLIENT)
 
 
 def test():
@@ -82,7 +106,7 @@ def test():
                  *(["--", *extra] if extra else [])])
             jit_save = save_path.read_bytes() if extra else None
             binary = BUILD / (label + "-tests" + ("-debug" if flags else "") + EXT)
-            run([GOOSE, "build", ROOT / f"tests/{source}.goose", "--offline", *flags, "-o", binary])
+            native_build(ROOT / f"tests/{source}.goose", binary, flags)
             result = run([binary, *extra])
             if result.stdout.strip() != f"headless {label}: ok":
                 raise RuntimeError("Missing Goose assertions result")
@@ -158,7 +182,7 @@ def test():
 def benchmark(evidence):
     evidence.mkdir(parents=True, exist_ok=True)
     binary = BUILD / ("mesh-benchmark" + EXT)
-    run([GOOSE, "build", ROOT / "benchmarks/mesh.goose", "--offline", "-o", binary])
+    native_build(ROOT / "benchmarks/mesh.goose", binary)
     toolchain = run([GOOSE, "toolchain"]).stdout
     iterations = 1000
     result = run([binary, "--iterations", str(iterations)])
@@ -214,7 +238,7 @@ def render_build():
         raise RuntimeError("Graphics submodule pins differ")
     BUILD.mkdir(exist_ok=True)
     run([GOOSE, "check", ROOT / "src/viewer.goose", "--offline"])
-    run([GOOSE, "build", ROOT / "src/viewer.goose", "--offline", "-o", VIEWER], timeout=900)
+    native_build(ROOT / "src/viewer.goose", VIEWER, timeout=900)
     run([VIEWER, "--help"])
     for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"],
                  ["--seam-replay", "--single-chunk"], ["--world"], ["--world", "x", "--no-save"], ["--view-away"]):
@@ -224,7 +248,7 @@ def render_build():
     run([VIEWER, "--world", corrupt, "--frames", "1"], expected=5)
     if corrupt.read_bytes() != b"corrupt world":
         raise RuntimeError("Graphical startup overwrote corrupt input before opening the GPU")
-    run([GOOSE, "build", ROOT / "src/viewer.goose", "--offline", "--debug", "-o", DEBUG_VIEWER], timeout=900)
+    native_build(ROOT / "src/viewer.goose", DEBUG_VIEWER, ["--debug"], timeout=900)
 
 
 def render_test(evidence):
