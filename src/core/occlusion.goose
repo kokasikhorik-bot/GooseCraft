@@ -33,9 +33,9 @@ fn uniform(value: u16) -> bool {
     for c in 1..4 { if ((value >> (2 + c * 2)) & 3) != first { return false; } }
     return true;
 }
-fn color(value: u16, face: i64, corner: i64) -> u8[4] {
+fn color(value: u16, face: i64, corner: i64, neutral: bool = false) -> u8[4] {
     let light: f32[6] = [0.78, 0.58, 1.0, 0.42, 0.7, 0.62];
-    let tint: u8[3] = if (value & 3) == 1 { [72, 165, 102] } else { [239, 174, 67] };
+    let tint: u8[3] = if neutral { [255; 3] } else if (value & 3) == 1 { [72, 165, 102] } else { [239, 174, 67] };
     let factors: u32[4] = [128, 166, 210, 255];
     let factor = factors[(value >> (2 + corner * 2)) & 3];
     var result: u8[4] = [0, 0, 0, 255];
@@ -47,15 +47,15 @@ fn color(value: u16, face: i64, corner: i64) -> u8[4] {
 }
 
 fn quad(vertices: mesh::Vertex[>..]&, indices: u32[>..]&, face: i64, slice: i64,
-        u: i64, v: i64, width: i64, height: i64, value: u16) {
+        u: i64, v: i64, width: i64, height: i64, value: u16, neutral: bool) {
     let axis = face / 2; let positive = face % 2 == 0;
     let n: f32 = slice + (if positive { 1 } else { 0 });
     let first_v = if positive { v } else { v + height };
     let last_v = if positive { v + height } else { v };
-    let a = mesh::Vertex { mesh::point(axis, n, u, first_v), color(value, face, if positive { 0 } else { 3 }) };
-    let b = mesh::Vertex { mesh::point(axis, n, u + width, first_v), color(value, face, if positive { 1 } else { 2 }) };
-    let c = mesh::Vertex { mesh::point(axis, n, u + width, last_v), color(value, face, if positive { 2 } else { 1 }) };
-    let d = mesh::Vertex { mesh::point(axis, n, u, last_v), color(value, face, if positive { 3 } else { 0 }) };
+    let a = mesh::Vertex { mesh::point(axis, n, u, first_v), color(value, face, if positive { 0 } else { 3 }, neutral) };
+    let b = mesh::Vertex { mesh::point(axis, n, u + width, first_v), color(value, face, if positive { 1 } else { 2 }, neutral) };
+    let c = mesh::Vertex { mesh::point(axis, n, u + width, last_v), color(value, face, if positive { 2 } else { 1 }, neutral) };
+    let d = mesh::Vertex { mesh::point(axis, n, u, last_v), color(value, face, if positive { 3 } else { 0 }, neutral) };
     let base = vertices.len as u32;
     if axis == 0 { vertices.push(a); vertices.push(b); vertices.push(c); vertices.push(d); }
     else if positive { vertices.push(b); vertices.push(c); vertices.push(d); vertices.push(a); }
@@ -65,7 +65,7 @@ fn quad(vertices: mesh::Vertex[>..]&, indices: u32[>..]&, face: i64, slice: i64,
     indices.append([base, base + 1, base + 2, base, base + 2, base + 3]);
 }
 
-fn build_reference<T>(source: T&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&) {
+fn build_reference<T>(source: T&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&, neutral: bool = false) {
     assert(vertices.len == 0 && indices.len == 0);
     let steps: i64[3][6] = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
     for y in 16 { for z in 16 { for x in 16 {
@@ -77,12 +77,12 @@ fn build_reference<T>(source: T&, vertices: mesh::Vertex[>..]&, indices: u32[>..
             if mesh::solid(source, x + step[0], y + step[1], z + step[2]) { continue; }
             let axis = face / 2;
             quad(vertices, indices, face, p[axis], p[(axis + 1) % 3], p[(axis + 2) % 3],
-                 1, 1, key(source, x, y, z, face, id));
+                 1, 1, key(source, x, y, z, face, id), neutral);
         }
     } } }
 }
 
-fn build<T>(source: T&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&) {
+fn build<T>(source: T&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&, neutral: bool = false) {
     assert(vertices.len == 0 && indices.len == 0);
     // 49,152 mask bytes. The legacy builder and its 24,576-byte masks stay
     // separate: disabling AO does not pay for the wider key or extra sampling.
@@ -120,7 +120,7 @@ fn build<T>(source: T&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&) {
                         height++;
                     }
                 }
-                quad(vertices, indices, face, slice, u, v, width, height, value);
+                quad(vertices, indices, face, slice, u, v, width, height, value, neutral);
                 for row in height { for col in width { masks[offset + (v + row) * 16 + u + col] = 0; } }
                 u += width;
             }

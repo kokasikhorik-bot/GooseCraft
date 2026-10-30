@@ -10,7 +10,7 @@ fn solid<T>(chunk: T&, x: i64, y: i64, z: i64) -> bool {
 }
 
 // Outward counterclockwise corners: +X, -X, +Y, -Y, +Z, -Z.
-fn build_reference<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&) {
+fn build_reference<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&, neutral: bool = false) {
     assert(vertices.len == 0 && indices.len == 0);
     let corners: u8[3][4][6] = [
         [[1, 0, 0], [1, 1, 0], [1, 1, 1], [1, 0, 1]],
@@ -28,7 +28,7 @@ fn build_reference<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&) {
             for x in 16 {
                 let id = world::get(chunk, x, y, z);
                 if id == 0 { continue; }
-                let tint: u8[3] = if id == 1 { [72, 165, 102] } else { [239, 174, 67] };
+                let tint: u8[3] = if neutral { [255; 3] } else if id == 1 { [72, 165, 102] } else { [239, 174, 67] };
                 for face in 6 {
                     let delta = steps[face];
                     if solid(chunk, x + delta[0], y + delta[1], z + delta[2]) { continue; }
@@ -57,7 +57,7 @@ fn point(axis: i64, n: f32, u: f32, v: f32) -> float3 {
 // Greedy rectangles join only coplanar, equally oriented faces of the same
 // material. A single visibility pass fills 96 masks; empty planes are skipped.
 // Scratch storage is bounded (24,576 mask bytes + 96 flags), without a heap.
-fn build<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&) {
+fn build<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&, neutral: bool = false) {
     assert(vertices.len == 0 && indices.len == 0);
     var masks: u8[24576] = [0; 24576];
     var used: bool[96] = [false; 96];
@@ -86,10 +86,12 @@ fn build<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&) {
     for face in 6 {
         let axis = face / 2;
         let positive = face % 2 == 0;
-        let green: u8[4] = [(72 * light[face]) as! u8, (165 * light[face]) as! u8,
-                            (102 * light[face]) as! u8, 255];
-        let amber: u8[4] = [(239 * light[face]) as! u8, (174 * light[face]) as! u8,
-                            (67 * light[face]) as! u8, 255];
+        let green_tint: u8[3] = if neutral { [255; 3] } else { [72, 165, 102] };
+        let amber_tint: u8[3] = if neutral { [255; 3] } else { [239, 174, 67] };
+        let green: u8[4] = [(green_tint[0] * light[face]) as! u8, (green_tint[1] * light[face]) as! u8,
+                            (green_tint[2] * light[face]) as! u8, 255];
+        let amber: u8[4] = [(amber_tint[0] * light[face]) as! u8, (amber_tint[1] * light[face]) as! u8,
+                            (amber_tint[2] * light[face]) as! u8, 255];
         for slice in 16 {
             let plane = face * 16 + slice;
             if !used[plane] { continue; }

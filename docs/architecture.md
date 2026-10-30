@@ -269,3 +269,32 @@ Paged сохраняет прежний полный квадрат CPU halo (me
 Сохранения GCW v1/v2/v3/v4 и генераторы не изменены. AO — параметр запуска,
 не persistent world data. Все новые алгоритмы написаны на Goose; платформенный
 C и shaders не менялись. [Результаты и стоимость](occlusion-results.md).
+
+## Оригинальные текстуры 0.16
+
+`core/textures.goose` создаёт 4096 байт RGBA8: четыре рисунка 16×16.
+Material 1 выбирает grass-top / grass-side / earth по ориентации грани,
+material 2 — ochre. Рисунки целиком оригинальные, внешних image assets нет.
+Выбор tile зависит только от material + face, уже входящих в условия greedy
+объединения. Случайного UV-поворота или другого per-block texture state нет.
+
+Мешеры получают optional neutral=true: vertex RGB хранит только прежнюю
+яркость стороны/AO. Не меняются visibility, mask key, позиции и индексы.
+`textures::convert` обрабатывает unstitched quads и добавляет четыре byte:
+axis, array layer, 0, 0. Vertex stride 20 вместо 16 только при `--textures`.
+Временные массивы исходных 16-byte quads и 20-byte texture vertices сосуществуют
+во время rebuild; это дополнительный CPU scratch, не полный расход памяти.
+
+`stitch::apply<T>` сохраняет поля исходной вершины при добавлении точек.
+Metadata постоянна на каждой грани, AO-градиенты по-прежнему unit-sized.
+Шейдер получает UV из позиции: X-normal=(z,-y), Y-normal=(x,z), Z-normal=(x,-y).
+Это аффинное отображение: edge/fan vertices и perspective interpolation не
+растягивают рисунок. Origins кратны 16, repeat period=1, поэтому local/world
+фазы совпадают и на отрицательных секциях. Ориентация не зависит от знака normal.
+
+`render/materials.goose` создаёт один RGBA8 2D array, четыре слоя, один mip,
+nearest/repeat sampler и отдельный pipeline. GLSL только проецирует координаты
+и умножает texel на vertex light; материал, пиксели и политика остаются в Goose.
+HUD/outline используют прежние 16-byte vertices/pipeline. Выключенный режим не
+создаёт atlas/sampler и не заполняет texture scratch. World formats и native C
+не меняются. `src/texture_probe.goose` — отдельный test binary, не поставляется.

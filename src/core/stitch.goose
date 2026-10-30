@@ -14,7 +14,7 @@ fn boundary(p: float3) -> bool {
 // Input is the quad list from mesh::build. Original corners stay in place.
 // Extra edge points and one center are appended only for a split rectangle.
 // Unit boundary segments also agree with a neighbor rebuilt independently.
-fn apply(vertices: mesh::Vertex[>..]&, indices: u32[>..]&) -> i64 {
+fn apply<T>(vertices: T[>..]&, indices: u32[>..]&) -> i64 {
     assert(vertices.len % 4 == 0 && indices.len == vertices.len / 4 * 6);
     let original = vertices.len;
     var large = false;
@@ -49,7 +49,7 @@ fn apply(vertices: mesh::Vertex[>..]&, indices: u32[>..]&) -> i64 {
                 let p = a + step * (at as f32);
                 if corners[slot(p)] || boundary(p) {
                     ring[count] = vertices.len as u32; count++;
-                    vertices.push(mesh::Vertex { p, color });
+                    var added = vertices[base]; added.position = p; vertices.push(added);
                 }
             }
         }
@@ -58,7 +58,8 @@ fn apply(vertices: mesh::Vertex[>..]&, indices: u32[>..]&) -> i64 {
             indices.append([b, b + 1, b + 2, b, b + 2, b + 3]);
         } else {
             let center = vertices.len as u32;
-            vertices.push(mesh::Vertex { (vertices[base].position + vertices[base + 2].position) * 0.5, color });
+            var added = vertices[base]; added.position = (vertices[base].position + vertices[base + 2].position) * 0.5;
+            vertices.push(added);
             for i in count { indices.append([center, ring[i], ring[(i + 1) % count]]); }
             split++;
         }

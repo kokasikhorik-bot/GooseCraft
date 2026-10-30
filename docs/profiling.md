@@ -197,6 +197,14 @@ builder. Сравнивать `initial_mesh_ns`, mesh bytes/capacity и remesh �
 или доказательство изменения FPS. Число новых dirty sections при угловой правке
 может достигать восьми; прежний бюджет два remesh за кадр сохраняется.
 
+В 0.16 metadata `textures`, `vertex_stride` (16/20), `texture_payload_bytes`
+(0/4096) описывает текстурный режим. `mesh_bytes=vertices*stride+indices*4`;
+shader/driver overhead, texture alignment и полный VRAM/RSS не включены.
+4096 — RGBA8 payload четырёх 16×16 layers с одним mip, не полная GPU allocation.
+Overlay buffer по-прежнему 524672 bytes, outline upload 24*16=384 bytes.
+Raw schema/columns не меняются; reference/greedy нужно сравнивать в одном
+режиме textures/AO. Initial mesh wall time включает conversion и buffer updates.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

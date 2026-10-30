@@ -17,6 +17,7 @@ from png_readback import compare_boundary_pixels, differences, enclosed_clear, c
 from profile_readback import validate_profile
 from page_readback import validate_pages
 from tall_readback import validate_tall, terrain_bytes
+from texture_readback import validate_tiles, validate_probe
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -26,6 +27,8 @@ BUILD = ROOT / "build"
 CLIENT = BUILD / ("goosecraft-headless" + EXT)
 VIEWER = BUILD / ("goosecraft-client" + EXT)
 DEBUG_VIEWER = BUILD / ("goosecraft-client-debug" + EXT)
+TEXTURE_PROBE = BUILD / ("texture-probe" + EXT)
+DEBUG_TEXTURE_PROBE = BUILD / ("texture-probe-debug" + EXT)
 
 
 def environment():
@@ -89,7 +92,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging", "inventory", "tall", "occlusion")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging", "inventory", "tall", "occlusion", "textures")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/prefetch.goose", ROOT / "tests/transfer.goose", ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -118,10 +121,15 @@ def test():
             if source == "profiling":
                 profile_path.unlink(missing_ok=True)
                 extra = [profile_path, blocked / "frames.json"]
+            if source == "textures":
+                texture_path = save_folder / "tiles.rgba"
+                texture_path.unlink(missing_ok=True); extra = [texture_path]
             run([GOOSE, "run", ROOT / f"tests/{source}.goose", "--offline", *flags,
                  *(["--", *extra] if extra else [])])
             jit_save = save_path.read_bytes() if source == "storage" else None
             jit_profile = profile_path.read_bytes() if source == "profiling" else None
+            if source == "textures":
+                jit_texture = texture_path.read_bytes(); validate_tiles(jit_texture); texture_path.unlink()
             if source == "profiling":
                 validate_profile(profile_path, 1100)
                 profile_path.unlink()
@@ -134,6 +142,9 @@ def test():
             result = run([binary, *extra])
             if result.stdout.strip() != f"headless {label}: ok":
                 raise RuntimeError("Missing Goose assertions result")
+            if source == "textures":
+                validate_tiles(texture_path.read_bytes())
+                if texture_path.read_bytes() != jit_texture: raise RuntimeError("Native/JIT tile bytes differ")
             if source == "profiling":
                 validate_profile(profile_path, 1100)
                 if profile_path.read_bytes() != jit_profile or blocked.read_bytes() != b"retain this file":
@@ -332,7 +343,7 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, 15 suites including inventory/tall/occlusion (JIT/native, release/debug), "
+    print("PASS: compiler probes, 16 suites including inventory/tall/occlusion/textures (JIT/native, release/debug), "
           "growable world owners and v1/v2 vectors, "
           "profile ring and independent percentile recomputation, "
           "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
@@ -458,6 +469,7 @@ def render_build():
                  ["--raw-greedy", "--reference-renderer"]):
         run([VIEWER, *args], expected=2)
     run([VIEWER, "--ambient-occlusion", "--ambient-occlusion"], expected=2)
+    run([VIEWER, "--textures", "--textures"], expected=2)
     for args in (["--profile"], ["--profile", ""], ["--profile", "x", "--profile", "y"],
                  ["--profile-warmup", "0"], ["--profile", "x", "--profile-warmup", "-1"],
                  ["--profile", "x", "--profile-warmup", "10001"],
@@ -501,6 +513,8 @@ def render_build():
     if corrupt.read_bytes() != b"corrupt world":
         raise RuntimeError("Explicit seed replaced an existing file")
     native_build(ROOT / "src/viewer.goose", DEBUG_VIEWER, ["--debug"], timeout=900)
+    native_build(ROOT / "src/texture_probe.goose", TEXTURE_PROBE, timeout=900)
+    native_build(ROOT / "src/texture_probe.goose", DEBUG_TEXTURE_PROBE, ["--debug"], timeout=900)
 
 
 def render_test(evidence):
@@ -518,6 +532,15 @@ def render_test(evidence):
     if "llvmpipe" not in info.stdout.lower():
         raise RuntimeError("Expected Mesa's software Vulkan device")
     (evidence / "vulkan.txt").write_text(info.stdout + info.stderr)
+    probe_results = {}
+    for name, binary in (("probe", TEXTURE_PROBE), ("probe-debug", DEBUG_TEXTURE_PROBE)):
+        folder = evidence / name; folder.mkdir(exist_ok=True)
+        for png in folder.glob("tiles-*.png"): png.unlink()
+        outcome = json.loads(run([binary, folder], extra_env={**env, "SDL_VIDEODRIVER":"offscreen"}).stdout)
+        if outcome != {"frames":12, "misuse_count":0, "negative_coordinates":True, "texture_bytes":4096}:
+            raise RuntimeError("Unexpected GPU texture probe result")
+        probe_results[name] = validate_probe(folder)
+    (evidence / "texture-probe-results.json").write_text(json.dumps(probe_results, indent=2) + "\n")
     no_display = run([VIEWER, "--no-save", "--frames", "1"], expected=3, extra_env={**env, "SDL_VIDEODRIVER": "x11"})
     if "graphics unavailable" not in no_display.stderr:
         raise RuntimeError("Window startup without DISPLAY did not produce the expected diagnostic")
@@ -678,6 +701,24 @@ def render_test(evidence):
     ]
     for name, prefix, flags, frames in ao_specs:
         profile_specs.append((name, prefix, [*flags, "--ambient-occlusion"], frames, 0))
+    texture_specs = [
+        ("texture-demo", [], ["--offscreen", "--preview", "--demo-world", "--single-chunk"], 3),
+        ("texture-window", xvfb, ["--preview", "--demo-world", "--single-chunk"], 3),
+        ("texture-debug", [], ["--offscreen", "--preview", "--demo-world", "--single-chunk"], 3),
+        ("texture-reference", [], ["--offscreen", "--preview", "--demo-world", "--single-chunk", "--reference-renderer"], 3),
+        ("texture-tall", [], ["--offscreen", "--preview", "--tall-world", saves / "texture-tall.gcw", "--radius", "1"], 3),
+        ("texture-tall-ao", [], ["--offscreen", "--preview", "--tall-world", saves / "texture-tall-ao.gcw", "--radius", "1", "--ambient-occlusion"], 3),
+        ("texture-tall-window", xvfb, ["--preview", "--tall-world", saves / "texture-tall-window.gcw", "--radius", "1", "--ambient-occlusion"], 3),
+        ("texture-tall-debug", [], ["--offscreen", "--preview", "--tall-world", saves / "texture-tall-debug.gcw", "--radius", "1", "--ambient-occlusion"], 3),
+        ("texture-play", [], ["--offscreen", "--inventory-replay", "--tall-world", saves / "texture-play.gcw", "--radius", "1", "--ambient-occlusion"], 90),
+        ("texture-play-window", xvfb, ["--inventory-replay", "--tall-world", saves / "texture-play-window.gcw", "--radius", "1", "--ambient-occlusion"], 90),
+        ("texture-paged", [], ["--offscreen", "--inventory-replay", "--paged-world", saves / "texture-paged", "--radius", "4", "--mesh-radius", "2", "--ambient-occlusion"], 90),
+        ("texture-seam", [], ["--offscreen", "--seam-replay", "--demo-world", "--world", saves / "texture-seam.gcw", "--ambient-occlusion"], 110),
+        ("texture-stream", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "texture-stream", "--ambient-occlusion"], 680),
+        ("texture-stream-control", [], ["--offscreen", "--paging-replay", "--world", saves / "texture-stream-control.gcw", "--ambient-occlusion"], 680),
+    ]
+    for name, prefix, flags, frames in texture_specs:
+        profile_specs.append((name, prefix, [*flags, "--textures"], frames, 0))
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
     cache_retained_save = saves / "cache-retained" / "world.gcw"
@@ -740,7 +781,7 @@ def render_test(evidence):
         if name == "tall-reopen": tall_saved_bytes = (saves / "tall-play.gcw").read_bytes()
         if name == "pages-reopen":
             pages_before = {p.name: p.read_bytes() for p in (saves / "pages-route").iterdir() if p.suffix in (".gci", ".gcp")}
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug", "inventory-debug", "tall-debug", "ao-debug") else VIEWER
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug", "inventory-debug", "tall-debug", "ao-debug", "texture-debug", "texture-tall-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -762,7 +803,7 @@ def render_test(evidence):
             if data["colored_pixels"] != 0 or (name == "empty" and data["indices"] != 0):
                 raise RuntimeError("Empty render is not the clear color")
         elif not (5000 < data["colored_pixels"] <= 640 * 480 and
-                  (data["colored_pixels"] < 640 * 480 or name in ("inventory-paged", "inventory-map", "ao-paged", "ao-tall-play") or name.startswith("tall-")) and data["indices"] > 0):
+                  (data["colored_pixels"] < 640 * 480 or name in ("inventory-paged", "inventory-map", "ao-paged", "ao-tall-play", "texture-play", "texture-play-window", "texture-paged") or name.startswith("tall-")) and data["indices"] > 0):
             raise RuntimeError("Scene geometry is missing from GPU readback")
         raw = png.read_bytes()
         if raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR" or struct.unpack(">II", raw[16:24]) != (640, 480):
@@ -985,7 +1026,7 @@ def render_test(evidence):
             if trace[key] != stdout[key]: raise RuntimeError(f"Transfer profile metadata disagrees: {name}: {key}")
         for key in ("inventory_frames", "inventory_opens", "inventory_open", "selected_slot", "selected_material"):
             if trace[key] != stdout[key]: raise RuntimeError(f"Inventory profile metadata disagrees: {name}: {key}")
-        for key in ("world_min_y", "world_max_y_exclusive", "sectioned", "ambient_occlusion"):
+        for key in ("world_min_y", "world_max_y_exclusive", "sectioned", "ambient_occlusion", "textures", "vertex_stride", "texture_payload_bytes"):
             if trace[key] != stdout[key]: raise RuntimeError(f"Height profile metadata disagrees: {name}: {key}")
     for name in ("timing-offscreen", "timing-window", "timing-debug"):
         if results[name]["png_sha256"] != results["terrain-replay"]["png_sha256"] or any(results[name][k] != results["terrain-replay"][k] for k in keys):
@@ -1211,9 +1252,14 @@ def render_test(evidence):
         'scope':'Fully resident GCW v4 backend, not paged v3 or Minecraft save format'},indent=2)+'\n')
     # AO changes mesh shading only: fixed input must produce identical gameplay
     # and save bytes, and window/debug must reproduce the offscreen pixels.
-    for name, *_ in cases:
-        if results[name]["ambient_occlusion"] != name.startswith("ao-"):
+    for name, _, flags, _ in cases:
+        if results[name]["ambient_occlusion"] != ("--ambient-occlusion" in flags):
             raise RuntimeError("AO selection was not propagated to the renderer")
+        d = results[name]
+        if d["textures"] != ("--textures" in flags) or d["vertex_stride"] != (20 if d["textures"] else 16):
+            raise RuntimeError("Texture selection/vertex stride disagrees")
+        if d["mesh_bytes"] != d["vertices"] * d["vertex_stride"] + d["indices"] * 4:
+            raise RuntimeError("Packed texture mesh byte accounting disagrees")
     for left, right in (("ao-demo", "ao-window"), ("ao-demo", "ao-debug"),
                         ("ao-seam", "ao-seam-window"), ("ao-tall", "ao-tall-window")):
         if results[left]["png_sha256"] != results[right]["png_sha256"]:
@@ -1240,6 +1286,28 @@ def render_test(evidence):
         "opt_in":True, "vertex_stride":16, "mask_bytes":49152, "nonuniform_faces_merge":False,
         "window_offscreen_debug_equal":True, "gameplay_and_tall_save_equal":True, "images":ao_images,
         "scope":"Local vertex AO only; no skylight propagation, textures or dynamic lights"}, indent=2) + "\n")
+    for left, right in (("texture-demo", "texture-window"), ("texture-demo", "texture-debug"),
+                        ("texture-tall-ao", "texture-tall-window"), ("texture-tall-ao", "texture-tall-debug"),
+                        ("texture-play", "texture-play-window"), ("texture-stream", "texture-stream-control")):
+        if results[left]["png_sha256"] != results[right]["png_sha256"]:
+            raise RuntimeError("Texture window/debug/backend pixels disagree: " + left)
+    for left, right in (("texture-play", "tall-play"), ("texture-paged", "inventory-paged"),
+                        ("texture-seam", "seam-replay"), ("texture-stream", "pages-route")):
+        if any(results[left][k] != results[right][k] for k in gameplay_keys):
+            raise RuntimeError("Textures changed gameplay: " + left)
+    for name in ("texture-play", "texture-play-window"):
+        if (saves / (name + ".gcw")).read_bytes() != (saves / "tall-play.gcw").read_bytes():
+            raise RuntimeError("Textures changed tall save bytes")
+    texture_export = saves / "texture-export.gcw"
+    run([CLIENT, "--headless", "--export-pages", saves / "texture-stream", texture_export])
+    if texture_export.read_bytes() != (saves / "texture-stream-control.gcw").read_bytes():
+        raise RuntimeError("Texture paged eviction/reload changed persistent blocks")
+    (evidence / "texture-results.json").write_text(json.dumps({
+        "opt_in":True, "tile_edge":16, "layers":4, "texture_payload_bytes":4096,
+        "vertex_stride":20, "repeat_per_block":True, "gpu_probe_checked_pixels":2*12*640*480,
+        "window_debug_offscreen_equal":True, "paged_map_pixels_and_save_equal":True,
+        "gameplay_and_tall_saves_equal":True,
+        "scope":"Original Goose tiles; nearest repeat, one mip; no Minecraft resource pack"}, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
           "frustum culling, terrain, release/debug/reference, saves, opt-in frame profiling, independent percentiles, no unrequested readback, cached overlays")
@@ -1276,6 +1344,7 @@ def package(graphics=False):
         "terrain_generator": 1,
         "profiling_schema": 1,
         "ambient_occlusion": "opt-in --ambient-occlusion; local vertex shading",
+        "textures": "opt-in --textures; 4 original 16x16 RGBA8 tiles, nearest repeat",
     }, indent=2) + "\n")
     print("Packaged", destination)
 

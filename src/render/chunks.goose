@@ -41,33 +41,35 @@ fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, refe
     return true;
 }
 
-fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-           cache: Cache&, reference: bool, raw: bool, ao: bool) {
+fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, textured_vertices: textures::Vertex[>..]&, indices: u32[>..]&,
+           cache: Cache&, reference: bool, raw: bool, ao: bool, textured: bool) {
     vertices.clear(); indices.clear();
-    if ao && reference { occlusion::build_reference(source, vertices, indices); }
-    else if ao { occlusion::build(source, vertices, indices); }
-    else if reference { mesh::build_reference(source, vertices, indices); }
-    else { mesh::build(source, vertices, indices); }
+    if ao && reference { occlusion::build_reference(source, vertices, indices, textured); }
+    else if ao { occlusion::build(source, vertices, indices, textured); }
+    else if reference { mesh::build_reference(source, vertices, indices, textured); }
+    else { mesh::build(source, vertices, indices, textured); }
     cache.patches = vertices.len / 4;
-    cache.split_patches = if reference || raw { 0 } else { stitch::apply(vertices, indices) };
-    let vb = bytes_of(vertices);
+    textured_vertices.clear();
+    if textured { textures::convert(source, vertices, textured_vertices); }
+    cache.split_patches = if reference || raw { 0 } else if textured { stitch::apply(textured_vertices, indices) } else { stitch::apply(vertices, indices) };
+    let vb = if textured { bytes_of(textured_vertices) } else { bytes_of(vertices) };
     let ib = bytes_of(indices);
     if reserve(cache.vertex, cache.vertex_capacity, vb.len, gfx::BUFFER_VERTEX, reference) { cache.allocations++; }
     if reserve(cache.index, cache.index_capacity, ib.len, gfx::BUFFER_INDEX, reference) { cache.allocations++; }
     if vb.len > 0 && !gfx::update_buffer(cache.vertex, vb) { abort(str("GPU vertex upload: ", gfx::error())); }
     if ib.len > 0 && !gfx::update_buffer(cache.index, ib) { abort(str("GPU index upload: ", gfx::error())); }
-    cache.vertices = vertices.len; cache.indices = indices.len;
+    cache.vertices = if textured { textured_vertices.len } else { vertices.len }; cache.indices = indices.len;
     cache.uploaded_bytes += vb.len + ib.len; cache.rebuilds++;
 }
 
-fn rebuild_dirty<T>(map: T&, resident: residency::State&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-                 budget: i64, reference: bool, raw: bool, ao: bool) -> i64 {
+fn rebuild_dirty<T>(map: T&, resident: residency::State&, caches: Cache[:], vertices: mesh::Vertex[>..]&, textured_vertices: textures::Vertex[>..]&, indices: u32[>..]&,
+                 budget: i64, reference: bool, raw: bool, ao: bool, textured: bool) -> i64 {
     var done: i64 = 0;
     while done < budget {
         let at = residency::next(map, resident);
         if at < 0 { break; }
         var source = world::neighborhood(map, at);
-        rebuild(source, vertices, indices, caches[at], reference, raw, ao);
+        rebuild(source, vertices, textured_vertices, indices, caches[at], reference, raw, ao, textured);
         residency::complete(map, resident, at);
         done++;
     }

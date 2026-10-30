@@ -1,0 +1,13 @@
+{
+  "height": 64,
+  "min_y": -16,
+  "max_y_exclusive": 48,
+  "sections_max": 324,
+  "chunk_payload_unchanged": 4096,
+  "legacy_source_preserved": true,
+  "migrated_low_layer_equals_legacy_gameplay": true,
+  "window_offscreen_debug_pixels_equal": true,
+  "above_16_edits_checked": true,
+  "reopen_preserves_bytes": true,
+  "scope": "Fully resident GCW v4 backend, not paged v3 or Minecraft save format"
+}

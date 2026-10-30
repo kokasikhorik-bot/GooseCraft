@@ -1,0 +1,24 @@
+{
+  "format": "RGBA8",
+  "edge": 16,
+  "layers": [
+    {
+      "name": "grass-top",
+      "sha256": "10027605a79bf11fb31fafe0e7de8c68786effb02030ddafbae850c429f99cee"
+    },
+    {
+      "name": "grass-side",
+      "sha256": "f3b98cf52b4495a3da30bd42c5f18da29423a312297959289a21774b3c5b83cf"
+    },
+    {
+      "name": "earth",
+      "sha256": "be1bb664beb2d635233095846355a4af536b0dd0833f0a1e8ff7346999ba8ea7"
+    },
+    {
+      "name": "ochre",
+      "sha256": "7ffc068ca29db96921b5769039e458ed49548a498310a7077be574d8ca43e271"
+    }
+  ],
+  "sha256": "fddc28c00e91e330a5f154fa2bc3024403d7878d229cefdc62f5c590c09d0b74",
+  "origin": "Original GooseCraft integer tile generator; no Minecraft resources"
+}

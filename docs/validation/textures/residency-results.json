@@ -1,0 +1,9 @@
+{
+  "same_view_retained_meshes_png_and_gameplay_equal": true,
+  "bounded_resident_meshes": true,
+  "evictions_and_return_checked": true,
+  "streamed_and_retained_save_bytes_equal": true,
+  "reopen_preserves_bytes": true,
+  "cpu_blocks_remain_resident": true,
+  "scope": "Finite 81-chunk CPU world; bounded live API mesh handles; driver may defer actual destruction"
+}

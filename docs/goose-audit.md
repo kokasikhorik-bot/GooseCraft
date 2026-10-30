@@ -201,3 +201,11 @@ API и extern нет, pins toolchain не менялись. Headless occlusion �
 world/Halo samples, консервативное объединение, stitch и dirty через XYZ-угол.
 Тот же независимый triangle clipper используется в geometry-only режиме;
 старые проверки RGBA сохранены, цвета AO проверяются отдельно до stitching.
+
+В 0.16 изучены pinned `gfx.goose` TextureDesc/Region/SamplerDesc,
+texture_array/update_texture/bind_texture и gfx_resources.c, а также mat4
+и атрибуты UBYTE4_NORM. Все четыре слоя загружаются отдельными Region.layer,
+sampler2DArray находится в fragment set=2 binding=0. Программный GPU probe
+использует тот же production pipeline и проверяется independent PNG oracle.
+Generic stitch с копированием дополнительных полей и stride 20 проверяются
+Goose JIT/native; новых extern, C функций или сторонних ресурсов нет.

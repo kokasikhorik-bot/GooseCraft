@@ -3,6 +3,7 @@ import .paged_world;
 import .simulation;
 import .mesh;
 import .occlusion;
+import .textures;
 import .player;
 import .interaction;
 import .inventory;

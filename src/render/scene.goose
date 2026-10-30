@@ -4,6 +4,7 @@ import core.transfer;
 import .hud;
 import .replay;
 import .chunks;
+import .materials;
 namespace scene;
 
 struct Camera { view_projection: gfx::mat4 }
@@ -23,6 +24,7 @@ struct Options {
     inventory_replay: bool = false,
     tall: bool = false,
     ambient_occlusion: bool = false,
+    textures: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -92,16 +94,17 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.15.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.16.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
+    var textured_vertices: textures::Vertex[>..] = [];
     var indices: u32[>..] = [];
     var buffers: chunks::Cache[>..] = [];
     buffers.resize(world::slots(chunk), chunks::Cache {});
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
     let initial_mesh_begin = if profiled { clock_ns() } else { 0 };
-    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, world::slots(chunk), reference, options.raw, options.ambient_occlusion);
+    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, textured_vertices, indices, world::slots(chunk), reference, options.raw, options.ambient_occlusion, options.textures);
     let initial_meshes = remeshes;
     let initial_uploaded_bytes = chunks::stats(buffers).uploaded_bytes;
     var peak_mesh_capacity = chunks::stats(buffers).capacity;
@@ -125,6 +128,8 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     desc.formats[1] = gfx::VERTEX_UBYTE4_NORM;
     let pipeline = gfx::pipeline(vs, fs, desc);
     if pipeline.id == 0 { abort(str("GPU pipeline: ", gfx::error())); }
+    let textured_materials = if options.textures { materials::create() } else { materials::Resources {} };
+    defer materials::release(textured_materials);
     desc.cull = gfx::CULL_NONE;
     desc.primitive = gfx::LINES;
     desc.depth_write = false;
@@ -295,7 +300,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             residency::update(chunk, resident, cx, cz, cache_radius);
             for at in buffers.len { if !resident.wanted[at] { chunks::evict(buffers[at]); } }
         }
-        let rebuilt = if loading { 0 } else { chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, 2, reference, options.raw, options.ambient_occlusion) };
+        let rebuilt = if loading { 0 } else { chunks::rebuild_dirty(chunk, resident, buffers, vertices, textured_vertices, indices, 2, reference, options.raw, options.ambient_occlusion, options.textures) };
         peak_mesh_capacity = max(peak_mesh_capacity, chunks::stats(buffers).capacity);
         remeshes += rebuilt;
         let t3 = if profiled { clock_ns() } else { 0 };
@@ -351,7 +356,8 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             if !reference && !visibility::intersects(rows, origin, origin + float3 { 16.0, 16.0, 16.0 }) {
                 culled_chunks++; continue;
             }
-            gfx::bind(pipeline);
+            if options.textures { materials::bind(textured_materials); }
+            else { gfx::bind(pipeline); }
             gfx::bind_vertex_buffer(buffers[at].vertex);
             gfx::bind_index_buffer(buffers[at].index, 4);
             gfx::uniforms(gfx::VERTEX, 0, Camera { gfx::mul(camera.view_projection, gfx::translate(origin)) });
@@ -425,7 +431,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             loop_session_ns: loop_session_ns, collector_ns_total: collector_ns_total,
             readback: output.len > 0, world_block_capacity_bytes: bytes_of(chunk.chunks).len,
             active_world_block_bytes: world::resident_count(chunk) * 4096,
-            mesh_bytes: totals.vertices * 16 + totals.indices * 4, mesh_capacity_bytes: totals.capacity,
+            mesh_bytes: totals.vertices * (if options.textures { 20 } else { 16 }) + totals.indices * 4, mesh_capacity_bytes: totals.capacity,
             mesh_buffer_creations: totals.allocations, overlay_buffer_capacity_bytes: 512 * 1024 + 24 * 16,
             overlay_buffer_creations: 2,
             world_radius: chunk.radius, world_chunks: world::count(chunk), world_format: pages::format(chunk),
@@ -449,6 +455,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             selected_slot: bag.selected + 1, selected_material: selected,
             world_min_y: world::lower_y(chunk), world_max_y_exclusive: world::upper_y(chunk), sectioned: options.tall,
             ambient_occlusion: options.ambient_occlusion,
+            textures: options.textures,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -463,7 +470,9 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
         ",\"diagnostic_page_delay_ms\":", options.page_delay, ",\"diagnostic_worker_delay_ms\":", options.prefetch_delay,
         ",\"reference_renderer\":", reference,
         ",\"ambient_occlusion\":", options.ambient_occlusion,
-        ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
+        ",\"textures\":", options.textures, ",\"vertex_stride\":", if options.textures { 20 } else { 16 },
+        ",\"texture_payload_bytes\":", if options.textures { 4096 } else { 0 },
+        ",\"mesh_bytes\":", totals.vertices * (if options.textures { 20 } else { 16 }) + totals.indices * 4,
         ",\"mesh_capacity_bytes\":", totals.capacity,
         ",\"mesh_allocations\":", totals.allocations, ",\"mesh_uploaded_bytes\":", totals.uploaded_bytes,
         ",\"mesh_radius\":", options.mesh_radius, ",\"retain_meshes\":", options.retain_meshes,

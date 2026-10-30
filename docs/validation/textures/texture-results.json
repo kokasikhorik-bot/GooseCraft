@@ -1,0 +1,13 @@
+{
+  "opt_in": true,
+  "tile_edge": 16,
+  "layers": 4,
+  "texture_payload_bytes": 4096,
+  "vertex_stride": 20,
+  "repeat_per_block": true,
+  "gpu_probe_checked_pixels": 7372800,
+  "window_debug_offscreen_equal": true,
+  "paged_map_pixels_and_save_equal": true,
+  "gameplay_and_tall_saves_equal": true,
+  "scope": "Original Goose tiles; nearest repeat, one mip; no Minecraft resource pack"
+}

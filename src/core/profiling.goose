@@ -47,6 +47,7 @@ struct Context {
     selected_slot: i64 = 1, selected_material: i64 = 1,
     world_min_y: i64 = 0, world_max_y_exclusive: i64 = 16, sectioned: bool = false,
     ambient_occlusion: bool = false,
+    textures: bool = false,
 }
 
 fn value(s: Sample, metric: i64) -> i64 {
@@ -154,7 +155,9 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
         ",\"inventory_open\":", context.inventory_open, ",\"selected_slot\":", context.selected_slot,
         ",\"selected_material\":", context.selected_material,
         ",\"world_min_y\":", context.world_min_y, ",\"world_max_y_exclusive\":", context.world_max_y_exclusive,
-        ",\"sectioned\":", context.sectioned, ",\"ambient_occlusion\":", context.ambient_occlusion, ","));
+        ",\"sectioned\":", context.sectioned, ",\"ambient_occlusion\":", context.ambient_occlusion,
+        ",\"textures\":", context.textures, ",\"vertex_stride\":", if context.textures { 20 } else { 16 },
+        ",\"texture_payload_bytes\":", if context.textures { 4096 } else { 0 }, ","));
     output.append("\"memory_scope\":\"known block storage and requested GPU buffer bytes; excludes allocator, driver, RSS/VRAM totals\",\"summary\":{");
     let names: const u8[:][6] = ["wall_ns", "pump_ns", "game_ns", "mesh_ns", "save_ns", "submit_ns"];
     for metric in 6 {
