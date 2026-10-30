@@ -149,3 +149,24 @@ paged_world. Использованы `_wfopen`/CreateFileW без sharing и PO
 на POSIX best effort. Не заявляется тест реальной потери питания.
 Фиксированный Paged поддерживает обычное сравнение в снимках тестов,
 в отличие от growable Map. [Результаты 0.10](paging-results.md).
+
+## Дополнение 0.11 — native worker и typed queues
+
+Проверен pinned reference §22, `test/threads/queue_bounds.goose`,
+`qpoll_zero_padded.goose` и `src/runtime/runtime_threads.h`. Реальные
+`thread_spawn`, `thread_wait`, `qget`, `qpoll`, `qput`, `qlimit` использованы
+без собственного C-планировщика. Job, Result и аргумент Path — flat values;
+мир и gfx в worker не передаются. Глобальный diagnostic delay — scalar,
+который Goose копирует при spawn; изменяемой общей памяти не используется.
+
+Native-тест обнаружил важную деталь: первый worker ID равен **0**, поэтому
+признак отсутствия — -1. Очередь полная возвращает false из qput; нельзя
+игнорировать этот результат. Обе очереди limit 1, outstanding job один.
+Shutdown сначала принимает ожидающий Result, затем отправляет stop и wait:
+producer не застревает на заполненной очереди. Проверены restart/ранний stop.
+
+Компилятор подтвердил границу: TinyCC JIT отклоняет потоковый suite с
+`JIT mode does not support threads ... TinyCC cannot place thread-local storage`.
+Он проверяется native release/debug на GCC 12.2/14.2 и в Windows CI; прежние
+12 suites остаются JIT/native. В worker не вызывается gfx; main-thread-only
+контракт графического пакета сохранён. [Результаты 0.11](prefetch-results.md).

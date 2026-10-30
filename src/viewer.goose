@@ -12,6 +12,8 @@ fn main() {
     var warmup_given = false;
     var radius_given = false;
     var mesh_radius_given = false;
+    var prefetch_delay_given = false;
+    var page_delay_given = false;
     var output: u8[>..] = [];
     var world_path: u8[>..] = [];
     var profile_path: u8[>..] = [];
@@ -19,7 +21,7 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.10.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.11.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
@@ -28,6 +30,8 @@ fn main() {
             print("       [--mesh-radius 0..4] (regular games default to 2; 0 keeps the whole world)");
             print("       --paged-world DIR enables bounded CPU paging; mesh-radius must be 1 or 2. Existing GCW files stay separate.");
             print("Paged diagnostics require new .png screenshot files and .json profile files.");
+            print("Paged preparation uses one Goose worker; --sync-paging selects the synchronous baseline.");
+            print("Diagnostics: --prefetch-delay-ms 0..100 delays the worker; --page-delay-ms 0..20 delays each page preparation.");
             print("Diagnostics: --paging-replay walks farther before returning; default 680 frames.");
             print("Diagnostics: --retain-meshes keeps all GPU meshes but draws the same mesh-radius window; --stream-replay walks out and respawns.");
             print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.");
@@ -70,6 +74,15 @@ fn main() {
         }
         else if flag == "--raw-greedy" { options.raw = true; }
         else if flag == "--retain-meshes" { options.retain_meshes = true; }
+        else if flag == "--sync-paging" { options.sync_paging = true; }
+        else if flag == "--prefetch-delay-ms" || flag == "--page-delay-ms" {
+            let worker = flag == "--prefetch-delay-ms";
+            if i + 1 >= argv.len || (worker && prefetch_delay_given) || (!worker && page_delay_given) { abort_args(); }
+            i++; let n, ok = parse_int(argv[i]);
+            if !ok || n < 0 || n > (if worker { 100 } else { 20 }) { abort_args(); }
+            if worker { options.prefetch_delay = n; prefetch_delay_given = true; }
+            else { options.page_delay = n; page_delay_given = true; }
+        }
         else if flag == "--mesh-radius" {
             if i + 1 >= argv.len || mesh_radius_given { abort_args(); }
             i++; let n, ok = parse_int(argv[i]);
@@ -140,6 +153,8 @@ fn main() {
     if options.preview && options.mesh_radius != 0 { abort_args(); }
     if options.retain_meshes && options.mesh_radius == 0 { abort_args(); }
     if options.paged && (options.mesh_radius < 1 || options.mesh_radius > 2 || options.preview || options.demo || options.empty || options.single || options.retain_meshes) { abort_args(); }
+    if !options.paged && (options.sync_paging || prefetch_delay_given || page_delay_given) { abort_args(); }
+    if options.sync_paging && prefetch_delay_given { abort_args(); }
     // Page/index/lock names cannot collide with diagnostic outputs. New PNGs
     // also avoid accidental replacement of a user's existing diagnostic file.
     if options.paged && output.len > 0 && (output.len < 4 || output[output.len - 4..] != ".png" || file_exists(output) || is_dir(output)) { abort_args(); }

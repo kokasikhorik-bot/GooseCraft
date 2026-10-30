@@ -2,7 +2,7 @@
 
 Самостоятельный нативный клиент на Goose для Windows 10 x64, разрабатываемый
 полностью в Codex Cloud. Цель — реализация поведения Minecraft Java Edition
-с отдельным лаунчером. Текущий этап **0.10.0 — CPU-пул и страницы мира**:
+с отдельным лаунчером. Текущий этап **0.11.0 — фоновая подготовка страниц**:
 до 81 чанка, холмы в области 144×144, движение и редактирование через границы,
 воспроизводимая целочисленная генерация на Goose. Сохранения 0.5–0.7 читаются.
 Блоки сохраняются по F5 и при штатном выходе, загружаются при следующем запуске.
@@ -13,7 +13,7 @@ Greedy meshing, повторное использование GPU-буферов
 сохраняет прежнее поведение. Это собственный voxel-прототип без сети,
 бесконечного мира и совместимости с Java Edition.
 
-![После CPU-выгрузки и возврата: Linux lavapipe](docs/validation/paging/pages-route.png)
+![После фоновой подготовки и возврата: Linux lavapipe](docs/validation/prefetch/pages-route.png)
 
 ## Компоненты
 
@@ -91,6 +91,12 @@ mesh-буферов сокращена с 1732608 до 503808 байт при о
 от второго процесса GooseCraft. Кадры и GCW-экспорт совпали с полным CPU-миром.
 **12 headless suites и 121 графический сценарий**;
 [проверки, затраты и ограничения 0.10](docs/paging-results.md).
+В 0.11 один Goose worker заранее читает/проверяет или генерирует входящие чанки.
+Кеш — 8 страниц, каждая очередь — одно сообщение. На проверенном файловом
+маршруте чтений на главном потоке стало 38 вместо 48; при опоздании worker
+используется синхронный fallback. Форматы не менялись. 12 JIT/AOT suites,
+новый native-only потоковый suite и **127 графических сценариев**;
+[результаты и ограничения 0.11](docs/prefetch-results.md).
 
 ## Проверки в облаке
 
@@ -134,7 +140,7 @@ Goose, Python, Java или локальная среда разработки. �
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
 Готовые ZIP публикуются в [GitHub Actions](https://github.com/kokasikhorik-bot/GooseCraft/actions/workflows/build.yml).
-Версия 0.10: [успешный CI #41081936076](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076),
+Предыдущая версия 0.10: [успешный CI #41081936076](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076),
 [Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12990900263),
 проверенный source `5bd71bd`.
 Выберите успешный run нужной версии и артефакт `goosecraft-windows-2022-x64-...`.

@@ -1,0 +1,12 @@
+{
+  "png_and_gameplay_match_sync_backend": true,
+  "exported_gcw_bytes_equal": true,
+  "worker_joined_before_report": true,
+  "queue_limit": 1,
+  "staging_slots": 8,
+  "controlled_latency_ms_per_page": 2,
+  "controlled_main_reads_async": 38,
+  "controlled_main_reads_sync": 48,
+  "controlled_prefetch_hits": 5,
+  "scope": "Real Goose worker and file I/O; explicit artificial latency is a robustness scenario, not a hardware benchmark"
+}

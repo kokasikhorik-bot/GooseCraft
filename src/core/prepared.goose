@@ -1,0 +1,37 @@
+// Main-thread staging only. Queue messages are copied into this bounded cache.
+import .world;
+import .paged_world;
+namespace prepared;
+
+struct Page {
+    at: i64 = -1, generation: u32 = 0, hash: u32 = 0, solids: i64 = 0,
+    ok: bool = false, chunk: world::Chunk = world::Chunk {},
+}
+struct None { reads: i64 = 0, read_ns: i64 = 0, hits: i64 = 0, disk_reads: i64 = 0 }
+struct Cache {
+    entries: Page[8] = [Page {}; 8],
+    reads: i64 = 0, read_ns: i64 = 0, hits: i64 = 0, discarded: i64 = 0,
+    disk_reads: i64 = 0,
+}
+
+fn matches(page: Page&, index: world::PageIndex&, at: i64) -> bool {
+    page.at == at && page.generation == index.generations[at] &&
+    page.hash == index.hashes[at] && page.solids == index.solids[at]
+}
+fn get(cache: None&, index: world::PageIndex&, at: i64, out: world::Chunk&) -> bool { false }
+fn get(cache: Cache&, index: world::PageIndex&, at: i64, out: world::Chunk&) -> bool {
+    for i in 8 {
+        if matches(cache.entries[i], index, at) && cache.entries[i].ok {
+            out = cache.entries[i].chunk; return true;
+        }
+    }
+    return false;
+}
+fn consumed(cache: None&, index: world::PageIndex&, at: i64) {}
+fn consumed(cache: Cache&, index: world::PageIndex&, at: i64) {
+    for i in 8 {
+        if matches(cache.entries[i], index, at) && cache.entries[i].ok {
+            cache.entries[i].at = -1; cache.hits++; return;
+        }
+    }
+}

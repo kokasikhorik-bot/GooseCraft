@@ -33,6 +33,11 @@ struct Context {
     peak_mesh_capacity_bytes: i64 = 0,
     cpu_resident_chunks: i64 = 0, cpu_peak_chunks: i64 = 0, cpu_evictions: i64 = 0,
     page_commits: i64 = 0, page_writes: i64 = 0, page_loads: i64 = 0,
+    async_paging: bool = false, prefetch_hits: i64 = 0, main_page_reads: i64 = 0,
+    main_page_read_ns: i64 = 0, prefetch_worker_ns: i64 = 0, prefetch_join_ns: i64 = 0,
+    prefetch_staging_bytes: i64 = 0,
+    diagnostic_page_delay_ms: i64 = 0, diagnostic_worker_delay_ms: i64 = 0,
+    main_disk_page_reads: i64 = 0, worker_disk_page_reads: i64 = 0,
 }
 
 fn value(s: Sample, metric: i64) -> i64 {
@@ -94,7 +99,7 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
     if context.driver != "headless" && context.driver != "vulkan" && context.driver != "metal" &&
        context.driver != "direct3d12" && context.driver != "unknown" { return false; }
     let warmup = min(log.seen, log.warmup);
-    output.append(str("{\"schema\":1,\"client_version\":\"0.10.0\",\"clock\":\"os.clock_ns\",",
+    output.append(str("{\"schema\":1,\"client_version\":\"0.11.0\",\"clock\":\"os.clock_ns\",",
         "\"scope\":\"CPU loop wall time; pump includes previous-frame submission/presentation; not GPU timestamps\",",
         "\"percentiles\":\"nearest-rank on retained samples\",\"driver\":\"", context.driver,
         "\",\"offscreen\":", context.offscreen, ",\"replay\":", context.replay,
@@ -119,6 +124,14 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
         ",\"cpu_resident_chunks\":", context.cpu_resident_chunks, ",\"cpu_peak_chunks\":", context.cpu_peak_chunks,
         ",\"cpu_evictions\":", context.cpu_evictions, ",\"page_commits\":", context.page_commits,
         ",\"page_writes\":", context.page_writes, ",\"page_loads\":", context.page_loads,
+        ",\"async_paging\":", context.async_paging, ",\"prefetch_hits\":", context.prefetch_hits,
+        ",\"main_page_reads\":", context.main_page_reads, ",\"main_page_read_ns\":", context.main_page_read_ns,
+        ",\"prefetch_worker_ns\":", context.prefetch_worker_ns, ",\"prefetch_join_ns\":", context.prefetch_join_ns,
+        ",\"prefetch_staging_bytes\":", context.prefetch_staging_bytes,
+        ",\"diagnostic_page_delay_ms\":", context.diagnostic_page_delay_ms,
+        ",\"diagnostic_worker_delay_ms\":", context.diagnostic_worker_delay_ms,
+        ",\"main_disk_page_reads\":", context.main_disk_page_reads,
+        ",\"worker_disk_page_reads\":", context.worker_disk_page_reads,
         ",\"overlay_buffer_capacity_bytes\":", context.overlay_buffer_capacity_bytes,
         ",\"overlay_buffer_creations\":", context.overlay_buffer_creations, ","));
     output.append("\"memory_scope\":\"known block storage and requested GPU buffer bytes; excludes allocator, driver, RSS/VRAM totals\",\"summary\":{");

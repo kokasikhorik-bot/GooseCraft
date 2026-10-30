@@ -131,6 +131,19 @@ SDL может отложить физическое удаление до за�
 до изменения пула. `game_ns` теперь включает CPU-подгрузку/commit при движении;
 это синхронное I/O, не только физика. F5 остаётся в `save_ns`.
 
+В 0.11 добавлены `async_paging`, `prefetch_hits`, `main_page_reads`,
+`main_page_read_ns`, `prefetch_worker_ns`, `prefetch_join_ns`,
+`prefetch_staging_bytes`, `main_disk_page_reads`, `worker_disk_page_reads`,
+`diagnostic_page_delay_ms`, `diagnostic_worker_delay_ms`.
+Page reads здесь — вызовы подготовки (из файла либо seed). Disk page reads —
+попытки чтения файлов страниц; это не число kernel syscalls. Метрики main
+относятся к игровому циклу, начальная загрузка до worker сюда не входит.
+Worker time измеряется параллельно и не складывается с frame wall.
+Join измеряется отдельно после GPU flush; искусственная worker-delay туда
+может попасть, но не входит в worker preparation time. Page-delay входит
+в подготовку; ненулевые diagnostics нельзя выдавать за hardware benchmark.
+Raw columns/schema 1 остаются прежними.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

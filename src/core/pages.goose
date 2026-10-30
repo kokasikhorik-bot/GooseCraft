@@ -5,7 +5,11 @@ import .paged_world;
 import .terrain;
 import .storage;
 import .fileio;
+import .prepared;
 namespace pages;
+
+// Diagnostic only. Copied into the worker by Goose at spawn, never shared.
+var diagnostic_delay_ms: i64 = 0;
 
 fn u32_at(data: const u8[:], at: i64) -> u32 {
     var n: u32 = 0; for i in 4 { n |= (data[at + i] as u32) << (8 * i); } return n;
@@ -65,6 +69,7 @@ fn encode_page(index: world::PageIndex&, at: i64, serial: u32, chunk: world::Chu
     put(out, 12, storage::checksum(out));
 }
 fn read_page(root: const u8[:], index: world::PageIndex&, at: i64, chunk: world::Chunk&) -> bool {
+    if diagnostic_delay_ms > 0 { sleep_ms(diagnostic_delay_ms); }
     assert(active(index, at));
     if index.generations[at] == 0 {
         if index.generator != 1 { return false; }
@@ -124,7 +129,15 @@ fn save(root: const u8[:], map: world::Paged&) -> bool {
 }
 fn save(path: const u8[:], map: world::Map&) -> bool { storage::save(path, map) }
 
-fn ensure(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: i64) -> bool {
+fn read_cached<T>(root: const u8[:], map: world::Paged&, at: i64, out: world::Chunk&, cache: T&) -> bool {
+    if prepared::get(cache, map.index, at, out) { return true; }
+    if map.index.generations[at] != 0 { cache.disk_reads++; }
+    let begin = clock_ns(); let ok = read_page(root, map.index, at, out);
+    cache.reads++; cache.read_ns += clock_ns() - begin;
+    return ok;
+}
+
+fn ensure_cached<T>(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: i64, cache: T&) -> bool {
     assert(mesh_radius >= 1 && mesh_radius <= 2);
     let x = clamp(cx, -map.radius, map.radius); let z = clamp(cz, -map.radius, map.radius);
     let radius = mesh_radius + 1;
@@ -133,7 +146,7 @@ fn ensure(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: 
     var scratch = world::Chunk {};
     for at in world::slots(map) {
         wanted[at] = world::active(map, at) && ((abs(world::chunk_x(map, at) - x) <= radius && abs(world::chunk_z(map, at) - z) <= radius) || at == world::slot(0, 0, map.radius));
-        if wanted[at] && map.locations[at] < 0 && !read_page(root, map.index, at, scratch) { return false; }
+        if wanted[at] && map.locations[at] < 0 && !read_cached(root, map, at, scratch, cache) { return false; }
         if !wanted[at] && map.changed[at] { flush = true; }
     }
     if flush && !save(root, map) { return false; }
@@ -145,13 +158,18 @@ fn ensure(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: 
     for at in world::slots(map) {
         if !wanted[at] || map.locations[at] >= 0 { continue; }
         var pool: i64 = 0; while pool < 49 && map.owners[pool] >= 0 { pool++; } assert(pool < 49);
-        if !read_page(root, map.index, at, scratch) { return false; } // Fail closed if external I/O changes after preflight.
+        if !read_cached(root, map, at, scratch, cache) { return false; } // Fail closed after preflight.
         map.chunks[pool] = scratch; map.owners[pool] = at; map.locations[at] = pool; map.dirty[at] = true;
         map.resident++; map.peak = max(map.peak, map.resident);
         if map.index.generations[at] == 0 { map.generated++; } else { map.reads++; }
+        prepared::consumed(cache, map.index, at);
     }
     map.center_x = x; map.center_z = z; map.cpu_radius = radius;
     return true;
+}
+fn ensure_cached<T>(path: const u8[:], map: world::Map&, cx: i64, cz: i64, mesh_radius: i64, cache: T&) -> bool { true }
+fn ensure(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mesh_radius: i64) -> bool {
+    var cache = prepared::None {}; return ensure_cached(root, map, cx, cz, mesh_radius, cache);
 }
 fn ensure(path: const u8[:], map: world::Map&, cx: i64, cz: i64, mesh_radius: i64) -> bool { true }
 

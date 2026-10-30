@@ -90,7 +90,7 @@ def build():
 def test():
     sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
-         ROOT / "tests/support", ROOT / "benchmarks"])
+         ROOT / "tests/prefetch.goose", ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
     bad = run([GOOSE, "check", ROOT / "tests/fixtures/type_error.goose", "--offline"], expected=1)
     if "expected a value of type i64" not in bad.stderr:
@@ -141,6 +141,17 @@ def test():
                     raise RuntimeError("Save lost blocks or contains unsupported IDs")
                 if blocked.read_bytes() != b"retain this file":
                     raise RuntimeError("Failed save modified an unrelated file")
+    unsupported = run([GOOSE, "run", ROOT / "tests/prefetch.goose", "--offline"], expected=1)
+    if "JIT mode does not support threads" not in unsupported.stderr:
+        raise RuntimeError("Thread JIT probe failed for an unexpected reason")
+    for flags in ([], ["--debug"]):
+        path = save_folder / "native worker" / "мир"
+        if path.parent.exists(): shutil.rmtree(path.parent)
+        path.parent.mkdir(parents=True)
+        binary = BUILD / ("prefetch-tests" + ("-debug" if flags else "") + EXT)
+        native_build(ROOT / "tests/prefetch.goose", binary, flags)
+        if run([binary, path]).stdout.strip() != "headless prefetch: ok":
+            raise RuntimeError("Missing native worker test result")
     inspected = json.loads(run([CLIENT, "--headless", "--inspect-world", save_path]).stdout)
     if inspected != {"mode": "world-inspect", "chunks": 9, "solid_blocks": 2333, "format": 1}:
         raise RuntimeError("Native saved-world inspection failed")
@@ -426,6 +437,11 @@ def render_build():
                  ["--paged-world", "x", "--retain-meshes"], ["--paged-world", "x", "--screenshot", "index.gci"],
                  ["--paged-world", "x", "--profile", "index.gci"]):
         run([VIEWER, *args], expected=2)
+    for args in (["--sync-paging"], ["--prefetch-delay-ms", "1"], ["--page-delay-ms", "1"],
+                 ["--paged-world", "x", "--sync-paging", "--prefetch-delay-ms", "1"],
+                 ["--paged-world", "x", "--prefetch-delay-ms", "101"],
+                 ["--paged-world", "x", "--page-delay-ms", "21"]):
+        run([VIEWER, *args], expected=2)
     old_profile = BUILD / "existing profile with spaces" / "профили" / "frames.json"
     old_profile.parent.mkdir(parents=True, exist_ok=True)
     old_profile.write_bytes(b"retain profile")
@@ -562,6 +578,12 @@ def render_test(evidence):
         ("pages-mid", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "pages-mid"], 600, 0),
         ("pages-mid-legacy", [], ["--offscreen", "--paging-replay", "--world", saves / "pages-mid.gcw"], 600, 0),
         ("pages-imported", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "pages-imported"], 680, 0),
+        ("prefetch-sync", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-sync", "--sync-paging"], 680, 0),
+        ("prefetch-imported-sync", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-imported-sync", "--sync-paging"], 680, 0),
+        ("prefetch-latency", xvfb, ["--paging-replay", "--paged-world", saves / "prefetch-latency", "--page-delay-ms", "2"], 680, 0),
+        ("prefetch-latency-sync", xvfb, ["--paging-replay", "--paged-world", saves / "prefetch-latency-sync", "--sync-paging", "--page-delay-ms", "2"], 680, 0),
+        ("prefetch-delayed", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-delayed", "--prefetch-delay-ms", "10"], 680, 0),
+        ("prefetch-quit", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-quit", "--prefetch-delay-ms", "50"], 15, 0),
     ]
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
@@ -590,7 +612,8 @@ def render_test(evidence):
     origin = saves / "pages-origin.gcw"
     run([CLIENT, "--headless", "--generate-world", "12345", origin, "--radius", "4"])
     origin_before = origin.read_bytes()
-    run([CLIENT, "--headless", "--import-world", origin, saves / "pages-imported"])
+    for name in ("pages-imported", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync"):
+        run([CLIENT, "--headless", "--import-world", origin, saves / name])
     no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big", "cache-idle", "cache-idle-retained", "pages-idle"}
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
@@ -837,7 +860,9 @@ def render_test(evidence):
             if sum(row["uploaded_bytes"] for row in rows) != expected_uploads:
                 raise RuntimeError("Per-frame uploads disagree with cumulative buffers")
         for key in ("mesh_radius", "resident_chunks", "peak_resident_chunks", "mesh_evictions", "initial_meshes", "initial_uploaded_bytes", "peak_mesh_capacity_bytes",
-                    "cpu_resident_chunks", "cpu_peak_chunks", "cpu_evictions", "page_commits", "page_writes", "page_loads"):
+                    "cpu_resident_chunks", "cpu_peak_chunks", "cpu_evictions", "page_commits", "page_writes", "page_loads",
+                    "async_paging", "prefetch_hits", "main_page_reads", "main_page_read_ns", "prefetch_worker_ns", "prefetch_join_ns",
+                    "prefetch_staging_bytes", "diagnostic_page_delay_ms", "diagnostic_worker_delay_ms", "main_disk_page_reads", "worker_disk_page_reads"):
             if trace[key] != stdout[key]:
                 raise RuntimeError(f"Residency profile metadata disagrees: {name}: {key}")
         profiles[name] = {"file": str(profile_paths[name].relative_to(evidence)),
@@ -911,7 +936,10 @@ def render_test(evidence):
     for a, b in (("pages-route", "pages-route-legacy"), ("pages-route", "pages-route-window"),
                  ("pages-route", "pages-route-debug"), ("pages-mid", "pages-mid-legacy"),
                  ("pages-route", "pages-imported"), ("pages-reopen", "pages-reopen-legacy")):
-        if results[a]["png_sha256"] != results[b]["png_sha256"] or any(results[a][k] != results[b][k] for k in keys):
+        # Reopen is a real-time idle window, not fixed-step replay. Different
+        # frame durations may complete different tick counts without moving.
+        compared = [k for k in keys if a != "pages-reopen" or k != "ticks"]
+        if results[a]["png_sha256"] != results[b]["png_sha256"] or any(results[a][k] != results[b][k] for k in compared):
             raise RuntimeError(f"CPU paging changed pixels or gameplay: {a}, {b}")
     for name in ("pages-route", "pages-route-window", "pages-route-debug", "pages-imported"):
         d = results[name]
@@ -932,6 +960,33 @@ def render_test(evidence):
         "all_exported_gcw_bytes_match_resident_backend": True, "reopen_preserves_all_page_bytes": True,
         "source_gcw_retained": True, "cpu_pool_bytes": 200704, "cpu_pool_slots": 49,
         "scope": "Finite 81-chunk world, synchronous bounded CPU paging, software Vulkan/Xvfb",
+    }, indent=2) + "\n")
+    for name in ("prefetch-sync", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync", "prefetch-delayed"):
+        if results[name]["png_sha256"] != results["pages-route"]["png_sha256"] or any(results[name][k] != results["pages-route"][k] for k in keys):
+            raise RuntimeError(f"Worker scheduling or synchronous fallback changed pixels/gameplay: {name}")
+        exported = saves / (name + "-export.gcw")
+        run([CLIENT, "--headless", "--export-pages", saves / name, exported])
+        if exported.read_bytes() != (saves / "pages-route.gcw").read_bytes():
+            raise RuntimeError("Prefetch/fallback changed saved world bytes")
+    for name, d in results.items():
+        if d["async_paging"]:
+            if d["prefetch_submitted"] != d["prefetch_completed"] or d["prefetch_queue_limit"] != 1 or d["prefetch_staging_bytes"] > 34000:
+                raise RuntimeError("Unjoined worker, unbounded queue or staging storage")
+    fast, slow = results["prefetch-latency"], results["prefetch-latency-sync"]
+    if fast["prefetch_hits"] < 1 or fast["main_page_reads"] >= slow["main_page_reads"]:
+        raise RuntimeError("Prefetch did not remove main-thread reads in the controlled-latency window scenario")
+    if slow["main_page_reads"] - fast["main_page_reads"] != 2 * fast["prefetch_hits"]:
+        raise RuntimeError("Main-thread read reduction does not match consumed prepared pages")
+    if fast["main_disk_page_reads"] >= slow["main_disk_page_reads"] or fast["worker_disk_page_reads"] < 1:
+        raise RuntimeError("File-backed preparation was not moved to the real worker")
+    if results["prefetch-delayed"]["main_page_reads"] < 1 or results["prefetch-quit"]["prefetch_submitted"] < 1:
+        raise RuntimeError("Delayed worker did not exercise fallback or pending-job shutdown")
+    (evidence / "prefetch-results.json").write_text(json.dumps({
+        "png_and_gameplay_match_sync_backend": True, "exported_gcw_bytes_equal": True,
+        "worker_joined_before_report": True, "queue_limit": 1, "staging_slots": 8,
+        "controlled_latency_ms_per_page": 2, "controlled_main_reads_async": fast["main_page_reads"],
+        "controlled_main_reads_sync": slow["main_page_reads"], "controlled_prefetch_hits": fast["prefetch_hits"],
+        "scope": "Real Goose worker and file I/O; explicit artificial latency is a robustness scenario, not a hardware benchmark",
     }, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "

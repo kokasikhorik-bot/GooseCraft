@@ -17,6 +17,8 @@ GooseCraft/
 │   │   ├── paged_world.goose # фиксированный CPU-пул 49 и mapping максимум 81 чанка
 │   │   ├── pages.goose       # формат 3, preflight, commit, import/export
 │   │   ├── fileio.goose      # объявления тонкого системного I/O
+│   │   ├── prepared.goose    # bounded staging, подписи поколений и fallback metrics
+│   │   ├── prefetch.goose    # native Goose worker, очереди limit 1, кеш 8 страниц
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # GCW v1/v2, транзакционная загрузка и atomic save
@@ -40,6 +42,7 @@ GooseCraft/
 │   ├── large.goose           # большой мир, GCW v2, копии, движение и геометрия
 │   ├── residency.goose       # переходы/смена направления/правки вне GPU-набора
 │   ├── paging.goose          # CPU-пул, immutable pages, сбои, checksum и lock
+│   ├── prefetch.goose        # AOT-only: warmup, stale results, corrupt data и shutdown
 │   ├── support/surface.goose # независимая проверка покрытия меша
 │   ├── support/triangles.goose # clipping к единичным клеткам и поиск T-стыков
 │   └── fixtures/type_error.goose
@@ -158,6 +161,15 @@ halo из реальных соседей. CPU-резидентность шир
 Все codec/policy/gameplay остаются на Goose. Sidecars client/viewer/core.build
 компилируют только системный I/O из native/fileio.c. [Спецификация](paged-world-format.md),
 [доказательства и ограничения](paging-results.md).
+
+В 0.11 scene отдельно импортирует native-only `core.prefetch`; обычный
+`core.core` не требует потоков, поэтому прежние 12 suites продолжают работать
+в TinyCC. Worker получает копии Path/PageIndex/Job и не видит изменяемый мир
+или gfx. Результат валидирован до отправки, перед admission повторно сверяется
+его per-slot generation/hash/count. В `pages::ensure_cached` cache может
+заменить preflight и admission без повторного I/O; отсутствие результата
+сохраняет прежний safe path. CPU/GPU mapping, редактирование и commit — main.
+Сохранения не распараллеливались. [Проверки, затраты и контракты](prefetch-results.md).
 
 Сохранение — отдельный версионный кодек на Goose. Проверяет весь ввод до
 замены мира; GPU-данные восстанавливаются из блоков. F5 и штатный выход

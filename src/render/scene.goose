@@ -1,4 +1,5 @@
 import core.core;
+import core.prefetch;
 import .hud;
 import .replay;
 import .chunks;
@@ -16,6 +17,7 @@ struct Options {
     far_replay: bool = false,
     mesh_radius: i64 = 2, retain_meshes: bool = false, stream_replay: bool = false,
     paged: bool = false, paging_replay: bool = false,
+    sync_paging: bool = false, prefetch_delay: i64 = 0, page_delay: i64 = 0,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -70,12 +72,19 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     if options.seam_replay { state.position.x = 15.5; }
     if options.far_replay { state.position.x = 31.5; }
     while player::collides(chunk, state.position) { state.position.y += 1.0; }
+    var background: prefetch::State[>..] = [];
+    var synchronous = prepared::None {};
+    if options.paged && !options.sync_paging {
+        background.push(prefetch::State {});
+        prefetch::start(options.world_path, background[0], state.position.x, state.position.z, options.prefetch_delay);
+    }
+    defer prefetch::shutdown(background);
     var resident = residency::State {};
     let cache_radius = if options.retain_meshes { 0 } else { options.mesh_radius };
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.10.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.11.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -212,7 +221,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                     max_x = max(max_x, state.position.x);
                     accumulator -= player::STEP;
                 }
-                ensure_cpu(options, chunk, state);
+                ensure_cpu(options, chunk, state, background, synchronous);
                 hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
                 var dirty = false;
                 if !resumed && gfx::mouse_pressed(gfx::MOUSE_LEFT) && interaction::remove(chunk, hit) {
@@ -320,6 +329,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     let loop_session_ns = if profiled { tail_begin - loop_begin } else { 0 };
     gfx::flush();
     let tail_flush_ns = if profiled { clock_ns() - tail_begin } else { 0 };
+    prefetch::shutdown(background);
     let size = gfx::screen_size();
     var colored: i64 = -1; // Not measured unless a screenshot was requested.
     let readback_begin = if profiled { clock_ns() } else { 0 };
@@ -348,6 +358,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     let exit_save_ns = if profiled { clock_ns() - exit_save_begin } else { 0 };
     let totals = chunks::stats(buffers);
     let cpu = pages::stats(chunk);
+    let prepared_stats = prefetch::stats(background, synchronous);
     if profiled {
         let driver = gfx::driver();
         let context = profiling::Context { driver: driver, offscreen: offscreen, replay: replay_input,
@@ -365,6 +376,12 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             initial_uploaded_bytes: initial_uploaded_bytes, peak_mesh_capacity_bytes: peak_mesh_capacity,
             cpu_resident_chunks: cpu.resident, cpu_peak_chunks: cpu.peak, cpu_evictions: cpu.evictions,
             page_commits: cpu.commits, page_writes: cpu.writes, page_loads: cpu.loads,
+            async_paging: prepared_stats.enabled, prefetch_hits: prepared_stats.hits,
+            main_page_reads: prepared_stats.reads, main_page_read_ns: prepared_stats.read_ns,
+            prefetch_worker_ns: prepared_stats.worker_ns, prefetch_join_ns: prepared_stats.join_ns,
+            prefetch_staging_bytes: prepared_stats.staging_bytes,
+            diagnostic_page_delay_ms: options.page_delay, diagnostic_worker_delay_ms: options.prefetch_delay,
+            main_disk_page_reads: prepared_stats.main_disk_reads, worker_disk_page_reads: prepared_stats.worker_disk_reads,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -376,6 +393,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
         ",\"vertices\":", totals.vertices, ",\"indices\":", totals.indices,
         ",\"colored_pixels\":", colored, ",\"misuse_count\":", gfx::misuse_count(),
         ",\"readback_performed\":", output.len > 0,
+        ",\"diagnostic_page_delay_ms\":", options.page_delay, ",\"diagnostic_worker_delay_ms\":", options.prefetch_delay,
         ",\"reference_renderer\":", reference,
         ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
         ",\"mesh_capacity_bytes\":", totals.capacity,
@@ -413,13 +431,20 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
         rebuild_report.append(str(buffers[at].rebuilds));
     }
     rebuild_report.append("]"); rebuild_report.append(pages::report(chunk));
+    rebuild_report.append(prefetch::report(prepared_stats));
     rebuild_report.append(str(",\"cpu_block_capacity_bytes\":", bytes_of(chunk.chunks).len, "}"));
     print(rendering_report, gameplay_report, rebuild_report);
 }
 
-fn ensure_cpu<T>(options: Options, chunk: T&, state: player::State&) {
-    if !pages::ensure(options.world_path, chunk, world::chunk_coord(floor(state.position.x) as i64),
-                      world::chunk_coord(floor(state.position.z) as i64), options.mesh_radius) {
+fn ensure_cpu<T>(options: Options, chunk: T&, state: player::State&, background: prefetch::State[:], synchronous: prepared::None&) {
+    let cx = world::chunk_coord(floor(state.position.x) as i64); let cz = world::chunk_coord(floor(state.position.z) as i64);
+    var ok = false;
+    if background.len > 0 {
+        prefetch::collect(chunk, background[0]);
+        ok = pages::ensure_cached(options.world_path, chunk, cx, cz, options.mesh_radius, background[0].cache);
+        if ok { prefetch::predict(chunk, background[0], state.position.x, state.position.z, options.mesh_radius); }
+    } else { ok = pages::ensure_cached(options.world_path, chunk, cx, cz, options.mesh_radius, synchronous); }
+    if !ok {
         let saved = pages::save(options.world_path, chunk);
         write_stderr(str("paged I/O failed; stopped before using missing blocks; pending checkpoint=", saved, "\n")); exit(8);
     }
@@ -438,6 +463,10 @@ fn run_paged(options: Options, startup_begin: i64) {
     if !pages::open(options.world_path, chunk) { write_stderr("invalid paged index\n"); exit(5); }
     if options.radius_explicit && options.radius != chunk.radius { write_stderr("existing world radius differs\n"); exit(2); }
     var state = player::State {}; if options.far_replay { state.position.x = 31.5; }
-    ensure_cpu(options, chunk, state);
+    pages::diagnostic_delay_ms = options.page_delay;
+    if !pages::ensure(options.world_path, chunk, world::chunk_coord(floor(state.position.x) as i64),
+                      world::chunk_coord(floor(state.position.z) as i64), options.mesh_radius) {
+        write_stderr("paged startup I/O failed\n"); exit(8);
+    }
     run_world(options, chunk, !fresh, fresh, if fresh { options.seed } else { -1 }, startup_begin);
 }
