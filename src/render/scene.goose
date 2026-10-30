@@ -12,10 +12,18 @@ struct Options {
     single: bool = false, persistent: bool = false, away: bool = false, frames: i64 = -1,
     demo: bool = false, terrain_replay: bool = false, seed_explicit: bool = false, seed: u32 = terrain::DEFAULT_SEED,
     raw: bool = false, preview_view: i64 = 0,
+    profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
 
 fn run(options: Options) {
+    let profiled = options.profile_path.len > 0;
+    let startup_begin = if profiled { clock_ns() } else { 0 };
+    if profiled && (file_exists(options.profile_path) || is_dir(options.profile_path)) {
+        write_stderr("profile path already exists; original file was not changed\n"); exit(7);
+    }
+    var profiles: profiling::Log[>..] = [];
+    if profiled { profiles.push(profiling::Log { warmup: options.profile_warmup }); }
     let offscreen = options.offscreen;
     let preview = options.preview;
     let replay_input = options.replay_input;
@@ -46,14 +54,16 @@ fn run(options: Options) {
     var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
     var save_writes: i64 = 0;
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.6.1", 640, 480) };
+                 else { gfx::open("GooseCraft 0.7.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
     var buffers: chunks::Cache[9] = [chunks::Cache {}; 9];
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
+    let initial_mesh_begin = if profiled { clock_ns() } else { 0 };
     var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 9, reference, options.raw);
+    let initial_mesh_ns = if profiled { clock_ns() - initial_mesh_begin } else { 0 };
     let vs = embed_shader("vert", """
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec4 color;
@@ -91,6 +101,7 @@ fn run(options: Options) {
     var hud_uploads: i64 = 0;
     var hud_uploaded_bytes: i64 = 0;
     var outline_uploads: i64 = 0;
+    var outline_uploaded_bytes: i64 = 0;
     var state = player::State {};
     if options.seam_replay { state.position.x = 15.5; }
     while player::collides(chunk, state.position) { state.position.y += 1.0; }
@@ -111,12 +122,18 @@ fn run(options: Options) {
     var culled_chunks: i64 = 0;
     var drawn_vertices: i64 = 0;
     var drawn: i64 = 0;
+    var last_upload_total: i64 = if profiled { chunks::stats(buffers).uploaded_bytes } else { 0 };
+    var collector_ns_total: i64 = 0;
+    let loop_begin = if profiled { clock_ns() } else { 0 };
+    let startup_ns = if profiled { loop_begin - startup_begin } else { 0 };
     while true {
         if replay_input {
             if options.terrain_replay { replay::terrain_input(drawn); }
             else { replay::inject(drawn, options.seam_replay); }
         }
+        let t0 = if profiled { clock_ns() } else { 0 };
         if !gfx::frame() { break; }
+        let t1 = if profiled { clock_ns() } else { 0 };
         if gfx::key_pressed("F10") || (preview && gfx::key_pressed("Escape")) { break; }
         var hit = interaction::Hit {};
         if !preview {
@@ -183,12 +200,18 @@ fn run(options: Options) {
             hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
             assert(!player::collides(chunk, state.position));
         }
-        remeshes += chunks::rebuild_dirty(chunk, buffers, vertices, indices, 2, reference, options.raw);
+        let t2 = if profiled { clock_ns() } else { 0 };
+        let rebuilt = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 2, reference, options.raw);
+        remeshes += rebuilt;
+        let t3 = if profiled { clock_ns() } else { 0 };
+        var save_calls: i64 = 0;
         if options.persistent && gfx::key_pressed("F5") {
+            save_calls = 1;
             if storage::save(options.world_path, chunk) {
                 saved_revision = chunk.revision; save_status = 2; save_writes++;
             } else { save_status = 3; write_stderr("world save failed; previous file retained\n"); }
         }
+        let t4 = if profiled { clock_ns() } else { 0 };
         let size = gfx::screen_size();
         var eye = if options.away { float3 { 80.0, 40.0, 80.0 } } else if preview {
             if chunk.radius == 0 { float3 { 25.0, 23.0, 29.0 } } else { float3 { 52.0, 43.0, 55.0 } }
@@ -216,6 +239,7 @@ fn run(options: Options) {
                     abort(str("outline upload: ", gfx::error()));
                 }
                 outline_uploads++; outline_cell = hit.cell;
+                outline_uploaded_bytes += bytes_of(outline_vertices).len;
             }
         }
         gfx::begin_screen(float4 { 15.0 / 255.0, 23.0 / 255.0, 35.0 / 255.0, 1.0 });
@@ -244,35 +268,75 @@ fn run(options: Options) {
             gfx::uniforms(gfx::VERTEX, 0, Camera { gfx::mat4_identity }); gfx::draw(hud_vertices.len);
         }
         gfx::end_pass();
+        if profiled {
+            let t5 = clock_ns();
+            let total_uploads = chunks::stats(buffers).uploaded_bytes + hud_uploaded_bytes + outline_uploaded_bytes;
+            let draws = drawn_chunks + (if preview { 0 } else { 1 + (if hit.found { 1 } else { 0 }) });
+            assert(profiling::record(profiles[0], profiling::Sample {
+                frame: drawn, wall_ns: t5 - t0, pump_ns: t1 - t0, game_ns: t2 - t1,
+                mesh_ns: t3 - t2, save_ns: t4 - t3, submit_ns: t5 - t4,
+                rebuilt: rebuilt, draw_calls: draws, uploaded_bytes: total_uploads - last_upload_total,
+                paused: if active { 0 } else { 1 }, save_calls: save_calls,
+            }));
+            last_upload_total = total_uploads;
+            collector_ns_total += clock_ns() - t5;
+        }
         drawn++;
         if frames > 0 && drawn >= frames { break; }
     }
+    let tail_begin = if profiled { clock_ns() } else { 0 };
+    let loop_session_ns = if profiled { tail_begin - loop_begin } else { 0 };
     gfx::flush();
+    let tail_flush_ns = if profiled { clock_ns() - tail_begin } else { 0 };
     let size = gfx::screen_size();
-    let pixels = gfx::read_pixels(gfx::screen());
-    if pixels.len != size.x as i64 * size.y * 4 { abort("invalid screen readback size"); }
-    var colored: i64 = 0;
-    for p in 0..pixels.len / 4 {
-        let at = p * 4;
-        if abs(pixels[at] as i64 - 15) > 1 || abs(pixels[at + 1] as i64 - 23) > 1 ||
-           abs(pixels[at + 2] as i64 - 35) > 1 { colored++; }
+    var colored: i64 = -1; // Not measured unless a screenshot was requested.
+    let readback_begin = if profiled { clock_ns() } else { 0 };
+    if output.len > 0 {
+        let pixels = gfx::read_pixels(gfx::screen());
+        if pixels.len != size.x as i64 * size.y * 4 { abort("invalid screen readback size"); }
+        colored = 0;
+        for p in 0..pixels.len / 4 {
+            let at = p * 4;
+            if abs(pixels[at] as i64 - 15) > 1 || abs(pixels[at + 1] as i64 - 23) > 1 ||
+               abs(pixels[at + 2] as i64 - 35) > 1 { colored++; }
+        }
+        if !gfx::screenshot(output) {
+            write_stderr(str("screenshot failed: ", gfx::error(), "\n")); exit(4);
+        }
     }
-    if output.len > 0 && !gfx::screenshot(output) {
-        write_stderr(str("screenshot failed: ", gfx::error(), "\n")); exit(4);
-    }
+    let readback_ns = if profiled && output.len > 0 { clock_ns() - readback_begin } else { 0 };
     gfx::check();
+    let exit_save_begin = if profiled { clock_ns() } else { 0 };
     if options.persistent && saved_revision != chunk.revision {
         if !storage::save(options.world_path, chunk) {
             write_stderr("world save failed on exit; previous file retained\n"); exit(6);
         }
         saved_revision = chunk.revision; save_writes++;
     }
+    let exit_save_ns = if profiled { clock_ns() - exit_save_begin } else { 0 };
     let totals = chunks::stats(buffers);
+    if profiled {
+        let driver = gfx::driver();
+        let context = profiling::Context { driver: driver, offscreen: offscreen, replay: replay_input,
+            reference: reference, raw: options.raw, startup_ns: startup_ns, initial_mesh_ns: initial_mesh_ns,
+            tail_flush_ns: tail_flush_ns, exit_readback_ns: readback_ns, exit_save_ns: exit_save_ns,
+            loop_session_ns: loop_session_ns, collector_ns_total: collector_ns_total,
+            readback: output.len > 0, world_block_capacity_bytes: bytes_of(chunk.chunks).len,
+            active_world_block_bytes: (if chunk.radius == 0 { 1 } else { 9 }) * 4096,
+            mesh_bytes: totals.vertices * 16 + totals.indices * 4, mesh_capacity_bytes: totals.capacity,
+            mesh_buffer_creations: totals.allocations, overlay_buffer_capacity_bytes: 512 * 1024 + 24 * 16,
+            overlay_buffer_creations: 2,
+        };
+        if !profiling::save(options.profile_path, profiles[0], context) {
+            write_stderr("profile export failed; existing files retained\n"); exit(7);
+        }
+    }
     let rendering_report = str("{\"mode\":\"", if offscreen { "offscreen" } else { "window" },
         "\",\"driver\":\"", gfx::driver(), "\",\"frames\":", drawn,
         ",\"width\":", size.x, ",\"height\":", size.y,
         ",\"vertices\":", totals.vertices, ",\"indices\":", totals.indices,
         ",\"colored_pixels\":", colored, ",\"misuse_count\":", gfx::misuse_count(),
+        ",\"readback_performed\":", output.len > 0,
         ",\"reference_renderer\":", reference,
         ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
         ",\"mesh_capacity_bytes\":", totals.capacity,

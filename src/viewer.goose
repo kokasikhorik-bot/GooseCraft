@@ -9,16 +9,19 @@ fn main() {
     var options = scene::Options {};
     var no_save = false;
     var view_given = false;
+    var warmup_given = false;
     var output: u8[>..] = [];
     var world_path: u8[>..] = [];
+    var profile_path: u8[>..] = [];
     var i: i64 = 1;
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.6.1: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.7.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
+            print("       [--profile NEW-FILE.json [--profile-warmup N]]");
             print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.");
             print("Escape pauses; click/Enter resumes; R respawns; F5 saves; F10 quits and saves.");
             print("Default world: user profile / GooseCraft/worlds/default-v1.gcw. Player position is not saved.");
@@ -26,6 +29,7 @@ fn main() {
             print("Diagnostics: --single-chunk; --reference-renderer; --view-away (preview only); --seam-replay requires --demo-world.");
             print("Diagnostics: --raw-greedy disables edge stitching; --preview-view 0..3 changes overview direction.");
             print("Replay, preview and single-chunk modes are temporary unless --world is explicit.");
+            print("Profile: wall-clock CPU loop samples, last 1024 after 30 warmup frames; exported on clean exit. Use a new path.");
             return;
         } else if flag == "--offscreen" { options.offscreen = true; }
         else if flag == "--empty" { options.empty = true; }
@@ -60,6 +64,17 @@ fn main() {
             i++; world_path.append(argv[i]);
             if world_path.len == 0 { abort_args(); }
         }
+        else if flag == "--profile" {
+            if i + 1 >= argv.len || profile_path.len > 0 { abort_args(); }
+            i++; profile_path.append(argv[i]);
+            if profile_path.len == 0 { abort_args(); }
+        }
+        else if flag == "--profile-warmup" {
+            if i + 1 >= argv.len || warmup_given { abort_args(); }
+            i++; let n, ok = parse_int(argv[i]);
+            if !ok || n < 0 || n > 10000 { abort_args(); }
+            options.profile_warmup = n; warmup_given = true;
+        }
         else if flag == "--frames" {
             if i + 1 >= argv.len { abort_args(); }
             i++;
@@ -86,10 +101,13 @@ fn main() {
     if options.away && !options.preview { abort_args(); }
     if view_given && (!options.preview || options.away) { abort_args(); }
     if options.raw && options.reference { abort_args(); }
+    if warmup_given && profile_path.len == 0 { abort_args(); }
     if options.offscreen && options.frames < 0 { options.frames = 3; }
     options.persistent = world_path.len > 0 || !(no_save || options.offscreen || options.preview || options.replay_input || options.single);
     if options.persistent && world_path.len == 0 { world_path.append(storage::default_path()); }
+    if profile_path.len > 0 && (profile_path == world_path || profile_path == output) { abort_args(); }
     options.output = output; options.world_path = world_path;
+    options.profile_path = profile_path;
     scene::run(options);
 }
 

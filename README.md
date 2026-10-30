@@ -2,7 +2,7 @@
 
 Самостоятельный нативный клиент на Goose для Windows 10 x64, разрабатываемый
 полностью в Codex Cloud. Цель — реализация поведения Minecraft Java Edition
-с отдельным лаунчером. Текущий этап **0.6.1 — устранение просветов меша**:
+с отдельным лаунчером. Текущий этап **0.7.0 — измерения игрового цикла**:
 девять чанков, холмы в области 48×48, движение и редактирование через границы,
 воспроизводимая целочисленная генерация на Goose. Сохранения 0.5 читаются.
 Блоки сохраняются по F5 и при штатном выходе, загружаются при следующем запуске.
@@ -57,6 +57,12 @@ R возвращает на старт; F5 сохраняет блоки; F10 и
 Геометрии стало больше, чем в 0.6, но её всё ещё в 3,7 раза меньше, чем
 у эталона из единичных граней; CPU-построение стало медленнее.
 [Замеры, ограничения и проверки 0.6.1](docs/stitch-results.md).
+В 0.7 добавлен профиль на Goose: p50/p95/p99 wall time, стадии, remesh,
+draw calls, uploads и известные ёмкости буферов. `--profile run-001.json`
+выгружает последние 1024 samples при выходе. Девять headless suites и
+84 графических сценария; [как читать профиль](docs/profiling.md),
+[реальные замеры и границы выводов](docs/profiling-results.md).
+Обычный выход без screenshot больше не читает пиксели из GPU.
 
 ## Проверки в облаке
 
@@ -100,7 +106,7 @@ Goose, Python, Java или локальная среда разработки. �
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
 Готовые ZIP публикуются в [GitHub Actions](https://github.com/kokasikhorik-bot/GooseCraft/actions/workflows/build.yml).
-Версия 0.6.1: [успешный CI #41053468183](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183),
+Предыдущая версия 0.6.1: [успешный CI #41053468183](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183),
 [Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976740022).
 Выберите успешный run нужной версии и артефакт `goosecraft-windows-2022-x64-...`.
 Поставка содержит `BUILD-INFO.json` с версией, source SHA и ссылкой на её CI.
@@ -120,6 +126,8 @@ Windows GUI и пользовательская Windows 10 ещё не пров�
 - [Несколько чанков и сохранение](docs/multichunk-results.md)
 - [Рельеф по seed и проверки 0.6](docs/terrain-results.md)
 - [Согласование рёбер и стоимость исправления 0.6.1](docs/stitch-results.md)
+- [Профиль клиента: запуск и схема](docs/profiling.md)
+- [Измерения игрового цикла 0.7](docs/profiling-results.md)
 - [Формат сохранения](docs/world-format.md)
 - [План до серверов Java Edition](docs/roadmap.md)
 - [GitHub и статус CI](docs/github-ci.md)

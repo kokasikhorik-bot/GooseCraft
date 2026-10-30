@@ -14,6 +14,7 @@ import zlib
 import traceback
 import xml.etree.ElementTree as ET
 from png_readback import compare_boundary_pixels, differences, enclosed_clear, compare_surface_edges
+from profile_readback import validate_profile
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -86,7 +87,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -98,19 +99,31 @@ def test():
     blocked = save_folder / "blocked"
     blocked.write_bytes(b"retain this file")
     save_path = save_folder / "nested" / "world.gcw"
+    profile_path = save_folder / "profile nested" / "frames.json"
     for source in sources:
         label = "core" if source == "headless" else source
         for flags in ([], ["--debug"]):
             extra = [save_path, blocked / "world.gcw"] if source == "storage" else []
+            if source == "profiling":
+                profile_path.unlink(missing_ok=True)
+                extra = [profile_path, blocked / "frames.json"]
             run([GOOSE, "run", ROOT / f"tests/{source}.goose", "--offline", *flags,
                  *(["--", *extra] if extra else [])])
-            jit_save = save_path.read_bytes() if extra else None
+            jit_save = save_path.read_bytes() if source == "storage" else None
+            jit_profile = profile_path.read_bytes() if source == "profiling" else None
+            if source == "profiling":
+                validate_profile(profile_path, 1100)
+                profile_path.unlink()
             binary = BUILD / (label + "-tests" + ("-debug" if flags else "") + EXT)
             native_build(ROOT / f"tests/{source}.goose", binary, flags)
             result = run([binary, *extra])
             if result.stdout.strip() != f"headless {label}: ok":
                 raise RuntimeError("Missing Goose assertions result")
-            if extra:
+            if source == "profiling":
+                validate_profile(profile_path, 1100)
+                if profile_path.read_bytes() != jit_profile or blocked.read_bytes() != b"retain this file":
+                    raise RuntimeError("Native/JIT profile differs or failed export changed an unrelated file")
+            if source == "storage":
                 data = save_path.read_bytes()
                 if data != jit_save or data[:12] != b"GOOSEWLD\x01\x01\x09\x00" or len(data) != 36880:
                     raise RuntimeError("Native/JIT save format differs")
@@ -194,7 +207,8 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch (JIT/native, release/debug), "
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling (JIT/native, release/debug), "
+          "profile ring and independent percentile recomputation, "
           "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
           "independent save checksum and world inspection, CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
@@ -313,6 +327,18 @@ def render_build():
                  ["--preview-view", "0"], ["--offscreen", "--view-away", "--preview-view", "1"],
                  ["--raw-greedy", "--reference-renderer"]):
         run([VIEWER, *args], expected=2)
+    for args in (["--profile"], ["--profile", ""], ["--profile", "x", "--profile", "y"],
+                 ["--profile-warmup", "0"], ["--profile", "x", "--profile-warmup", "-1"],
+                 ["--profile", "x", "--profile-warmup", "10001"],
+                 ["--profile", "x", "--profile-warmup", "1.5"],
+                 ["--profile", "x", "--screenshot", "x"], ["--profile", "x", "--world", "x"]):
+        run([VIEWER, *args], expected=2)
+    old_profile = BUILD / "existing profile with spaces" / "профили" / "frames.json"
+    old_profile.parent.mkdir(parents=True, exist_ok=True)
+    old_profile.write_bytes(b"retain profile")
+    run([VIEWER, "--no-save", "--profile", old_profile, "--frames", "1"], expected=7)
+    if old_profile.read_bytes() != b"retain profile":
+        raise RuntimeError("Profiling preflight overwrote an existing file")
     corrupt = BUILD / "invalid load.gcw"
     corrupt.write_bytes(b"corrupt world")
     run([VIEWER, "--world", corrupt, "--frames", "1"], expected=5)
@@ -411,6 +437,22 @@ def render_test(evidence):
         ("surface-window", xvfb, ["--preview", "--no-save", "--preview-view", "2"], 3),
         ("surface-debug", [], ["--offscreen", "--preview", "--preview-view", "2"], 3),
     ]
+    profile_specs = [
+        ("timing-offscreen", [], ["--offscreen", "--terrain-replay", "--no-save"], 120, 0),
+        ("timing-window", xvfb, ["--terrain-replay", "--no-save"], 120, 0),
+        ("timing-debug", [], ["--offscreen", "--terrain-replay", "--no-save"], 120, 0),
+        ("timing-reference", [], ["--offscreen", "--terrain-replay", "--no-save", "--reference-renderer"], 120, 0),
+        ("timing-idle", xvfb, ["--no-save"], 180, 30),
+        ("timing-short", [], ["--offscreen", "--preview"], 3, 30),
+        ("timing-ring", [], ["--offscreen", "--preview"], 1100, 3),
+        ("timing-save", [], ["--offscreen", "--terrain-replay", "--world", saves / "timing-world.gcw"], 120, 0),
+        ("timing-paused", [], ["--offscreen", "--replay", "--demo-world", "--single-chunk", "--no-save"], 110, 0),
+    ]
+    profile_paths = {name: evidence / "profiles" / (name + ".json") for name, *_ in profile_specs}
+    for name, prefix, flags, frames, warmup in profile_specs:
+        profile_paths[name].unlink(missing_ok=True)
+        cases.append((name, prefix, [*flags, "--profile", profile_paths[name], "--profile-warmup", str(warmup)], frames))
+    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save"}
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
@@ -421,15 +463,24 @@ def render_test(evidence):
             persisted_region = multi_save.read_bytes()
         if name == "terrain-load":
             persisted_terrain = terrain_save.read_bytes()
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug") else VIEWER
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
-        p = run([*prefix, binary, *flags, "--frames", str(frames), "--screenshot", png], extra_env=case_env)
+        capture = name not in no_capture
+        p = run([*prefix, binary, *flags, "--frames", str(frames), *(["--screenshot", png] if capture else [])], extra_env=case_env)
         data = json.loads(p.stdout)
         if data["driver"] != "vulkan" or data["frames"] != frames or data["misuse_count"] != 0:
             raise RuntimeError("Unexpected renderer result")
         if (data["width"], data["height"]) != (640, 480):
             raise RuntimeError("Unexpected render dimensions")
+        if data["readback_performed"] != capture:
+            raise RuntimeError("Unrequested GPU readback, or requested readback omitted")
+        if not capture:
+            if data["colored_pixels"] != -1 or png.exists():
+                raise RuntimeError("Non-capture run pretended to have inspected pixels")
+            data["png_sha256"] = None
+            results[name] = data
+            continue
         if name == "empty" or name.startswith("multi-away"):
             if data["colored_pixels"] != 0 or (name == "empty" and data["indices"] != 0):
                 raise RuntimeError("Empty render is not the clear color")
@@ -585,6 +636,59 @@ def render_test(evidence):
                  expected=6, extra_env={**env, "SDL_VIDEODRIVER": "offscreen"})
     if b"retain" != blocked.read_bytes() or "world save failed" not in failed.stderr:
         raise RuntimeError("Save error damaged an unrelated file or missed the diagnostic")
+    profiles = {}
+    for name, _, _, frames, _ in profile_specs:
+        trace = validate_profile(profile_paths[name], frames)
+        rows = [dict(zip(trace["columns"], row)) for row in trace["rows"]]
+        if any(row["rebuilt"] > 2 or row["draw_calls"] > 11 for row in rows):
+            raise RuntimeError("Profile violated remesh/draw bounds")
+        stdout = results[name]
+        if trace["readback_performed"] != stdout["readback_performed"] or trace["mesh_bytes"] != stdout["mesh_bytes"]:
+            raise RuntimeError("Profile state does not match the renderer")
+        if trace["mesh_capacity_bytes"] != stdout["mesh_capacity_bytes"] or trace["mesh_buffer_creations"] != stdout["mesh_allocations"]:
+            raise RuntimeError("Profile mesh accounting disagrees")
+        if trace["world_block_capacity_bytes"] != 36864 or trace["overlay_buffer_capacity_bytes"] != 524672:
+            raise RuntimeError("Known storage capacities changed")
+        if trace["warmup_requested"] == 0:
+            if sum(row["rebuilt"] for row in rows) + stdout["chunks"] != stdout["remeshes"]:
+                raise RuntimeError("Per-frame remesh events were lost")
+            expected_uploads = stdout["mesh_uploaded_bytes"] - 158944 + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
+            # The exact initial mesh differs in reference/one-chunk modes;
+            # check the comparable full-terrain stitched replay here.
+            if name in ("timing-offscreen", "timing-window", "timing-debug", "timing-save") and sum(row["uploaded_bytes"] for row in rows) != expected_uploads:
+                raise RuntimeError("Per-frame uploads disagree with cumulative buffers")
+        profiles[name] = {"file": str(profile_paths[name].relative_to(evidence)),
+                          "seen": trace["seen"], "retained": trace["retained"], "overwritten": trace["overwritten"],
+                          "summary": trace["summary"], "collector_ns_total": trace["collector_ns_total"],
+                          "loop_session_ns": trace["loop_session_ns"], "startup_ns": trace["startup_ns"],
+                          "tail_flush_ns": trace["tail_flush_ns"], "exit_readback_ns": trace["exit_readback_ns"]}
+    for name in ("timing-offscreen", "timing-window", "timing-debug"):
+        if results[name]["png_sha256"] != results["terrain-replay"]["png_sha256"] or any(results[name][k] != results["terrain-replay"][k] for k in keys):
+            raise RuntimeError("Profiling changed terrain replay pixels or gameplay")
+    if results["timing-paused"]["png_sha256"] != results["replay-offscreen"]["png_sha256"]:
+        raise RuntimeError("Profiling changed pause/focus replay pixels")
+    pause_trace = validate_profile(profile_paths["timing-paused"])
+    if sum(row[pause_trace["columns"].index("paused")] for row in pause_trace["rows"]) != 14:
+        raise RuntimeError("Paused frames were not labeled")
+    save_trace = validate_profile(profile_paths["timing-save"])
+    if sum(row[-1] for row in save_trace["rows"]) != 1 or results["timing-save"]["save_writes"] != 1:
+        raise RuntimeError("F5 event was not captured")
+    saved = saves / "timing-world.gcw"
+    if json.loads(run([CLIENT, "--headless", "--inspect-world", saved]).stdout)["solid_blocks"] != 19196:
+        raise RuntimeError("Profiled gameplay lost world data")
+    failed_world = saves / "profile-failed-world.gcw"
+    failure = run([VIEWER, "--offscreen", "--frames", "1", "--world", failed_world,
+                   "--profile", blocked / "trace.json"], expected=7, extra_env={**env, "SDL_VIDEODRIVER": "offscreen"})
+    if "profile export failed" not in failure.stderr or blocked.read_bytes() != b"retain":
+        raise RuntimeError("Profile export failure damaged a file or missed the diagnostic")
+    if json.loads(run([CLIENT, "--headless", "--inspect-world", failed_world]).stdout)["solid_blocks"] != 19196:
+        raise RuntimeError("Profile export error prevented the world from being saved")
+    (evidence / "profiling-results.json").write_text(json.dumps({
+        "profiles": profiles, "percentiles_recomputed_independently": True,
+        "profiled_replay_png_and_gameplay_unchanged": True,
+        "profile_export_failure_exit": 7, "world_saved_before_profile_failure": True,
+        "scope": "CPU loop wall time on Linux lavapipe/Xvfb; no GPU timestamps or Windows GUI timing",
+    }, indent=2) + "\n")
     (evidence / "save-results.json").write_text(json.dumps({"single_bytes": len(persisted_single),
         "region_bytes": len(persisted_region), "reopen_preserved_bytes": True,
         "independent_adler32": True, "default_profile_saved": True,
@@ -594,7 +698,7 @@ def render_test(evidence):
     (evidence / "pixel-comparisons.json").write_text(json.dumps(comparisons, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
-          "frustum culling, seeded terrain and terrain traversal, release/debug/reference, manual/exit saves and reopen, error preservation, cached overlays")
+          "frustum culling, terrain, release/debug/reference, saves, opt-in frame profiling, independent percentiles, no unrequested readback, cached overlays")
 
 
 def package(graphics=False):
@@ -626,6 +730,7 @@ def package(graphics=False):
         "target": "windows-x64" if WINDOWS else "linux-x64", "graphics": graphics,
         "world_format": 1,
         "terrain_generator": 1,
+        "profiling_schema": 1,
     }, indent=2) + "\n")
     print("Packaged", destination)
 

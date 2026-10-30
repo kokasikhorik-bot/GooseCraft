@@ -12,6 +12,7 @@ GooseCraft/
 │   │   ├── simulation.goose  # детерминированный шаг состояния
 │   │   ├── mesh.goose        # CPU-мешер видимых граней; без gfx/SDL
 │   │   ├── stitch.goose      # согласование рёбер и триангуляция без T-стыков
+│   │   ├── profiling.goose   # bounded ring, nearest-rank summary, JSON export
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # формат 1, транзакционная загрузка и atomic save
@@ -31,6 +32,7 @@ GooseCraft/
 │   ├── visibility.goose      # плоскости отсечения и AABB
 │   ├── terrain.goose         # генерация, поверхность, приземление и roundtrip
 │   ├── stitch.goose          # площадь/цвет треугольников и T-стыки всего мира
+│   ├── profiling.goose       # прогрев, rollover, summary и JSON I/O
 │   ├── support/surface.goose # независимая проверка покрытия меша
 │   ├── support/triangles.goose # clipping к единичным клеткам и поиск T-стыков
 │   └── fixtures/type_error.goose
@@ -41,6 +43,7 @@ GooseCraft/
 │   ├── bootstrap.py         # закреплённый Goose и опциональный gfx
 │   ├── project.py           # build/test/render-build/render-test/package
 │   ├── png_readback.py       # чтение GPU-PNG для проверки границ геометрии
+│   ├── profile_readback.py   # независимый пересчёт ns summary из raw rows
 │   └── requirements.txt
 ├── .devcontainer/            # отдельные headless и graphics Docker targets
 ├── .github/workflows/build.yml

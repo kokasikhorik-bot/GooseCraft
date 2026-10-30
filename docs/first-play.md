@@ -1,6 +1,6 @@
-# Первый запуск GooseCraft 0.6.1 на Windows 10 x64
+# Первый запуск GooseCraft 0.7 на Windows 10 x64
 
-[Скачать Windows x64 ZIP 0.6.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976740022),
+Предыдущая опубликованная [Windows x64 ZIP 0.6.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976740022),
 успешный CI #41053468183, source `9188988`.
 [Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md). В 0.5 мир расширен до девяти чанков и появился файл
 сохранения. В 0.6 новые миры получают рельеф по seed; старые сохранения
@@ -85,6 +85,13 @@ Windows, модель видеокарты, появился ли кадр и к
 Проверка сохранения без GUI:
 `goosecraft.cmd --headless --inspect-world "%LOCALAPPDATA%\GooseCraft\worlds\default-v1.gcw"`.
 `BUILD-INFO.json` рядом с программой содержит версию, исходный commit и run CI.
+
+Чтобы собрать профиль игры: `goosecraft.cmd --no-save --profile run-001.json`,
+затем штатно выйти. Путь должен быть новым. Файл содержит p50/p95/p99 времени
+CPU-цикла, стадии и счётчики; это не GPU FPS. По умолчанию исключаются первые
+30 кадров, хранятся последние 1024; [инструкция и схема](profiling.md).
+Неудачная выгрузка профиля даёт exit 7; мир перед этим сохраняется обычным
+порядком. Без `--screenshot` диагностического чтения кадра при выходе нет.
 
 Облачные проверки пока подтверждают Windows-сборку/CLI и Linux-рендеринг.
 Окно на пользовательской Windows 10 и её видеодрайвере должен подтвердить
