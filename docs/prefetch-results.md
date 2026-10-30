@@ -103,3 +103,22 @@ CPU с lavapipe и требует дополнительной памяти. GPU
 RSS/VRAM, physical GPU и пользовательская Windows 10 GUI не проверены.
 Крупный мир/сеть Minecraft пока отсутствуют. Итог Windows native/CLI сборки
 публикуется отдельно в [github-ci.md](github-ci.md).
+
+Все три jobs [GitHub Actions 41091361216](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41091361216)
+для source `437bed6259aff94d534bd53eaf7f4d662b1a7c9e` завершились success:
+Windows native worker release/debug и прежние JIT/AOT проверки, Linux и
+127 графических сценариев. [Windows ZIP 0.11](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41091361216/artifacts/12993618874)
+создан; metadata/digest и границы подтверждения — в github-ci.md.
+
+Локальная Linux-поставка дополнительно запущена как UID 1000 из `/tmp`,
+network=none, исходный `/work` и compiler скрыты tmpfs, PATH только /usr/bin:/bin.
+Упакованный graphical binary выполнил 30 кадров с настоящим worker: пять hits,
+main preparation calls 0 на игровом участке, одно сохранение при выходе;
+начальная загрузка до цикла здесь не учитывается. Все worker jobs завершены,
+misuse=0, PNG/raw profile проверены. Упакованный headless затем проверил мир,
+не изменив index/page hashes. Бинарники совпали с тестовыми, 12 лицензий
+сохранены побайтно, миров/debug-программ в поставке нет. BUILD-INFO:
+0.11.0, source `437bed6`, formats [1,2,3], profiling schema 1.
+[Результат](validation/prefetch/package-results.json),
+[дополнительный кадр](validation/prefetch/package/frame.png).
+Эта проверка относится к Linux, не к скачанному Windows ZIP.
