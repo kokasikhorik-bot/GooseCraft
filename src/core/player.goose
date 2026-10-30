@@ -41,10 +41,10 @@ fn overlaps_cell(p: float3, x: i64, y: i64, z: i64) -> bool {
     p.z + RADIUS > z && p.z - RADIUS < z + 1
 }
 
-fn collides(chunk: world::Chunk&, p: float3) -> bool {
+fn collides<T>(chunk: T&, p: float3) -> bool {
     for y in clamp(floor(p.y) as i64, 0, 15)..clamp(floor(p.y + HEIGHT) as i64, 0, 15) + 1 {
-        for z in clamp(floor(p.z - RADIUS) as i64, 0, 15)..clamp(floor(p.z + RADIUS) as i64, 0, 15) + 1 {
-            for x in clamp(floor(p.x - RADIUS) as i64, 0, 15)..clamp(floor(p.x + RADIUS) as i64, 0, 15) + 1 {
+        for z in clamp(floor(p.z - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1)..clamp(floor(p.z + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) + 1 {
+            for x in clamp(floor(p.x - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1)..clamp(floor(p.x + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) + 1 {
                 if world::get(chunk, x, y, z) != 0 && overlaps_cell(p, x, y, z) { return true; }
             }
         }
@@ -54,18 +54,18 @@ fn collides(chunk: world::Chunk&, p: float3) -> bool {
 
 // Each fixed tick moves less than one voxel. Resolve each axis against all
 // intersected cells, so neither walking nor terminal-velocity falls tunnel.
-fn move_axis(chunk: world::Chunk&, state: State&, axis: i64, amount: f32) -> bool {
+fn move_axis<T>(chunk: T&, state: State&, axis: i64, amount: f32) -> bool {
     var p = state.position;
-    if axis == 0 { p.x = clamp(p.x + amount, RADIUS, 16.0 - RADIUS); }
+    if axis == 0 { p.x = clamp(p.x + amount, world::lower(chunk) + RADIUS, world::upper(chunk) - RADIUS); }
     if axis == 1 { p.y += amount; }
-    if axis == 2 { p.z = clamp(p.z + amount, RADIUS, 16.0 - RADIUS); }
+    if axis == 2 { p.z = clamp(p.z + amount, world::lower(chunk) + RADIUS, world::upper(chunk) - RADIUS); }
     var blocked = false;
-    let lo = int3 { clamp(floor(p.x - RADIUS) as i64, 0, 15) as i32,
+    let lo = int3 { clamp(floor(p.x - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32,
                     clamp(floor(p.y) as i64, 0, 15) as i32,
-                    clamp(floor(p.z - RADIUS) as i64, 0, 15) as i32 };
-    let hi = int3 { clamp(floor(p.x + RADIUS) as i64, 0, 15) as i32,
+                    clamp(floor(p.z - RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32 };
+    let hi = int3 { clamp(floor(p.x + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32,
                     clamp(floor(p.y + HEIGHT) as i64, 0, 15) as i32,
-                    clamp(floor(p.z + RADIUS) as i64, 0, 15) as i32 };
+                    clamp(floor(p.z + RADIUS) as i64, world::lower(chunk), world::upper(chunk) - 1) as i32 };
     for y in lo.y..hi.y + 1 {
         for z in lo.z..hi.z + 1 {
             for x in lo.x..hi.x + 1 {
@@ -81,7 +81,7 @@ fn move_axis(chunk: world::Chunk&, state: State&, axis: i64, amount: f32) -> boo
     return blocked;
 }
 
-fn respawn(chunk: world::Chunk&, state: State&) {
+fn respawn<T>(chunk: T&, state: State&) {
     state.position = float3 { 10.5, 1.0, 13.5 };
     // The spawn may have been edited. Find free space above its column.
     while collides(chunk, state.position) { state.position.y += 1.0; }
@@ -90,7 +90,7 @@ fn respawn(chunk: world::Chunk&, state: State&) {
     state.respawns++;
 }
 
-fn tick(chunk: world::Chunk&, state: State&, input: Input) {
+fn tick<T>(chunk: T&, state: State&, input: Input) {
     var forward = clamp(input.forward, -1.0, 1.0);
     var strafe = clamp(input.strafe, -1.0, 1.0);
     let magnitude = sqrt(forward * forward + strafe * strafe);

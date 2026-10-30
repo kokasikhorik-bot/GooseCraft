@@ -10,6 +10,7 @@ import struct
 import statistics
 import subprocess
 import sys
+import zlib
 from png_readback import compare_boundary_pixels
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -59,19 +60,48 @@ def build():
 
 
 def test():
-    run([GOOSE, "format", "--check", ROOT / "src", ROOT / "tests/headless.goose", ROOT / "tests/mesh.goose", ROOT / "tests/player.goose", ROOT / "benchmarks"])
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility")
+    run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
+         ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
     bad = run([GOOSE, "check", ROOT / "tests/fixtures/type_error.goose", "--offline"], expected=1)
     if "expected a value of type i64" not in bad.stderr:
         raise RuntimeError("Negative probe failed for an unexpected reason")
-    for source, label in (("headless", "core"), ("mesh", "mesh"), ("player", "player")):
+    save_folder = BUILD / "storage smoke with spaces" / "миры"
+    save_folder.mkdir(parents=True, exist_ok=True)
+    blocked = save_folder / "blocked"
+    blocked.write_bytes(b"retain this file")
+    save_path = save_folder / "nested" / "world.gcw"
+    for source in sources:
+        label = "core" if source == "headless" else source
         for flags in ([], ["--debug"]):
-            run([GOOSE, "run", ROOT / f"tests/{source}.goose", "--offline", *flags])
+            extra = [save_path, blocked / "world.gcw"] if source == "storage" else []
+            run([GOOSE, "run", ROOT / f"tests/{source}.goose", "--offline", *flags,
+                 *(["--", *extra] if extra else [])])
+            jit_save = save_path.read_bytes() if extra else None
             binary = BUILD / (label + "-tests" + ("-debug" if flags else "") + EXT)
             run([GOOSE, "build", ROOT / f"tests/{source}.goose", "--offline", *flags, "-o", binary])
-            result = run([binary])
+            result = run([binary, *extra])
             if result.stdout.strip() != f"headless {label}: ok":
                 raise RuntimeError("Missing Goose assertions result")
+            if extra:
+                data = save_path.read_bytes()
+                if data != jit_save or data[:12] != b"GOOSEWLD\x01\x01\x09\x00" or len(data) != 36880:
+                    raise RuntimeError("Native/JIT save format differs")
+                if struct.unpack("<I", data[12:16])[0] != zlib.adler32(data[:12] + data[16:]):
+                    raise RuntimeError("Save checksum disagrees with independent zlib")
+                if sum(value != 0 for value in data[16:]) != 2333 or max(data[16:]) != 2:
+                    raise RuntimeError("Save lost blocks or contains unsupported IDs")
+                if blocked.read_bytes() != b"retain this file":
+                    raise RuntimeError("Failed save modified an unrelated file")
+    inspected = json.loads(run([CLIENT, "--headless", "--inspect-world", save_path]).stdout)
+    if inspected != {"mode": "world-inspect", "chunks": 9, "solid_blocks": 2333, "format": 1}:
+        raise RuntimeError("Native saved-world inspection failed")
+    invalid_world = save_folder / "corrupt.gcw"
+    invalid_world.write_bytes(b"corrupt world")
+    run([CLIENT, "--headless", "--inspect-world", invalid_world], expected=5)
+    if invalid_world.read_bytes() != b"corrupt world":
+        raise RuntimeError("Inspection overwrote corrupt input")
     # Test the built executable from a different working directory, including spaces.
     scratch = BUILD / "unrelated working directory"
     scratch.mkdir(exist_ok=True)
@@ -118,7 +148,8 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, Goose core/mesh/player (JIT/native, release/debug), CLI" +
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility (JIT/native, release/debug), "
+          "independent save checksum and world inspection, CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
 
 

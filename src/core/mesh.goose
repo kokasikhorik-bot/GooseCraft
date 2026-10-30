@@ -5,13 +5,12 @@ namespace mesh;
 
 struct Vertex { position: float3, color: u8[4] }
 
-fn solid(chunk: world::Chunk&, x: i64, y: i64, z: i64) -> bool {
-    if !world::contains(x, y, z) { return false; }
-    return world::get(chunk, x, y, z) != 0;
+fn solid<T>(chunk: T&, x: i64, y: i64, z: i64) -> bool {
+    return world::sample(chunk, x, y, z) != 0;
 }
 
 // Outward counterclockwise corners: +X, -X, +Y, -Y, +Z, -Z.
-fn build_reference(chunk: world::Chunk&, vertices: Vertex[>..]&, indices: u32[>..]&) {
+fn build_reference<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&) {
     assert(vertices.len == 0 && indices.len == 0);
     let corners: u8[3][4][6] = [
         [[1, 0, 0], [1, 1, 0], [1, 1, 1], [1, 0, 1]],
@@ -58,7 +57,7 @@ fn point(axis: i64, n: f32, u: f32, v: f32) -> float3 {
 // Greedy rectangles join only coplanar, equally oriented faces of the same
 // material. A single visibility pass fills 96 masks; empty planes are skipped.
 // Scratch storage is bounded (24,576 mask bytes + 96 flags), without a heap.
-fn build(chunk: world::Chunk&, vertices: Vertex[>..]&, indices: u32[>..]&) {
+fn build<T>(chunk: T&, vertices: Vertex[>..]&, indices: u32[>..]&) {
     assert(vertices.len == 0 && indices.len == 0);
     var masks: u8[24576] = [0; 24576];
     var used: bool[96] = [false; 96];
