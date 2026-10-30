@@ -22,6 +22,7 @@ struct Options {
     deferred_respawn: bool = false,
     inventory_replay: bool = false,
     tall: bool = false,
+    ambient_occlusion: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -91,7 +92,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.14.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.15.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -100,7 +101,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     buffers.resize(world::slots(chunk), chunks::Cache {});
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
     let initial_mesh_begin = if profiled { clock_ns() } else { 0 };
-    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, world::slots(chunk), reference, options.raw);
+    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, world::slots(chunk), reference, options.raw, options.ambient_occlusion);
     let initial_meshes = remeshes;
     let initial_uploaded_bytes = chunks::stats(buffers).uploaded_bytes;
     var peak_mesh_capacity = chunks::stats(buffers).capacity;
@@ -271,8 +272,10 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
                 var dirty = false;
                 if !resumed && gfx::mouse_pressed(gfx::MOUSE_LEFT) && interaction::remove(chunk, hit) {
+                    if options.ambient_occlusion { occlusion::invalidate(chunk, hit.cell); }
                     broken++; dirty = true;
                 } else if !resumed && gfx::mouse_pressed(gfx::MOUSE_RIGHT) && interaction::place(chunk, hit, state.position, selected) {
+                    if options.ambient_occlusion { occlusion::invalidate(chunk, hit.cell + hit.normal); }
                     placed++; dirty = true;
                 }
                 if dirty && options.persistent { save_status = 1; }
@@ -292,7 +295,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             residency::update(chunk, resident, cx, cz, cache_radius);
             for at in buffers.len { if !resident.wanted[at] { chunks::evict(buffers[at]); } }
         }
-        let rebuilt = if loading { 0 } else { chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, 2, reference, options.raw) };
+        let rebuilt = if loading { 0 } else { chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, 2, reference, options.raw, options.ambient_occlusion) };
         peak_mesh_capacity = max(peak_mesh_capacity, chunks::stats(buffers).capacity);
         remeshes += rebuilt;
         let t3 = if profiled { clock_ns() } else { 0 };
@@ -445,6 +448,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             inventory_frames: inventory_frames, inventory_opens: inventory_opens, inventory_open: bag.opened,
             selected_slot: bag.selected + 1, selected_material: selected,
             world_min_y: world::lower_y(chunk), world_max_y_exclusive: world::upper_y(chunk), sectioned: options.tall,
+            ambient_occlusion: options.ambient_occlusion,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -458,6 +462,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
         ",\"readback_performed\":", output.len > 0,
         ",\"diagnostic_page_delay_ms\":", options.page_delay, ",\"diagnostic_worker_delay_ms\":", options.prefetch_delay,
         ",\"reference_renderer\":", reference,
+        ",\"ambient_occlusion\":", options.ambient_occlusion,
         ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
         ",\"mesh_capacity_bytes\":", totals.capacity,
         ",\"mesh_allocations\":", totals.allocations, ",\"mesh_uploaded_bytes\":", totals.uploaded_bytes,

@@ -1,0 +1,21 @@
+{
+  "opt_in": true,
+  "vertex_stride": 16,
+  "mask_bytes": 49152,
+  "nonuniform_faces_merge": false,
+  "window_offscreen_debug_equal": true,
+  "gameplay_and_tall_save_equal": true,
+  "images": {
+    "ao-demo": {
+      "control": "offscreen",
+      "changed_pixels": 2159,
+      "new_clear_pixels": 0
+    },
+    "ao-tall": {
+      "control": "tall-preview",
+      "changed_pixels": 40163,
+      "new_clear_pixels": 0
+    }
+  },
+  "scope": "Local vertex AO only; no skylight propagation, textures or dynamic lights"
+}

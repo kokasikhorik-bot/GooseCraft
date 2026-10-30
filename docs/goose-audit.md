@@ -193,3 +193,11 @@ MAX v4 payload потребовал увеличения общего C bound 1�
 `chunk_coord`/Euclidean `%` проверены на отрицательных Y; local Chunk/Halo
 размеры 16/18 сохранены. Tall suite JIT/AOT проверяет explicit-copy roundtrip
 growable-tail world и неизменность live data при malformed decode.
+
+В 0.15 AO использует только проверенные generic-функции, целочисленные массивы,
+bitwise/shift, `float3` и существующий vertex-color pipeline. Новых Goose/gfx
+API и extern нет, pins toolchain не менялись. Headless occlusion проверяет
+все 6 ориентаций × 4 угла × 8 occupancy-вариантов, byte colors, реальные
+world/Halo samples, консервативное объединение, stitch и dirty через XYZ-угол.
+Тот же независимый triangle clipper используется в geometry-only режиме;
+старые проверки RGBA сохранены, цвета AO проверяются отдельно до stitching.

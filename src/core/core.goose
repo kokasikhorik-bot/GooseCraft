@@ -2,6 +2,7 @@ import .world;
 import .paged_world;
 import .simulation;
 import .mesh;
+import .occlusion;
 import .player;
 import .interaction;
 import .inventory;

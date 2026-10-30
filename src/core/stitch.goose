@@ -31,6 +31,12 @@ fn apply(vertices: mesh::Vertex[>..]&, indices: u32[>..]&) -> i64 {
     for q in original / 4 {
         let base = q * 4;
         let color = vertices[base].color;
+        // Variable AO is supported only on unit faces. All larger rectangles
+        // must be constant-colored before adding edge points and fan centers.
+        let diagonal = vertices[base + 2].position - vertices[base].position;
+        if abs(diagonal.x) + abs(diagonal.y) + abs(diagonal.z) > 2.0 {
+            for i in 1..4 { assert(vertices[base + i].color == color); }
+        }
         var count: i64 = 0;
         for edge in 4 {
             ring[count] = (base + edge) as u32; count++;

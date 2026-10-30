@@ -21,7 +21,7 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.14.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.15.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
@@ -42,6 +42,7 @@ fn main() {
             print("New worlds: terrain v1, seed 12345. --seed applies only to a new world; existing saves are preserved.");
             print("Diagnostics: --single-chunk; --reference-renderer; --view-away (preview only); --seam-replay requires --demo-world.");
             print("Diagnostics: --raw-greedy disables edge stitching; --preview-view 0..3 changes overview direction.");
+            print("--ambient-occlusion enables local corner shading; defaults off. More vertices and CPU work may be needed.");
             print("Replay, preview and single-chunk modes are temporary unless --world is explicit.");
             print("Preview/replay/demo default to radius 1. Existing saves keep their size; --radius must match when reopening.");
             print("Diagnostics: --far-replay starts at x=31.5 to cross the old boundary; requires radius >=2.");
@@ -69,6 +70,10 @@ fn main() {
             options.seed = n as u32; options.seed_explicit = true;
         }
         else if flag == "--reference-renderer" { options.reference = true; }
+        else if flag == "--ambient-occlusion" {
+            if options.ambient_occlusion { abort_args(); }
+            options.ambient_occlusion = true;
+        }
         else if flag == "--radius" {
             if i + 1 >= argv.len || radius_given { abort_args(); }
             i++; let n, ok = parse_int(argv[i]);

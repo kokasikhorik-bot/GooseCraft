@@ -47,7 +47,7 @@ fn rgba(color: u8[4]) -> u32 {
     color[0] | ((color[1] as u32) << 8) | ((color[2] as u32) << 16) | ((color[3] as u32) << 24)
 }
 
-fn coverage(vertices: mesh::Vertex[:], indices: u32[:], expected: u32[:]) -> bool {
+fn coverage(vertices: mesh::Vertex[:], indices: u32[:], expected: u32[:], geometry_only: bool = false) -> bool {
     if indices.len % 3 != 0 { return false; }
     var covered: f64[24576] = [0.0; 24576];
     for t in indices.len / 3 {
@@ -55,7 +55,7 @@ fn coverage(vertices: mesh::Vertex[:], indices: u32[:], expected: u32[:]) -> boo
         let a = vertices[indices[t * 3]];
         let b = vertices[indices[t * 3 + 1]];
         let c = vertices[indices[t * 3 + 2]];
-        if a.color != b.color || a.color != c.color || a.color[3] != 255 { return false; }
+        if !geometry_only && (a.color != b.color || a.color != c.color || a.color[3] != 255) { return false; }
         let normal = cross(b.position - a.position, c.position - a.position);
         let components: f32[3] = [normal.x, normal.y, normal.z];
         var axis: i64 = -1;
@@ -86,7 +86,7 @@ fn coverage(vertices: mesh::Vertex[:], indices: u32[:], expected: u32[:]) -> boo
             if axis == 0 { x = n; y = u; z = v; }
             if axis == 1 { x = v; y = n; z = u; }
             let slot = face * 4096 + x + 16 * (z + 16 * y);
-            if expected[slot] == 0 || expected[slot] != rgba(a.color) { return false; }
+            if expected[slot] == 0 || (!geometry_only && expected[slot] != rgba(a.color)) { return false; }
             covered[slot] += part;
             if covered[slot] > 1.0000001 { return false; }
         } }

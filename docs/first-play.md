@@ -1,4 +1,4 @@
-# Первый запуск GooseCraft 0.14.0 на Windows 10 x64
+# Первый запуск GooseCraft на Windows 10 x64
 
 [Windows x64 ZIP 0.14.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13002104394),
 source `b8aa83b`, все три jobs [CI #41109972918](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918) завершились success.
@@ -9,6 +9,17 @@ source `b8aa83b`, все три jobs [CI #41109972918](https://github.com/kokasi
 Для UTF-8 аргументов путей используется app manifest Windows 10 1903+.
 Проверенный builder — Windows Server 2022; пользовательская Windows 10 GUI
 проверяется отдельно. На более старых сборках Windows 10 Unicode argv не проверен.
+
+В исходниках 0.15 добавлен optional `--ambient-occlusion`: углы рядом с блоками
+темнее, чем открытая поверхность. Для высокого мира:
+
+```bat
+goosecraft.cmd --tall-world Tall.gcw --radius 4 --ambient-occlusion
+```
+
+Параметр действует только на изображение и не записывается в мир. При следующем
+запуске можно убрать его. Материалов по-прежнему два; текстур и распространяемого
+солнечного/блочного света пока нет. [Проверки 0.15](occlusion-results.md).
 
 1. Распакуйте весь ZIP в отдельную папку. Оставьте оба `.exe`, `goosecraft.cmd`
    и лицензионные уведомления рядом. Не запускайте клиент внутри ZIP.

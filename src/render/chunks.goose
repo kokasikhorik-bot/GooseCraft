@@ -42,9 +42,11 @@ fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, refe
 }
 
 fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-           cache: Cache&, reference: bool, raw: bool) {
+           cache: Cache&, reference: bool, raw: bool, ao: bool) {
     vertices.clear(); indices.clear();
-    if reference { mesh::build_reference(source, vertices, indices); }
+    if ao && reference { occlusion::build_reference(source, vertices, indices); }
+    else if ao { occlusion::build(source, vertices, indices); }
+    else if reference { mesh::build_reference(source, vertices, indices); }
     else { mesh::build(source, vertices, indices); }
     cache.patches = vertices.len / 4;
     cache.split_patches = if reference || raw { 0 } else { stitch::apply(vertices, indices) };
@@ -59,13 +61,13 @@ fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]
 }
 
 fn rebuild_dirty<T>(map: T&, resident: residency::State&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-                 budget: i64, reference: bool, raw: bool) -> i64 {
+                 budget: i64, reference: bool, raw: bool, ao: bool) -> i64 {
     var done: i64 = 0;
     while done < budget {
         let at = residency::next(map, resident);
         if at < 0 { break; }
         var source = world::neighborhood(map, at);
-        rebuild(source, vertices, indices, caches[at], reference, raw);
+        rebuild(source, vertices, indices, caches[at], reference, raw, ao);
         residency::complete(map, resident, at);
         done++;
     }

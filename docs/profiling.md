@@ -190,6 +190,13 @@ backend. В Tall `world_chunks`/resident/remesh означают секции 16
 sectioned=false. Это нельзя выдавать за сравнение одинакового контента/расхода
 памяти с v3 paging: Tall сейчас полностью резидентный. Raw schema/columns прежние.
 
+В 0.15 `ambient_occlusion` — boolean metadata/stdout: выбран ли optional AO
+builder. Сравнивать `initial_mesh_ns`, mesh bytes/capacity и remesh нужно при
+одинаковых мире, камере, радиусе и input. Неоднородное освещение мешает greedy
+объединению, поэтому геометрии и работы может стать больше. Это не GPU timing
+или доказательство изменения FPS. Число новых dirty sections при угловой правке
+может достигать восьми; прежний бюджет два remesh за кадр сохраняется.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 
