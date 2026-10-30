@@ -76,7 +76,7 @@ fn build(vertices: mesh::Vertex[>..]&, size: int2, active: bool, selected: u8,
     let muted: u8[4] = [161, 182, 202, 255];
     let warning: u8[4] = [255, 128, 112, 255];
     rect(vertices, 0.0, 0.0, size.x, 52.0, size, [16, 24, 33, 255]);
-    text(vertices, "GOOSECRAFT 0.11.0", 12.0, 10.0, size, ink);
+    text(vertices, "GOOSECRAFT 0.11.1", 12.0, 10.0, size, ink);
     text(vertices, if save_status == 0 { "TEMP" } else if save_status == 1 { "UNSAVED" }
                   else if save_status == 2 { "SAVED" } else { "SAVE ERROR" }, 224.0, 10.0, size,
          if save_status == 3 { warning } else { muted });

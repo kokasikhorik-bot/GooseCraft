@@ -84,7 +84,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.11.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.11.1", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -377,6 +377,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             cpu_resident_chunks: cpu.resident, cpu_peak_chunks: cpu.peak, cpu_evictions: cpu.evictions,
             page_commits: cpu.commits, page_writes: cpu.writes, page_loads: cpu.loads,
             async_paging: prepared_stats.enabled, prefetch_hits: prepared_stats.hits,
+            fallback_reuses: prepared_stats.fallback_hits,
             main_page_reads: prepared_stats.reads, main_page_read_ns: prepared_stats.read_ns,
             prefetch_worker_ns: prepared_stats.worker_ns, prefetch_join_ns: prepared_stats.join_ns,
             prefetch_staging_bytes: prepared_stats.staging_bytes,

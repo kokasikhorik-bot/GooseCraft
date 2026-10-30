@@ -1,0 +1,346 @@
++ /workspace/GooseCraft/.cache/toolchain/build/goose check /workspace/GooseCraft/src/client.goose --offline
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/src/client.goose --offline -o /workspace/GooseCraft/build/goosecraft-headless
+built /workspace/GooseCraft/build/goosecraft-headless
++ /workspace/GooseCraft/.cache/toolchain/build/goose format --check /workspace/GooseCraft/src /workspace/GooseCraft/tests/headless.goose /workspace/GooseCraft/tests/mesh.goose /workspace/GooseCraft/tests/player.goose /workspace/GooseCraft/tests/region.goose /workspace/GooseCraft/tests/storage.goose /workspace/GooseCraft/tests/visibility.goose /workspace/GooseCraft/tests/terrain.goose /workspace/GooseCraft/tests/stitch.goose /workspace/GooseCraft/tests/profiling.goose /workspace/GooseCraft/tests/large.goose /workspace/GooseCraft/tests/residency.goose /workspace/GooseCraft/tests/paging.goose /workspace/GooseCraft/tests/prefetch.goose /workspace/GooseCraft/tests/support /workspace/GooseCraft/benchmarks
++ /workspace/GooseCraft/.cache/toolchain/build/goose check /workspace/GooseCraft/tests/headless.goose --offline
++ /workspace/GooseCraft/.cache/toolchain/build/goose check /workspace/GooseCraft/tests/fixtures/type_error.goose --offline
+/workspace/GooseCraft/tests/fixtures/type_error.goose:3: error: expected a value of type i64, got const u8[:]
+    let bad: i64 = "not an integer";
+  in fn main() instantiated from /workspace/GooseCraft/tests/fixtures/type_error.goose:2
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/headless.goose --offline
+headless core: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/headless.goose --offline -o /workspace/GooseCraft/build/core-tests
+built /workspace/GooseCraft/build/core-tests
++ /workspace/GooseCraft/build/core-tests
+headless core: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/headless.goose --offline --debug
+headless core: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/headless.goose --offline --debug -o /workspace/GooseCraft/build/core-tests-debug
+built /workspace/GooseCraft/build/core-tests-debug
++ /workspace/GooseCraft/build/core-tests-debug
+headless core: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/mesh.goose --offline
+headless mesh: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/mesh.goose --offline -o /workspace/GooseCraft/build/mesh-tests
+built /workspace/GooseCraft/build/mesh-tests
++ /workspace/GooseCraft/build/mesh-tests
+headless mesh: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/mesh.goose --offline --debug
+headless mesh: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/mesh.goose --offline --debug -o /workspace/GooseCraft/build/mesh-tests-debug
+built /workspace/GooseCraft/build/mesh-tests-debug
++ /workspace/GooseCraft/build/mesh-tests-debug
+headless mesh: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/player.goose --offline
+headless player: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/player.goose --offline -o /workspace/GooseCraft/build/player-tests
+built /workspace/GooseCraft/build/player-tests
++ /workspace/GooseCraft/build/player-tests
+headless player: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/player.goose --offline --debug
+headless player: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/player.goose --offline --debug -o /workspace/GooseCraft/build/player-tests-debug
+built /workspace/GooseCraft/build/player-tests-debug
++ /workspace/GooseCraft/build/player-tests-debug
+headless player: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/region.goose --offline
+headless region: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/region.goose --offline -o /workspace/GooseCraft/build/region-tests
+built /workspace/GooseCraft/build/region-tests
++ /workspace/GooseCraft/build/region-tests
+headless region: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/region.goose --offline --debug
+headless region: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/region.goose --offline --debug -o /workspace/GooseCraft/build/region-tests-debug
+built /workspace/GooseCraft/build/region-tests-debug
++ /workspace/GooseCraft/build/region-tests-debug
+headless region: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/storage.goose --offline -- /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/storage.goose --offline -o /workspace/GooseCraft/build/storage-tests
+built /workspace/GooseCraft/build/storage-tests
++ /workspace/GooseCraft/build/storage-tests /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/storage.goose --offline --debug -- /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/storage.goose --offline --debug -o /workspace/GooseCraft/build/storage-tests-debug
+built /workspace/GooseCraft/build/storage-tests-debug
++ /workspace/GooseCraft/build/storage-tests-debug /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/visibility.goose --offline
+headless visibility: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/visibility.goose --offline -o /workspace/GooseCraft/build/visibility-tests
+built /workspace/GooseCraft/build/visibility-tests
++ /workspace/GooseCraft/build/visibility-tests
+headless visibility: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/visibility.goose --offline --debug
+headless visibility: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/visibility.goose --offline --debug -o /workspace/GooseCraft/build/visibility-tests-debug
+built /workspace/GooseCraft/build/visibility-tests-debug
++ /workspace/GooseCraft/build/visibility-tests-debug
+headless visibility: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/terrain.goose --offline
+headless terrain: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/terrain.goose --offline -o /workspace/GooseCraft/build/terrain-tests
+built /workspace/GooseCraft/build/terrain-tests
++ /workspace/GooseCraft/build/terrain-tests
+headless terrain: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/terrain.goose --offline --debug
+headless terrain: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/terrain.goose --offline --debug -o /workspace/GooseCraft/build/terrain-tests-debug
+built /workspace/GooseCraft/build/terrain-tests-debug
++ /workspace/GooseCraft/build/terrain-tests-debug
+headless terrain: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/stitch.goose --offline
+headless stitch: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/stitch.goose --offline -o /workspace/GooseCraft/build/stitch-tests
+built /workspace/GooseCraft/build/stitch-tests
++ /workspace/GooseCraft/build/stitch-tests
+headless stitch: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/stitch.goose --offline --debug
+headless stitch: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/stitch.goose --offline --debug -o /workspace/GooseCraft/build/stitch-tests-debug
+built /workspace/GooseCraft/build/stitch-tests-debug
++ /workspace/GooseCraft/build/stitch-tests-debug
+headless stitch: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/profiling.goose --offline -- /workspace/GooseCraft/build/storage smoke with spaces/миры/profile nested/frames.json /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/frames.json
+headless profiling: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/profiling.goose --offline -o /workspace/GooseCraft/build/profiling-tests
+built /workspace/GooseCraft/build/profiling-tests
++ /workspace/GooseCraft/build/profiling-tests /workspace/GooseCraft/build/storage smoke with spaces/миры/profile nested/frames.json /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/frames.json
+headless profiling: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/profiling.goose --offline --debug -- /workspace/GooseCraft/build/storage smoke with spaces/миры/profile nested/frames.json /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/frames.json
+headless profiling: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/profiling.goose --offline --debug -o /workspace/GooseCraft/build/profiling-tests-debug
+built /workspace/GooseCraft/build/profiling-tests-debug
++ /workspace/GooseCraft/build/profiling-tests-debug /workspace/GooseCraft/build/storage smoke with spaces/миры/profile nested/frames.json /workspace/GooseCraft/build/storage smoke with spaces/миры/blocked/frames.json
+headless profiling: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/large.goose --offline
+headless large: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/large.goose --offline -o /workspace/GooseCraft/build/large-tests
+built /workspace/GooseCraft/build/large-tests
++ /workspace/GooseCraft/build/large-tests
+headless large: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/large.goose --offline --debug
+headless large: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/large.goose --offline --debug -o /workspace/GooseCraft/build/large-tests-debug
+built /workspace/GooseCraft/build/large-tests-debug
++ /workspace/GooseCraft/build/large-tests-debug
+headless large: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/residency.goose --offline
+headless residency: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/residency.goose --offline -o /workspace/GooseCraft/build/residency-tests
+built /workspace/GooseCraft/build/residency-tests
++ /workspace/GooseCraft/build/residency-tests
+headless residency: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/residency.goose --offline --debug
+headless residency: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/residency.goose --offline --debug -o /workspace/GooseCraft/build/residency-tests-debug
+built /workspace/GooseCraft/build/residency-tests-debug
++ /workspace/GooseCraft/build/residency-tests-debug
+headless residency: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/paging.goose --offline -- /workspace/GooseCraft/build/storage smoke with spaces/миры/paging
+headless paging: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/paging.goose --offline -o /workspace/GooseCraft/build/paging-tests
+built /workspace/GooseCraft/build/paging-tests
++ /workspace/GooseCraft/build/paging-tests /workspace/GooseCraft/build/storage smoke with spaces/миры/paging
+headless paging: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/paging.goose --offline --debug -- /workspace/GooseCraft/build/storage smoke with spaces/миры/paging
+headless paging: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/paging.goose --offline --debug -o /workspace/GooseCraft/build/paging-tests-debug
+built /workspace/GooseCraft/build/paging-tests-debug
++ /workspace/GooseCraft/build/paging-tests-debug /workspace/GooseCraft/build/storage smoke with spaces/миры/paging
+headless paging: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/tests/prefetch.goose --offline
+JIT mode does not support threads yet (TinyCC cannot place thread-local storage in an in-memory run); compile with -o and a C compiler instead
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/prefetch.goose --offline -o /workspace/GooseCraft/build/prefetch-tests
+built /workspace/GooseCraft/build/prefetch-tests
++ /workspace/GooseCraft/build/prefetch-tests /workspace/GooseCraft/build/storage smoke with spaces/миры/native worker/мир
+headless prefetch: ok
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/tests/prefetch.goose --offline --debug -o /workspace/GooseCraft/build/prefetch-tests-debug
+built /workspace/GooseCraft/build/prefetch-tests-debug
++ /workspace/GooseCraft/build/prefetch-tests-debug /workspace/GooseCraft/build/storage smoke with spaces/миры/native worker/мир
+headless prefetch: ok
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw
+{"mode":"world-inspect","chunks":9,"solid_blocks":2333,"format":1}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/corrupt.gcw
+invalid or unreadable world file
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 0 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-0-native.gcw
+{"mode":"world-generate","seed":0,"generator":1,"chunks":9,"solid_blocks":14109}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 0 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-0-jit.gcw
+{"mode":"world-generate","seed":0,"generator":1,"chunks":9,"solid_blocks":14109}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 0 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-0-jit.gcw
+world path already exists; original file was not changed
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-1-native.gcw
+{"mode":"world-generate","seed":1,"generator":1,"chunks":9,"solid_blocks":16243}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-1-jit.gcw
+{"mode":"world-generate","seed":1,"generator":1,"chunks":9,"solid_blocks":16243}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-1-jit.gcw
+world path already exists; original file was not changed
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-12345-native.gcw
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":9,"solid_blocks":19196}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-12345-jit.gcw
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":9,"solid_blocks":19196}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-12345-jit.gcw
+world path already exists; original file was not changed
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 4294967295 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-4294967295-native.gcw
+{"mode":"world-generate","seed":4294967295,"generator":1,"chunks":9,"solid_blocks":16387}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 4294967295 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-4294967295-jit.gcw
+{"mode":"world-generate","seed":4294967295,"generator":1,"chunks":9,"solid_blocks":16387}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 4294967295 /workspace/GooseCraft/build/storage smoke with spaces/миры/terrain-4294967295-jit.gcw
+world path already exists; original file was not changed
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-2-12345-native.gcw --radius 2
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":25,"solid_blocks":47699}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-2-12345-native.gcw
+{"mode":"world-inspect","chunks":25,"solid_blocks":47699,"format":2}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-2-12345-jit.gcw --radius 2
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":25,"solid_blocks":47699}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-2-12345-jit.gcw
+{"mode":"world-inspect","chunks":25,"solid_blocks":47699,"format":2}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-3-12345-native.gcw --radius 3
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":49,"solid_blocks":88087}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-3-12345-native.gcw
+{"mode":"world-inspect","chunks":49,"solid_blocks":88087,"format":2}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-3-12345-jit.gcw --radius 3
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":49,"solid_blocks":88087}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-3-12345-jit.gcw
+{"mode":"world-inspect","chunks":49,"solid_blocks":88087,"format":2}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-12345-native.gcw --radius 4
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":81,"solid_blocks":144444}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-12345-native.gcw
+{"mode":"world-inspect","chunks":81,"solid_blocks":144444,"format":2}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-12345-jit.gcw --radius 4
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":81,"solid_blocks":144444}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-12345-jit.gcw
+{"mode":"world-inspect","chunks":81,"solid_blocks":144444,"format":2}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 4294967295 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-4294967295-native.gcw --radius 4
+{"mode":"world-generate","seed":4294967295,"generator":1,"chunks":81,"solid_blocks":138914}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-4294967295-native.gcw
+{"mode":"world-inspect","chunks":81,"solid_blocks":138914,"format":2}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --generate-world 4294967295 /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-4294967295-jit.gcw --radius 4
+{"mode":"world-generate","seed":4294967295,"generator":1,"chunks":81,"solid_blocks":138914}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-4294967295-jit.gcw
+{"mode":"world-inspect","chunks":81,"solid_blocks":138914,"format":2}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --create-pages 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-native
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-native
+{"mode":"pages-inspect","format":3,"chunks":81,"solid_blocks":144444,"generator":1,"seed":12345,"serial":0}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-native /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-export-native.gcw
+{"mode":"pages-export","format":2}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --create-pages 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-native
+new paged path required; existing data retained
++ /workspace/GooseCraft/build/goosecraft-headless --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-native /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-export-native.gcw
+new export file required
++ /workspace/GooseCraft/build/goosecraft-headless --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/single-import.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-native-single-import
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-native-single-import /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-export-native-single-import.gcw
+{"mode":"pages-export","format":1}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-native-world
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-native-world /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-export-native-world.gcw
+{"mode":"pages-export","format":1}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-12345-native.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-native-large-4-12345-native
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-native-large-4-12345-native /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-export-native-large-4-12345-native.gcw
+{"mode":"pages-export","format":2}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --inspect-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/oversized-index-native
+invalid paged index
++ /workspace/GooseCraft/build/goosecraft-headless --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/oversized-index-native/index.gci /workspace/GooseCraft/build/storage smoke with spaces/миры/oversized-import-native
+paged world creation failed; no index published
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --create-pages 12345 /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-jit
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --inspect-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-jit
+{"mode":"pages-inspect","format":3,"chunks":81,"solid_blocks":144444,"generator":1,"seed":12345,"serial":0}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-jit /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-export-jit.gcw
+{"mode":"pages-export","format":2}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --create-pages 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-jit
+new paged path required; existing data retained
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-cli-jit /workspace/GooseCraft/build/storage smoke with spaces/миры/pages-export-jit.gcw
+new export file required
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/single-import.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-jit-single-import
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-jit-single-import /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-export-jit-single-import.gcw
+{"mode":"pages-export","format":1}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/nested/world.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-jit-world
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-jit-world /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-export-jit-world.gcw
+{"mode":"pages-export","format":1}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/large-4-12345-native.gcw /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-jit-large-4-12345-native
+{"mode":"pages-create","format":3}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --export-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-jit-large-4-12345-native /workspace/GooseCraft/build/storage smoke with spaces/миры/imported-export-jit-large-4-12345-native.gcw
+{"mode":"pages-export","format":2}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --inspect-pages /workspace/GooseCraft/build/storage smoke with spaces/миры/oversized-index-jit
+invalid paged index
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --import-world /workspace/GooseCraft/build/storage smoke with spaces/миры/oversized-index-jit/index.gci /workspace/GooseCraft/build/storage smoke with spaces/миры/oversized-import-jit
+paged world creation failed; no index published
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 0
+{"mode":"headless","ticks":0,"solid_blocks":256}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --ticks 0
+{"mode":"headless","ticks":0,"solid_blocks":256}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 1
+{"mode":"headless","ticks":1,"solid_blocks":256}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --ticks 1
+{"mode":"headless","ticks":1,"solid_blocks":256}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 20
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --ticks 20
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 1000
+{"mode":"headless","ticks":1000,"solid_blocks":256}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --ticks 1000
+{"mode":"headless","ticks":1000,"solid_blocks":256}
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 1000000
+{"mode":"headless","ticks":1000000,"solid_blocks":256}
++ /workspace/GooseCraft/.cache/toolchain/build/goose run /workspace/GooseCraft/src/client.goose --offline -- --headless --ticks 1000000
+{"mode":"headless","ticks":1000000,"solid_blocks":256}
++ /workspace/GooseCraft/build/goosecraft-headless --headless
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /workspace/GooseCraft/build/goosecraft-headless
+GooseCraft 0.11.1 (headless harness)
+usage: goosecraft-headless --headless [--ticks N | --inspect-world FILE] | --version | --help
+Graphical client: goosecraft-client.
+Generate: --headless --generate-world SEED FILE [--radius 1..4], default 1; never replaces existing files.
+Paged storage: --headless --create-pages SEED NEW-DIR | --inspect-pages DIR | --import-world FILE NEW-DIR | --export-pages DIR NEW-FILE.
++ /workspace/GooseCraft/build/goosecraft-headless --help
+GooseCraft 0.11.1 (headless harness)
+usage: goosecraft-headless --headless [--ticks N | --inspect-world FILE] | --version | --help
+Graphical client: goosecraft-client.
+Generate: --headless --generate-world SEED FILE [--radius 1..4], default 1; never replaces existing files.
+Paged storage: --headless --create-pages SEED NEW-DIR | --inspect-pages DIR | --import-world FILE NEW-DIR | --export-pages DIR NEW-FILE.
++ /workspace/GooseCraft/build/goosecraft-headless --version
+GooseCraft 0.11.1
++ /workspace/GooseCraft/build/goosecraft-headless --unknown
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless extra
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 1 extra
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks -1
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 1000001
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks abc
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 1.5
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --ticks 9999999999999999999999999999
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world -1 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 4294967296 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world abc /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1.5 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-radius.gcw --radius 0
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-radius.gcw --radius 5
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-radius.gcw --radius abc
+invalid arguments: use --help
++ /workspace/GooseCraft/build/goosecraft-headless --headless --generate-world 1 /workspace/GooseCraft/build/storage smoke with spaces/миры/invalid-radius.gcw --radius 1.5
+invalid arguments: use --help
+PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling/large/residency/paging (JIT/native, release/debug), growable world owners and v1/v2 vectors, profile ring and independent percentile recomputation, four fixed terrain SHA-256 vectors and refusal to replace existing worlds, independent save checksum and world inspection, CLI; Windows launcher not run on Linux

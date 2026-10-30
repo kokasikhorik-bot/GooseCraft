@@ -129,11 +129,12 @@ fn save(root: const u8[:], map: world::Paged&) -> bool {
 }
 fn save(path: const u8[:], map: world::Map&) -> bool { storage::save(path, map) }
 
-fn read_cached<T>(root: const u8[:], map: world::Paged&, at: i64, out: world::Chunk&, cache: T&) -> bool {
+fn read_cached<T>(root: const u8[:], map: world::Paged&, at: i64, out: world::Chunk&, cache: T&, preflight: bool = false) -> bool {
     if prepared::get(cache, map.index, at, out) { return true; }
     if map.index.generations[at] != 0 { cache.disk_reads++; }
     let begin = clock_ns(); let ok = read_page(root, map.index, at, out);
     cache.reads++; cache.read_ns += clock_ns() - begin;
+    if ok && preflight { prepared::remember(cache, map.index, at, out); }
     return ok;
 }
 
@@ -143,11 +144,14 @@ fn ensure_cached<T>(root: const u8[:], map: world::Paged&, cx: i64, cz: i64, mes
     let radius = mesh_radius + 1;
     if map.center_x == x && map.center_z == z && map.cpu_radius == radius { return true; }
     var wanted: bool[81] = [false; 81]; var flush = false;
-    var scratch = world::Chunk {};
     for at in world::slots(map) {
         wanted[at] = world::active(map, at) && ((abs(world::chunk_x(map, at) - x) <= radius && abs(world::chunk_z(map, at) - z) <= radius) || at == world::slot(0, 0, map.radius));
-        if wanted[at] && map.locations[at] < 0 && !read_cached(root, map, at, scratch, cache) { return false; }
         if !wanted[at] && map.changed[at] { flush = true; }
+    }
+    prepared::retain(cache, map, wanted);
+    var scratch = world::Chunk {};
+    for at in world::slots(map) {
+        if wanted[at] && map.locations[at] < 0 && !read_cached(root, map, at, scratch, cache, true) { return false; }
     }
     if flush && !save(root, map) { return false; }
     for at in world::slots(map) {

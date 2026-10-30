@@ -144,6 +144,16 @@ Join измеряется отдельно после GPU flush; искусст�
 в подготовку; ненулевые diagnostics нельзя выдавать за hardware benchmark.
 Raw columns/schema 1 остаются прежними.
 
+В 0.11.1 добавлен `fallback_reuses`: число admission, использовавших результат
+успешного синхронного preflight, оставшийся в восьми слотах staging. Это не
+фоновая работа: первое чтение входит в `main_page_reads` и `main_page_read_ns`.
+`prefetch_hits` по-прежнему считает только результаты worker. На одинаковом
+маршруте без ошибок/повторных попыток экономия относительно uncached baseline
+равна `2 * prefetch_hits + fallback_reuses`: один worker hit заменяет два main
+вызова, один fallback reuse — один. `prefetch_staging_bytes` теперь 32976 вместо
+32968: восемь дополнительных bool, число page slots прежнее. Полного RSS это
+не измеряет; raw columns/schema 1 не менялись.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

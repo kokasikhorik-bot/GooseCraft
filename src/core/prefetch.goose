@@ -26,7 +26,7 @@ thread_fn worker(path: Path, delay_ms: i64) {
         let begin = clock_ns();
         var result = Result { ticket: job.ticket,
             page: prepared::Page { at: job.at, generation: job.index.generations[job.at],
-                hash: job.index.hashes[job.at], solids: job.index.solids[job.at] } };
+                hash: job.index.hashes[job.at], solids: job.index.solids[job.at], background: true } };
         result.page.ok = pages::read_page(path.bytes[..path.length], job.index, job.at, result.page.chunk);
         result.elapsed_ns = clock_ns() - begin;
         assert(qput(result)); // At most one outstanding job, result queue limit 1.
@@ -125,17 +125,19 @@ struct Stats {
     reads: i64 = 0, read_ns: i64 = 0, staging_bytes: i64 = 0,
     request_bytes: i64 = 0, result_bytes: i64 = 0,
     main_disk_reads: i64 = 0, worker_disk_reads: i64 = 0,
+    fallback_hits: i64 = 0,
 }
 fn stats(states: State[:], synchronous: prepared::None&) -> Stats {
     if states.len == 0 { return Stats { reads: synchronous.reads, read_ns: synchronous.read_ns, main_disk_reads: synchronous.disk_reads }; }
     let s = states[0];
     return Stats { true, s.submitted, s.completed, s.cache.hits, s.cache.discarded, s.errors,
         s.worker_ns, s.join_ns, s.cache.reads, s.cache.read_ns, bytes_of(s.cache.entries).len,
-        bytes_of([Job {}]).len, bytes_of([Result {}]).len, s.cache.disk_reads, s.disk_reads };
+        bytes_of([Job {}]).len, bytes_of([Result {}]).len, s.cache.disk_reads, s.disk_reads, s.cache.fallback_hits };
 }
 fn report(s: Stats) -> u8[>..] {
     str(",\"async_paging\":", s.enabled, ",\"prefetch_submitted\":", s.submitted,
         ",\"prefetch_completed\":", s.completed, ",\"prefetch_hits\":", s.hits,
+        ",\"fallback_reuses\":", s.fallback_hits,
         ",\"prefetch_discarded\":", s.discarded, ",\"prefetch_errors\":", s.errors,
         ",\"prefetch_worker_ns\":", s.worker_ns, ",\"prefetch_join_ns\":", s.join_ns,
         ",\"main_page_reads\":", s.reads, ",\"main_page_read_ns\":", s.read_ns,

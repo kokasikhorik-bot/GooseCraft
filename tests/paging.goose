@@ -96,7 +96,59 @@ fn imported(base: const u8[:]) {
     var after: u8[>..] = []; assert(read_file(path, after) && after == before);
 }
 
+fn fallback(base: const u8[:]) {
+    let root = str(base, "/fallback"); assert(pages::prepare_new(root));
+    let handle = pages::lock(root); assert(handle != 0); defer pages::unlock(handle);
+    assert(pages::create(root, 12345, 4));
+    var map = world::Paged {}; assert(pages::open(root, map) && pages::ensure(root, map, 0, 0, 1));
+    var cache = prepared::Cache {};
+    // A cold five-page edge is read once, with no worker or extra page slots.
+    assert(pages::ensure_cached(root, map, 1, 0, 1, cache));
+    assert(cache.reads == 5 && cache.fallback_hits == 5 && cache.hits == 0);
+    for entry in cache.entries { assert(entry.at < 0); }
+    // A teleport needs fifteen incoming pages; only eight fit in staging.
+    assert(pages::ensure_cached(root, map, -4, 0, 1, cache));
+    assert(cache.reads == 27 && cache.fallback_hits == 13 && map.peak == 25);
+    assert(pages::ensure_cached(root, map, 4, 0, 1, cache));
+    assert(cache.reads == 49 && cache.fallback_hits == 21 && bytes_of(cache.entries).len < 33000);
+    for at in world::slots(map) {
+        if map.locations[at] >= 0 {
+            var expected = terrain::chunk(12345, world::chunk_x(map, at), world::chunk_z(map, at));
+            assert(map.chunks[map.locations[at]] == expected);
+        }
+    }
+    // Fail late in preflight, after eight valid pages have been staged.
+    assert(world::set(map, 64, 15, 32, 2) && pages::save(root, map));
+    assert(pages::ensure_cached(root, map, -4, 0, 1, cache));
+    let at = world::slot(4, 2, 4);
+    let path = pages::page_path(root, map.index, at, map.index.generations[at]);
+    var original: u8[4128] = [0; 4128]; assert(fileio::read_exact(path, original) == 1);
+    assert(write_file_atomic(path, "bad"));
+    let intact = map; let hits = cache.fallback_hits;
+    assert(!pages::ensure_cached(root, map, 4, 0, 1, cache) && map == intact && cache.fallback_hits == hits);
+    for entry in cache.entries { assert(entry.at >= 0 && entry.ok && !entry.background); }
+    assert(write_file_atomic(path, original) && pages::ensure_cached(root, map, 4, 0, 1, cache));
+    assert(world::get(map, 64, 15, 32) == 2 && cache.fallback_hits == hits + 8);
+    // Failed dirty-eviction commit must retain the live model and staged pages.
+    assert(world::set(map, 64, 15, 32, 1));
+    let blocked = pages::page_path(root, map.index, at, map.index.serial + 1);
+    assert(make_dir(blocked)); let pending = map;
+    assert(!pages::ensure_cached(root, map, -4, 0, 1, cache) && map == pending);
+    for entry in cache.entries { assert(entry.at >= 0 && entry.ok); }
+    assert(delete_dir(blocked) && pages::ensure_cached(root, map, -4, 0, 1, cache));
+    assert(pages::ensure_cached(root, map, 4, 0, 1, cache) && world::get(map, 64, 15, 32) == 1);
+    // Prune a stale cache entry even when it belongs to the new target window.
+    assert(pages::ensure(root, map, -4, 0, 1));
+    var old = world::Chunk {}; assert(pages::read_page(root, map.index, at, old));
+    prepared::remember(cache, map.index, at, old);
+    assert(pages::ensure(root, map, 4, 0, 1) && world::set(map, 64, 15, 32, 2));
+    assert(pages::ensure(root, map, -4, 0, 1));
+    let discarded = cache.discarded;
+    assert(pages::ensure_cached(root, map, 4, 0, 1, cache) && cache.discarded > discarded);
+    assert(world::get(map, 64, 15, 32) == 2 && cache.hits == 0);
+}
+
 fn main() {
     let argv = args(); assert(argv.len == 2);
-    codecs(); disk(argv[1]); imported(argv[1]); print("headless paging: ok");
+    codecs(); disk(argv[1]); imported(argv[1]); fallback(argv[1]); print("headless paging: ok");
 }

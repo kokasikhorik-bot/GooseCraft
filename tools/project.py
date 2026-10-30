@@ -584,6 +584,7 @@ def render_test(evidence):
         ("prefetch-latency-sync", xvfb, ["--paging-replay", "--paged-world", saves / "prefetch-latency-sync", "--sync-paging", "--page-delay-ms", "2"], 680, 0),
         ("prefetch-delayed", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-delayed", "--prefetch-delay-ms", "10"], 680, 0),
         ("prefetch-quit", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "prefetch-quit", "--prefetch-delay-ms", "50"], 15, 0),
+        ("fallback-file-delayed", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "fallback-file-delayed", "--prefetch-delay-ms", "10"], 680, 0),
     ]
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
@@ -612,7 +613,7 @@ def render_test(evidence):
     origin = saves / "pages-origin.gcw"
     run([CLIENT, "--headless", "--generate-world", "12345", origin, "--radius", "4"])
     origin_before = origin.read_bytes()
-    for name in ("pages-imported", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync"):
+    for name in ("pages-imported", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync", "fallback-file-delayed"):
         run([CLIENT, "--headless", "--import-world", origin, saves / name])
     no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big", "cache-idle", "cache-idle-retained", "pages-idle"}
     for name, prefix, flags, frames in cases:
@@ -861,7 +862,7 @@ def render_test(evidence):
                 raise RuntimeError("Per-frame uploads disagree with cumulative buffers")
         for key in ("mesh_radius", "resident_chunks", "peak_resident_chunks", "mesh_evictions", "initial_meshes", "initial_uploaded_bytes", "peak_mesh_capacity_bytes",
                     "cpu_resident_chunks", "cpu_peak_chunks", "cpu_evictions", "page_commits", "page_writes", "page_loads",
-                    "async_paging", "prefetch_hits", "main_page_reads", "main_page_read_ns", "prefetch_worker_ns", "prefetch_join_ns",
+                    "async_paging", "prefetch_hits", "fallback_reuses", "main_page_reads", "main_page_read_ns", "prefetch_worker_ns", "prefetch_join_ns",
                     "prefetch_staging_bytes", "diagnostic_page_delay_ms", "diagnostic_worker_delay_ms", "main_disk_page_reads", "worker_disk_page_reads"):
             if trace[key] != stdout[key]:
                 raise RuntimeError(f"Residency profile metadata disagrees: {name}: {key}")
@@ -961,7 +962,7 @@ def render_test(evidence):
         "source_gcw_retained": True, "cpu_pool_bytes": 200704, "cpu_pool_slots": 49,
         "scope": "Finite 81-chunk world, synchronous bounded CPU paging, software Vulkan/Xvfb",
     }, indent=2) + "\n")
-    for name in ("prefetch-sync", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync", "prefetch-delayed"):
+    for name in ("prefetch-sync", "prefetch-imported-sync", "prefetch-latency", "prefetch-latency-sync", "prefetch-delayed", "fallback-file-delayed"):
         if results[name]["png_sha256"] != results["pages-route"]["png_sha256"] or any(results[name][k] != results["pages-route"][k] for k in keys):
             raise RuntimeError(f"Worker scheduling or synchronous fallback changed pixels/gameplay: {name}")
         exported = saves / (name + "-export.gcw")
@@ -975,17 +976,29 @@ def render_test(evidence):
     fast, slow = results["prefetch-latency"], results["prefetch-latency-sync"]
     if fast["prefetch_hits"] < 1 or fast["main_page_reads"] >= slow["main_page_reads"]:
         raise RuntimeError("Prefetch did not remove main-thread reads in the controlled-latency window scenario")
-    if slow["main_page_reads"] - fast["main_page_reads"] != 2 * fast["prefetch_hits"]:
+    if fast["fallback_reuses"] < 1 or slow["main_page_reads"] - fast["main_page_reads"] != 2 * fast["prefetch_hits"] + fast["fallback_reuses"]:
         raise RuntimeError("Main-thread read reduction does not match consumed prepared pages")
     if fast["main_disk_page_reads"] >= slow["main_disk_page_reads"] or fast["worker_disk_page_reads"] < 1:
         raise RuntimeError("File-backed preparation was not moved to the real worker")
     if results["prefetch-delayed"]["main_page_reads"] < 1 or results["prefetch-quit"]["prefetch_submitted"] < 1:
         raise RuntimeError("Delayed worker did not exercise fallback or pending-job shutdown")
+    delayed = results["fallback-file-delayed"]
+    if delayed["fallback_reuses"] < 1 or delayed["main_disk_page_reads"] >= results["prefetch-imported-sync"]["main_disk_page_reads"]:
+        raise RuntimeError("Cold file-backed fallback did not reuse validated preflight pages")
+    for a, b in (("pages-route", "prefetch-sync"), ("pages-imported", "prefetch-imported-sync"),
+                 ("prefetch-delayed", "prefetch-sync"), ("fallback-file-delayed", "prefetch-imported-sync")):
+        d, baseline = results[a], results[b]
+        if baseline["main_page_reads"] - d["main_page_reads"] != 2 * d["prefetch_hits"] + d["fallback_reuses"]:
+            raise RuntimeError(f"Page read savings do not match worker/fallback reuse: {a}")
+    for name in ("prefetch-sync", "prefetch-imported-sync", "pages-route-legacy"):
+        if results[name]["fallback_reuses"] != 0:
+            raise RuntimeError("Uncached baseline unexpectedly reused a fallback page")
     (evidence / "prefetch-results.json").write_text(json.dumps({
         "png_and_gameplay_match_sync_backend": True, "exported_gcw_bytes_equal": True,
         "worker_joined_before_report": True, "queue_limit": 1, "staging_slots": 8,
         "controlled_latency_ms_per_page": 2, "controlled_main_reads_async": fast["main_page_reads"],
         "controlled_main_reads_sync": slow["main_page_reads"], "controlled_prefetch_hits": fast["prefetch_hits"],
+        "controlled_fallback_reuses": fast["fallback_reuses"],
         "scope": "Real Goose worker and file I/O; explicit artificial latency is a robustness scenario, not a hardware benchmark",
     }, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
