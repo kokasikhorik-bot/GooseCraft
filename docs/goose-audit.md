@@ -120,3 +120,14 @@ growable структуры выдал `codegen: comparing resizable structs is 
 Используется собственное сравнение metadata/блоков, без предположения о поддержке
 оператора. Итоговые владельцы, копии и кодек прошли TinyCC/native release/debug
 на GCC 12.2 и 14.2; Windows проверяется отдельным CI. [Результаты 0.8](large-world-results.md).
+
+## Дополнение 0.9 — жизненный цикл GPU-буферов
+
+Перед вытеснением мешей проверены pinned `gfx.goose:493`, реализация
+`gs_gfx_release_buffer` в `src/gfx/gfx_resources.c:214` и контракт
+`SDL_ReleaseGPUBuffer` в `SDL_gpu.h`. SDL откладывает физическое удаление до
+безопасного момента; старый handle нельзя использовать снова. GooseCraft
+сразу обнуляет handle/capacity/geometry и строит новый буфер при admission.
+Накопленные счётчики не сбрасываются, чтобы профиль не получил отрицательные
+upload deltas. 111 графических сценариев включают eviction/возврат, misuse=0;
+это не проверка полной VRAM и не запуск Windows GUI. [Результаты 0.9](residency-results.md).

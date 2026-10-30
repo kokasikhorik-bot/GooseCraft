@@ -87,6 +87,9 @@ API misuse count равен нулю.
 повторное построение/загрузка при возврате. Один прогон software GPU не
 доказывает устойчивый коэффициент FPS; CPU wall включает ожидания driver.
 GPU timestamps, общий RSS/VRAM и преимущество над Minecraft не измерены.
+В этом idle-прогоне p50 CPU wall не улучшился: 2,0989 мс с кешем против
+2,0243 мс с хранением всех мешей. Подтверждён выигрыш в запрошенной live
+ёмкости и объёме начальной подготовки; устойчивое ускорение кадров не заявляется.
 
 Видимость обрезается по границам квадратного набора чанков, без fog/LOD.
 При переходах и после R недостающая дальняя геометрия догружается по бюджету,
@@ -94,9 +97,19 @@ GPU timestamps, общий RSS/VRAM и преимущество над Minecraft
 Полная CPU-подгрузка потребует страниц с координатами/seed, нового формата и
 явного переноса GCW — это следующий отдельный этап, не возможность 0.9.
 
-Windows сборка/CLI и выдача ZIP проверяются отдельным GitHub Actions;
-актуальный итог — [github-ci.md](github-ci.md). Окно Windows 10, физический GPU
+Все три jobs [GitHub Actions 41073792518](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41073792518)
+для source `8978d6ad64a2414d71f35c7ec760423d3496588b` завершились success:
+Windows native/JIT/CLI, Linux и 111 графических сценариев.
+[Windows ZIP 0.9](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41073792518/artifacts/12986208060)
+создан; метаданные и digest — в [github-ci.md](github-ci.md). Окно Windows 10, физический GPU
 и Khronos validation layer пока не проверены. Linux Xvfb этого не заменяет.
+
+Локальная Linux-поставка собрана из проверенных native outputs. Из `/tmp`
+выполнены headless `--version` и graphical `--help` без открытия GUI, оба
+бинарника совпали с тестовыми; все 12 файлов лицензий совпали побайтно.
+BUILD-INFO указывает 0.9.0, source `8978d6a`, GCW [1,2], profiling schema 1.
+Сохранений и debug-программ нет. [Проверка состава](validation/residency/package-results.json)
+не является проверкой Windows ZIP.
 
 ## Запуск
 
