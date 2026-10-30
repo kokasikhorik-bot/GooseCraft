@@ -1,0 +1,382 @@
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/benchmarks/mesh.goose --offline -o /workspace/GooseCraft/build/mesh-benchmark
+built /workspace/GooseCraft/build/mesh-benchmark
++ /workspace/GooseCraft/.cache/toolchain/build/goose toolchain
+C compiler:   gcc 14.2.0, found on PATH
+              /usr/bin/cc
+C++ compiler: /usr/bin/g++
+style:        cc
+id:           gcc-14.2.0-a920ca84
+cmake:       /home/agent/.local/bin/cmake (3.31.6)
+git:         /usr/local/bin/git (2.52.0)
+built in:     no packages
+GOOSE_HOME:   /workspace/GooseCraft/.cache/goose-home
++ /workspace/GooseCraft/build/mesh-benchmark --iterations 1000
+{"scene":"empty","sample":0,"iterations":1000,"reference_ns":1169586,"greedy_ns":1456204,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":1,"iterations":1000,"reference_ns":1147383,"greedy_ns":1374462,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":2,"iterations":1000,"reference_ns":1146151,"greedy_ns":1376064,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":3,"iterations":1000,"reference_ns":1198309,"greedy_ns":1376425,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":4,"iterations":1000,"reference_ns":1382094,"greedy_ns":1372409,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":5,"iterations":1000,"reference_ns":1304908,"greedy_ns":1366510,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"empty","sample":6,"iterations":1000,"reference_ns":1311469,"greedy_ns":1494061,"reference_vertices":0,"greedy_vertices":0,"reference_indices":0,"greedy_indices":0,"checksum":0}
+{"scene":"flat","sample":0,"iterations":1000,"reference_ns":7652036,"greedy_ns":5401025,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":1,"iterations":1000,"reference_ns":7707909,"greedy_ns":4201393,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":2,"iterations":1000,"reference_ns":7544395,"greedy_ns":4514802,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":3,"iterations":1000,"reference_ns":7769081,"greedy_ns":4219821,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":4,"iterations":1000,"reference_ns":8117301,"greedy_ns":4164028,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":5,"iterations":1000,"reference_ns":7652707,"greedy_ns":4188814,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"flat","sample":6,"iterations":1000,"reference_ns":8388816,"greedy_ns":4158790,"reference_vertices":2304,"greedy_vertices":24,"reference_indices":3456,"greedy_indices":36,"checksum":8240000}
+{"scene":"full","sample":0,"iterations":1000,"reference_ns":40191554,"greedy_ns":27166816,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":1,"iterations":1000,"reference_ns":41205317,"greedy_ns":27927992,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":2,"iterations":1000,"reference_ns":40834484,"greedy_ns":26509585,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":3,"iterations":1000,"reference_ns":40294238,"greedy_ns":26534541,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":4,"iterations":1000,"reference_ns":40369749,"greedy_ns":26138981,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":5,"iterations":1000,"reference_ns":40847848,"greedy_ns":26713929,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"full","sample":6,"iterations":1000,"reference_ns":40958391,"greedy_ns":26798930,"reference_vertices":6144,"greedy_vertices":24,"reference_indices":9216,"greedy_indices":36,"checksum":21680000}
+{"scene":"demo","sample":0,"iterations":1000,"reference_ns":8648551,"greedy_ns":6148213,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":1,"iterations":1000,"reference_ns":8354232,"greedy_ns":5330690,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":2,"iterations":1000,"reference_ns":8354531,"greedy_ns":5268737,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":3,"iterations":1000,"reference_ns":8291216,"greedy_ns":5360335,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":4,"iterations":1000,"reference_ns":8556743,"greedy_ns":5435577,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":5,"iterations":1000,"reference_ns":8172198,"greedy_ns":5374495,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"demo","sample":6,"iterations":1000,"reference_ns":8343996,"greedy_ns":5269528,"reference_vertices":2480,"greedy_vertices":88,"reference_indices":3720,"greedy_indices":132,"checksum":9282000}
+{"scene":"terrain","sample":0,"iterations":1000,"reference_ns":35275041,"greedy_ns":30144841,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":1,"iterations":1000,"reference_ns":35346858,"greedy_ns":30607813,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":2,"iterations":1000,"reference_ns":37062643,"greedy_ns":30994081,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":3,"iterations":1000,"reference_ns":39731684,"greedy_ns":30426202,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":4,"iterations":1000,"reference_ns":39166590,"greedy_ns":30210990,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":5,"iterations":1000,"reference_ns":39129263,"greedy_ns":31393648,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"terrain","sample":6,"iterations":1000,"reference_ns":36666652,"greedy_ns":30486481,"reference_vertices":11520,"greedy_vertices":4540,"reference_indices":17280,"greedy_indices":6810,"checksum":56504000}
+{"scene":"checker","sample":0,"iterations":1000,"reference_ns":128281979,"greedy_ns":147966651,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":1,"iterations":1000,"reference_ns":127424147,"greedy_ns":148244316,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":2,"iterations":1000,"reference_ns":128569283,"greedy_ns":151062879,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":3,"iterations":1000,"reference_ns":127866700,"greedy_ns":148720892,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":4,"iterations":1000,"reference_ns":127685720,"greedy_ns":147002007,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":5,"iterations":1000,"reference_ns":127280645,"greedy_ns":148591079,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{"scene":"checker","sample":6,"iterations":1000,"reference_ns":131312336,"greedy_ns":148555526,"reference_vertices":49152,"greedy_vertices":49152,"reference_indices":73728,"greedy_indices":73728,"checksum":344150000}
+{
+  "empty": {
+    "reference_quads": 0,
+    "greedy_quads": 0,
+    "reference_mesh_bytes": 0,
+    "greedy_mesh_bytes": 0,
+    "reference_median_us": 1.198309,
+    "greedy_median_us": 1.3760640000000002,
+    "cpu_speedup": 0.8708235954141668
+  },
+  "flat": {
+    "reference_quads": 576,
+    "greedy_quads": 6,
+    "reference_mesh_bytes": 50688,
+    "greedy_mesh_bytes": 528,
+    "reference_median_us": 7.707909,
+    "greedy_median_us": 4.201393,
+    "cpu_speedup": 1.834607950267923
+  },
+  "full": {
+    "reference_quads": 1536,
+    "greedy_quads": 6,
+    "reference_mesh_bytes": 135168,
+    "greedy_mesh_bytes": 528,
+    "reference_median_us": 40.834483999999996,
+    "greedy_median_us": 26.713929,
+    "cpu_speedup": 1.5285839832845254
+  },
+  "demo": {
+    "reference_quads": 620,
+    "greedy_quads": 22,
+    "reference_mesh_bytes": 54560,
+    "greedy_mesh_bytes": 1936,
+    "reference_median_us": 8.354232,
+    "greedy_median_us": 5.360335,
+    "cpu_speedup": 1.5585279651365072
+  },
+  "terrain": {
+    "reference_quads": 2880,
+    "greedy_quads": 1135,
+    "reference_mesh_bytes": 253440,
+    "greedy_mesh_bytes": 99880,
+    "reference_median_us": 37.062642999999994,
+    "greedy_median_us": 30.486481,
+    "cpu_speedup": 1.2157074803090586
+  },
+  "checker": {
+    "reference_quads": 12288,
+    "greedy_quads": 12288,
+    "reference_mesh_bytes": 1081344,
+    "greedy_mesh_bytes": 1081344,
+    "reference_median_us": 127.8667,
+    "greedy_median_us": 148.55552600000001,
+    "cpu_speedup": 0.860733379921525
+  }
+}
+PASS: native meshing benchmark recorded; timings are observations, not CI performance gates
++ /workspace/GooseCraft/.cache/toolchain/build/goose build /workspace/GooseCraft/benchmarks/stitch.goose --offline -o /workspace/GooseCraft/build/stitch-benchmark
+built /workspace/GooseCraft/build/stitch-benchmark
++ /workspace/GooseCraft/build/stitch-benchmark --iterations 1000
+{"scene":"empty","mode":"reference","sample":0,"iterations":1000,"chunks":1,"ns":1136998,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":0,"iterations":1000,"chunks":1,"ns":1296566,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":0,"iterations":1000,"chunks":1,"ns":1385810,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":1,"iterations":1000,"chunks":1,"ns":1331308,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":1,"iterations":1000,"chunks":1,"ns":1295375,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"reference","sample":1,"iterations":1000,"chunks":1,"ns":1146803,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":2,"iterations":1000,"chunks":1,"ns":1344588,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"reference","sample":2,"iterations":1000,"chunks":1,"ns":1139091,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":2,"iterations":1000,"chunks":1,"ns":1382174,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"reference","sample":3,"iterations":1000,"chunks":1,"ns":1046403,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":3,"iterations":1000,"chunks":1,"ns":1332860,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":3,"iterations":1000,"chunks":1,"ns":1371268,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":4,"iterations":1000,"chunks":1,"ns":1314584,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":4,"iterations":1000,"chunks":1,"ns":1331208,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"reference","sample":4,"iterations":1000,"chunks":1,"ns":1038180,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":5,"iterations":1000,"chunks":1,"ns":1374272,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"reference","sample":5,"iterations":1000,"chunks":1,"ns":1158551,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":5,"iterations":1000,"chunks":1,"ns":1325420,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"reference","sample":6,"iterations":1000,"chunks":1,"ns":1101986,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"raw-greedy","sample":6,"iterations":1000,"chunks":1,"ns":1413340,"vertices":0,"indices":0,"checksum":0}
+{"scene":"empty","mode":"stitched","sample":6,"iterations":1000,"chunks":1,"ns":1276777,"vertices":0,"indices":0,"checksum":0}
+{"scene":"flat","mode":"reference","sample":0,"iterations":1000,"chunks":1,"ns":7962961,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"raw-greedy","sample":0,"iterations":1000,"chunks":1,"ns":5204933,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"stitched","sample":0,"iterations":1000,"chunks":1,"ns":8071564,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"flat","mode":"raw-greedy","sample":1,"iterations":1000,"chunks":1,"ns":5502437,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"stitched","sample":1,"iterations":1000,"chunks":1,"ns":7991685,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"flat","mode":"reference","sample":1,"iterations":1000,"chunks":1,"ns":7932285,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"stitched","sample":2,"iterations":1000,"chunks":1,"ns":7942962,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"flat","mode":"reference","sample":2,"iterations":1000,"chunks":1,"ns":8077773,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"raw-greedy","sample":2,"iterations":1000,"chunks":1,"ns":5103091,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"reference","sample":3,"iterations":1000,"chunks":1,"ns":7943893,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"raw-greedy","sample":3,"iterations":1000,"chunks":1,"ns":5311402,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"stitched","sample":3,"iterations":1000,"chunks":1,"ns":7997643,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"flat","mode":"raw-greedy","sample":4,"iterations":1000,"chunks":1,"ns":5073587,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"stitched","sample":4,"iterations":1000,"chunks":1,"ns":7936151,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"flat","mode":"reference","sample":4,"iterations":1000,"chunks":1,"ns":8205384,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"stitched","sample":5,"iterations":1000,"chunks":1,"ns":7926437,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"flat","mode":"reference","sample":5,"iterations":1000,"chunks":1,"ns":7852676,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"raw-greedy","sample":5,"iterations":1000,"chunks":1,"ns":5064473,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"reference","sample":6,"iterations":1000,"chunks":1,"ns":8059736,"vertices":2304,"indices":3456,"checksum":8113000}
+{"scene":"flat","mode":"raw-greedy","sample":6,"iterations":1000,"chunks":1,"ns":5089251,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"flat","mode":"stitched","sample":6,"iterations":1000,"chunks":1,"ns":7932095,"vertices":270,"indices":792,"checksum":1126000}
+{"scene":"full","mode":"reference","sample":0,"iterations":1000,"chunks":1,"ns":47277432,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"raw-greedy","sample":0,"iterations":1000,"chunks":1,"ns":39299388,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"stitched","sample":0,"iterations":1000,"chunks":1,"ns":43475765,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"full","mode":"raw-greedy","sample":1,"iterations":1000,"chunks":1,"ns":39444685,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"stitched","sample":1,"iterations":1000,"chunks":1,"ns":43531929,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"full","mode":"reference","sample":1,"iterations":1000,"chunks":1,"ns":47314788,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"stitched","sample":2,"iterations":1000,"chunks":1,"ns":43989682,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"full","mode":"reference","sample":2,"iterations":1000,"chunks":1,"ns":47960492,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"raw-greedy","sample":2,"iterations":1000,"chunks":1,"ns":39895328,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"reference","sample":3,"iterations":1000,"chunks":1,"ns":47658802,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"raw-greedy","sample":3,"iterations":1000,"chunks":1,"ns":39516121,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"stitched","sample":3,"iterations":1000,"chunks":1,"ns":43326642,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"full","mode":"raw-greedy","sample":4,"iterations":1000,"chunks":1,"ns":39487089,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"stitched","sample":4,"iterations":1000,"chunks":1,"ns":43427523,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"full","mode":"reference","sample":4,"iterations":1000,"chunks":1,"ns":47177322,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"stitched","sample":5,"iterations":1000,"chunks":1,"ns":43439671,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"full","mode":"reference","sample":5,"iterations":1000,"chunks":1,"ns":49095767,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"raw-greedy","sample":5,"iterations":1000,"chunks":1,"ns":39592576,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"reference","sample":6,"iterations":1000,"chunks":1,"ns":47709287,"vertices":6144,"indices":9216,"checksum":21553000}
+{"scene":"full","mode":"raw-greedy","sample":6,"iterations":1000,"chunks":1,"ns":39606086,"vertices":24,"indices":36,"checksum":127000}
+{"scene":"full","mode":"stitched","sample":6,"iterations":1000,"chunks":1,"ns":43659349,"vertices":390,"indices":1152,"checksum":1606000}
+{"scene":"demo","mode":"reference","sample":0,"iterations":1000,"chunks":1,"ns":8367055,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"raw-greedy","sample":0,"iterations":1000,"chunks":1,"ns":6541259,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"stitched","sample":0,"iterations":1000,"chunks":1,"ns":10427622,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"demo","mode":"raw-greedy","sample":1,"iterations":1000,"chunks":1,"ns":6310103,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"stitched","sample":1,"iterations":1000,"chunks":1,"ns":10499549,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"demo","mode":"reference","sample":1,"iterations":1000,"chunks":1,"ns":8633904,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"stitched","sample":2,"iterations":1000,"chunks":1,"ns":10430987,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"demo","mode":"reference","sample":2,"iterations":1000,"chunks":1,"ns":8666171,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"raw-greedy","sample":2,"iterations":1000,"chunks":1,"ns":6366187,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"reference","sample":3,"iterations":1000,"chunks":1,"ns":8299254,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"raw-greedy","sample":3,"iterations":1000,"chunks":1,"ns":6319056,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"stitched","sample":3,"iterations":1000,"chunks":1,"ns":10450166,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"demo","mode":"raw-greedy","sample":4,"iterations":1000,"chunks":1,"ns":6222623,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"stitched","sample":4,"iterations":1000,"chunks":1,"ns":10524427,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"demo","mode":"reference","sample":4,"iterations":1000,"chunks":1,"ns":8440084,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"stitched","sample":5,"iterations":1000,"chunks":1,"ns":11286905,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"demo","mode":"reference","sample":5,"iterations":1000,"chunks":1,"ns":9290184,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"raw-greedy","sample":5,"iterations":1000,"chunks":1,"ns":6435560,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"reference","sample":6,"iterations":1000,"chunks":1,"ns":9139128,"vertices":2480,"indices":3720,"checksum":8827000}
+{"scene":"demo","mode":"raw-greedy","sample":6,"iterations":1000,"chunks":1,"ns":6709359,"vertices":88,"indices":132,"checksum":455000}
+{"scene":"demo","mode":"stitched","sample":6,"iterations":1000,"chunks":1,"ns":11007228,"vertices":341,"indices":924,"checksum":1396000}
+{"scene":"terrain-region","mode":"reference","sample":0,"iterations":1000,"chunks":9,"ns":233098139,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":0,"iterations":1000,"chunks":9,"ns":230983230,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"stitched","sample":0,"iterations":1000,"chunks":9,"ns":302658026,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":1,"iterations":1000,"chunks":9,"ns":237610467,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"stitched","sample":1,"iterations":1000,"chunks":9,"ns":305188335,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"terrain-region","mode":"reference","sample":1,"iterations":1000,"chunks":9,"ns":237713351,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"stitched","sample":2,"iterations":1000,"chunks":9,"ns":300119135,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"terrain-region","mode":"reference","sample":2,"iterations":1000,"chunks":9,"ns":229430642,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":2,"iterations":1000,"chunks":9,"ns":232339276,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"reference","sample":3,"iterations":1000,"chunks":9,"ns":226901615,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":3,"iterations":1000,"chunks":9,"ns":233522222,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"stitched","sample":3,"iterations":1000,"chunks":9,"ns":299125301,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":4,"iterations":1000,"chunks":9,"ns":231241916,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"stitched","sample":4,"iterations":1000,"chunks":9,"ns":298103515,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"terrain-region","mode":"reference","sample":4,"iterations":1000,"chunks":9,"ns":227617179,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"stitched","sample":5,"iterations":1000,"chunks":9,"ns":300605651,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"terrain-region","mode":"reference","sample":5,"iterations":1000,"chunks":9,"ns":227584041,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":5,"iterations":1000,"chunks":9,"ns":230917489,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"reference","sample":6,"iterations":1000,"chunks":9,"ns":227360097,"vertices":26792,"indices":40188,"checksum":94223000}
+{"scene":"terrain-region","mode":"raw-greedy","sample":6,"iterations":1000,"chunks":9,"ns":229869824,"vertices":3268,"indices":4902,"checksum":11825000}
+{"scene":"terrain-region","mode":"stitched","sample":6,"iterations":1000,"chunks":9,"ns":302966055,"vertices":6208,"indices":14904,"checksum":24888000}
+{"scene":"checker","mode":"reference","sample":0,"iterations":1000,"chunks":1,"ns":130712600,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":0,"iterations":1000,"chunks":1,"ns":155607471,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":0,"iterations":1000,"chunks":1,"ns":173870409,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":1,"iterations":1000,"chunks":1,"ns":156668706,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":1,"iterations":1000,"chunks":1,"ns":173245677,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"reference","sample":1,"iterations":1000,"chunks":1,"ns":130936414,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":2,"iterations":1000,"chunks":1,"ns":174815782,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"reference","sample":2,"iterations":1000,"chunks":1,"ns":129269526,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":2,"iterations":1000,"chunks":1,"ns":157598874,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"reference","sample":3,"iterations":1000,"chunks":1,"ns":131531282,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":3,"iterations":1000,"chunks":1,"ns":158680840,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":3,"iterations":1000,"chunks":1,"ns":174932886,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":4,"iterations":1000,"chunks":1,"ns":156157211,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":4,"iterations":1000,"chunks":1,"ns":173032719,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"reference","sample":4,"iterations":1000,"chunks":1,"ns":133400594,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":5,"iterations":1000,"chunks":1,"ns":173600577,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"reference","sample":5,"iterations":1000,"chunks":1,"ns":133500048,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":5,"iterations":1000,"chunks":1,"ns":156205057,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"reference","sample":6,"iterations":1000,"chunks":1,"ns":131977156,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"raw-greedy","sample":6,"iterations":1000,"chunks":1,"ns":155904798,"vertices":49152,"indices":73728,"checksum":172075000}
+{"scene":"checker","mode":"stitched","sample":6,"iterations":1000,"chunks":1,"ns":173056502,"vertices":49152,"indices":73728,"checksum":172075000}
+{
+  "empty": {
+    "reference": {
+      "vertices": 0,
+      "indices": 0,
+      "chunks": 1,
+      "mesh_bytes": 0,
+      "median_us": 1.136998
+    },
+    "raw-greedy": {
+      "vertices": 0,
+      "indices": 0,
+      "chunks": 1,
+      "mesh_bytes": 0,
+      "median_us": 1.331308
+    },
+    "stitched": {
+      "vertices": 0,
+      "indices": 0,
+      "chunks": 1,
+      "mesh_bytes": 0,
+      "median_us": 1.344588
+    }
+  },
+  "flat": {
+    "reference": {
+      "vertices": 2304,
+      "indices": 3456,
+      "chunks": 1,
+      "mesh_bytes": 50688,
+      "median_us": 7.962961
+    },
+    "raw-greedy": {
+      "vertices": 24,
+      "indices": 36,
+      "chunks": 1,
+      "mesh_bytes": 528,
+      "median_us": 5.103091
+    },
+    "stitched": {
+      "vertices": 270,
+      "indices": 792,
+      "chunks": 1,
+      "mesh_bytes": 7488,
+      "median_us": 7.9429620000000005
+    }
+  },
+  "full": {
+    "reference": {
+      "vertices": 6144,
+      "indices": 9216,
+      "chunks": 1,
+      "mesh_bytes": 135168,
+      "median_us": 47.658802
+    },
+    "raw-greedy": {
+      "vertices": 24,
+      "indices": 36,
+      "chunks": 1,
+      "mesh_bytes": 528,
+      "median_us": 39.516121
+    },
+    "stitched": {
+      "vertices": 390,
+      "indices": 1152,
+      "chunks": 1,
+      "mesh_bytes": 10848,
+      "median_us": 43.475765
+    }
+  },
+  "demo": {
+    "reference": {
+      "vertices": 2480,
+      "indices": 3720,
+      "chunks": 1,
+      "mesh_bytes": 54560,
+      "median_us": 8.633904000000001
+    },
+    "raw-greedy": {
+      "vertices": 88,
+      "indices": 132,
+      "chunks": 1,
+      "mesh_bytes": 1936,
+      "median_us": 6.366187
+    },
+    "stitched": {
+      "vertices": 341,
+      "indices": 924,
+      "chunks": 1,
+      "mesh_bytes": 9152,
+      "median_us": 10.499549
+    }
+  },
+  "terrain-region": {
+    "reference": {
+      "vertices": 26792,
+      "indices": 40188,
+      "chunks": 9,
+      "mesh_bytes": 589424,
+      "median_us": 227.617179
+    },
+    "raw-greedy": {
+      "vertices": 3268,
+      "indices": 4902,
+      "chunks": 9,
+      "mesh_bytes": 71896,
+      "median_us": 231.241916
+    },
+    "stitched": {
+      "vertices": 6208,
+      "indices": 14904,
+      "chunks": 9,
+      "mesh_bytes": 158944,
+      "median_us": 300.605651
+    }
+  },
+  "checker": {
+    "reference": {
+      "vertices": 49152,
+      "indices": 73728,
+      "chunks": 1,
+      "mesh_bytes": 1081344,
+      "median_us": 131.531282
+    },
+    "raw-greedy": {
+      "vertices": 49152,
+      "indices": 73728,
+      "chunks": 1,
+      "mesh_bytes": 1081344,
+      "median_us": 156.205057
+    },
+    "stitched": {
+      "vertices": 49152,
+      "indices": 73728,
+      "chunks": 1,
+      "mesh_bytes": 1081344,
+      "median_us": 173.600577
+    }
+  }
+}
+PASS: reference/raw-greedy/stitched costs recorded; no timing pass/fail threshold

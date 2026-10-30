@@ -3,10 +3,11 @@ import os;
 import core.core;
 
 fn usage() {
-    print("GooseCraft 0.9.0 (headless harness)");
+    print("GooseCraft 0.10.0 (headless harness)");
     print("usage: goosecraft-headless --headless [--ticks N | --inspect-world FILE] | --version | --help");
     print("Graphical client: goosecraft-client.");
     print("Generate: --headless --generate-world SEED FILE [--radius 1..4], default 1; never replaces existing files.");
+    print("Paged storage: --headless --create-pages SEED NEW-DIR | --inspect-pages DIR | --import-world FILE NEW-DIR | --export-pages DIR NEW-FILE.");
 }
 
 fn invalid_args() {
@@ -19,10 +20,40 @@ fn main() {
     if argv.len == 1 { usage(); return; }
     if argv.len == 2 && argv[1] == "--help" { usage(); return; }
     if argv.len == 2 && argv[1] == "--version" {
-        print("GooseCraft 0.9.0");
+        print("GooseCraft 0.10.0");
         return;
     }
     if argv[1] != "--headless" { invalid_args(); }
+    if argv.len == 5 && (argv[2] == "--create-pages" || argv[2] == "--import-world") {
+        var seed: u32 = 12345;
+        if argv[2] == "--create-pages" {
+            let n, ok = parse_int(argv[3]); if !ok || n < 0 || n > 4294967295 { invalid_args(); } seed = n as u32;
+        } else if !file_exists(argv[3]) { write_stderr("source world is not a file\n"); exit(5); }
+        if !pages::prepare_new(argv[4]) { write_stderr("new paged path required; existing data retained\n"); exit(5); }
+        let handle = pages::lock(argv[4]); if handle == 0 { write_stderr("paged world is locked or unavailable\n"); exit(8); }
+        defer pages::unlock(handle);
+        let ok = if argv[2] == "--create-pages" { pages::create(argv[4], seed, 4) } else { pages::import_world(argv[3], argv[4]) };
+        if !ok { write_stderr("paged world creation failed; no index published\n"); exit(6); }
+        print("{\"mode\":\"pages-create\",\"format\":3}"); return;
+    }
+    if (argv.len == 4 && argv[2] == "--inspect-pages") || (argv.len == 5 && argv[2] == "--export-pages") {
+        if !is_dir(argv[3]) { write_stderr("invalid paged world directory\n"); exit(5); }
+        let handle = pages::lock(argv[3]); if handle == 0 { write_stderr("paged world is locked or unavailable\n"); exit(8); }
+        defer pages::unlock(handle);
+        var map = world::Paged {}; if !pages::open(argv[3], map) { write_stderr("invalid paged index\n"); exit(5); }
+        if argv[2] == "--export-pages" {
+            if file_exists(argv[4]) || is_dir(argv[4]) { write_stderr("new export file required\n"); exit(5); }
+            if !pages::export_world(argv[3], argv[4]) { write_stderr("page validation or export failed\n"); exit(6); }
+            print("{\"mode\":\"pages-export\",\"format\":", if map.radius <= 1 { 1 } else { 2 }, "}"); return;
+        }
+        var chunk = world::Chunk {};
+        for at in world::slots(map) {
+            if world::active(map, at) && !pages::read_page(argv[3], map.index, at, chunk) { write_stderr("invalid or missing page\n"); exit(5); }
+        }
+        print("{\"mode\":\"pages-inspect\",\"format\":3,\"chunks\":", world::count(map),
+              ",\"solid_blocks\":", world::solid_count(map), ",\"generator\":", map.index.generator,
+              ",\"seed\":", map.index.seed, ",\"serial\":", map.index.serial, "}"); return;
+    }
     if (argv.len == 5 || argv.len == 7) && argv[2] == "--generate-world" {
         let n, ok = parse_int(argv[3]);
         if !ok || n < 0 || n > 4294967295 || argv[4].len == 0 { invalid_args(); }

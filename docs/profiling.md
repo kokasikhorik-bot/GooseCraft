@@ -123,6 +123,14 @@ data stack. Дополнительные metadata не меняют порядо
 SDL может отложить физическое удаление до завершения GPU-команд; эти значения
 не измеряют полную VRAM. Raw columns по-прежнему schema 1, 12 целых на кадр.
 
+В 0.10 `--paged-world` даёт `world_format=3`. `world_block_capacity_bytes`
+для этого backend всегда 200704 (49 слотов), active bytes — текущие CPU-чанки.
+Добавлены `cpu_resident_chunks`, `cpu_peak_chunks`, `cpu_evictions`,
+`page_commits`, `page_writes`, `page_loads`. Load означает admission сохранённой
+страницы в пул, не число системных чтений: preflight читает входящие данные
+до изменения пула. `game_ns` теперь включает CPU-подгрузку/commit при движении;
+это синхронное I/O, не только физика. F5 остаётся в `save_ns`.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

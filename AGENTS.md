@@ -1,6 +1,7 @@
 # GooseCraft development
 
 - All gameplay, world state and simulation logic belong in Goose under src/.
+- Native C under native/ is limited to platform I/O; formats, paging policy and gameplay remain in Goose.
 - Do not launch Minecraft, a JVM or Horizon as a substitute for this client.
 - Inspect APIs in the pinned Goose source before using them. Change toolchain.lock.json deliberately.
 - Build helpers may use Python; the first launcher uses the Windows built-in cmd.exe.

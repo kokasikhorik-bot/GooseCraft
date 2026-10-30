@@ -36,6 +36,18 @@ fn stream_input(frame: i64) {
     if frame == 381 { key("F5", false); }
 }
 
+fn paging_input(frame: i64) {
+    terrain_input(frame);
+    if frame == 96 { key("D", true); }
+    if frame >= 100 && frame < 600 && frame % 40 == 20 { key("Space", true); }
+    if frame >= 100 && frame < 600 && frame % 40 == 21 { key("Space", false); }
+    if frame == 600 { key("D", false); }
+    if frame == 620 { key("R", true); }
+    if frame == 621 { key("R", false); }
+    if frame == 660 { key("F5", true); }
+    if frame == 661 { key("F5", false); }
+}
+
 fn inject(frame: i64, seam: bool) {
     if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }
     if frame == 2 { gfx::inject_mouse(320.0, 240.0, gfx::MOUSE_LEFT, true); }

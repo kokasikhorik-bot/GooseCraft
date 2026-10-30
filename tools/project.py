@@ -15,6 +15,7 @@ import traceback
 import xml.etree.ElementTree as ET
 from png_readback import compare_boundary_pixels, differences, enclosed_clear, compare_surface_edges
 from profile_readback import validate_profile
+from page_readback import validate_pages
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -87,7 +88,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -104,6 +105,11 @@ def test():
         label = "core" if source == "headless" else source
         for flags in ([], ["--debug"]):
             extra = [save_path, blocked / "world.gcw"] if source == "storage" else []
+            if source == "paging":
+                paging_base = save_folder / "paging"
+                if paging_base.exists(): shutil.rmtree(paging_base)
+                paging_base.mkdir(parents=True)
+                extra = [paging_base]
             if source == "profiling":
                 profile_path.unlink(missing_ok=True)
                 extra = [profile_path, blocked / "frames.json"]
@@ -116,6 +122,8 @@ def test():
                 profile_path.unlink()
             binary = BUILD / (label + "-tests" + ("-debug" if flags else "") + EXT)
             native_build(ROOT / f"tests/{source}.goose", binary, flags)
+            if source == "paging":
+                shutil.rmtree(paging_base); paging_base.mkdir(parents=True)
             result = run([binary, *extra])
             if result.stdout.strip() != f"headless {label}: ok":
                 raise RuntimeError("Missing Goose assertions result")
@@ -178,6 +186,54 @@ def test():
             generated.append(raw)
         if generated[0] != generated[1]:
             raise RuntimeError("Native/JIT large world bytes differ")
+    # Independent directory framing, source-preserving migration and export.
+    page_evidence = {}
+    single_import = save_folder / "single-import.gcw"
+    single_bytes = bytearray(b"GOOSEWLD\x01\x00\x01\x00" + bytes(4) + bytes([1]) * 256 + bytes(4096 - 256))
+    struct.pack_into("<I", single_bytes, 12, zlib.adler32(single_bytes[:12] + single_bytes[16:]))
+    single_import.write_bytes(single_bytes)
+    for label, command in (("native", [CLIENT]), ("jit", [GOOSE, "run", ROOT / "src/client.goose", "--offline", "--"])):
+        root = save_folder / ("pages-cli-" + label)
+        if root.exists(): shutil.rmtree(root)
+        exported = save_folder / ("pages-export-" + label + ".gcw")
+        exported.unlink(missing_ok=True)
+        run([*command, "--headless", "--create-pages", "12345", root])
+        run([*command, "--headless", "--inspect-pages", root])
+        run([*command, "--headless", "--export-pages", root, exported])
+        golden = next(v for v in large_vectors if v["seed"] == 12345 and v["radius"] == 4)
+        if hashlib.sha256(exported.read_bytes()).hexdigest() != golden["sha256"]:
+            raise RuntimeError("Procedural pages do not export the independent GCW vector")
+        page_evidence[label] = validate_pages(root, exported)
+        index_before = (root / "index.gci").read_bytes()
+        run([*command, "--headless", "--create-pages", "1", root], expected=5)
+        run([*command, "--headless", "--export-pages", root, exported], expected=5)
+        if (root / "index.gci").read_bytes() != index_before:
+            raise RuntimeError("Refused creation/export changed the paged index")
+        for source in (single_import, save_path, save_folder / "large-4-12345-native.gcw"):
+            imported = save_folder / f"imported-{label}-{source.stem}"
+            if imported.exists(): shutil.rmtree(imported)
+            output = save_folder / f"imported-export-{label}-{source.stem}.gcw"
+            output.unlink(missing_ok=True)
+            before = source.read_bytes()
+            run([*command, "--headless", "--import-world", source, imported])
+            run([*command, "--headless", "--export-pages", imported, output])
+            if before != source.read_bytes() or before != output.read_bytes():
+                raise RuntimeError("Import/export changed legacy GCW bytes")
+            page_evidence[f"import-{label}-{source.stem}"] = validate_pages(imported, output)
+        # A huge sparse malformed index must be rejected by the bounded reader,
+        # without trying to allocate its reported file length.
+        malformed = save_folder / ("oversized-index-" + label)
+        malformed.mkdir(exist_ok=True)
+        with (malformed / "index.gci").open("wb") as stream:
+            stream.truncate(1024 * 1024 * 1024)
+        run([*command, "--headless", "--inspect-pages", malformed], expected=5)
+        oversized_import = save_folder / ("oversized-import-" + label)
+        if oversized_import.exists(): shutil.rmtree(oversized_import)
+        run([*command, "--headless", "--import-world", malformed / "index.gci", oversized_import], expected=6)
+        if (oversized_import / "index.gci").exists():
+            raise RuntimeError("Oversized import published an index")
+        (malformed / "index.gci").unlink()
+    (BUILD / "paging-cli-results.json").write_text(json.dumps(page_evidence, indent=2) + "\n")
     # Test the built executable from a different working directory, including spaces.
     scratch = BUILD / "unrelated working directory"
     scratch.mkdir(exist_ok=True)
@@ -228,7 +284,7 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling/large/residency (JIT/native, release/debug), "
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling/large/residency/paging (JIT/native, release/debug), "
           "growable world owners and v1/v2 vectors, "
           "profile ring and independent percentile recomputation, "
           "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
@@ -363,6 +419,13 @@ def render_build():
                  ["--mesh-radius", "1", "--mesh-radius", "2"], ["--preview", "--mesh-radius", "1"],
                  ["--retain-meshes", "--mesh-radius", "0"]):
         run([VIEWER, *args], expected=2)
+    for args in (["--paged-world"], ["--paged-world", "x", "--no-save"],
+                 ["--paged-world", "x", "--world", "y"], ["--paged-world", "x", "--preview"],
+                 ["--paged-world", "x", "--demo-world"], ["--paged-world", "x", "--single-chunk"],
+                 ["--paged-world", "x", "--mesh-radius", "0"], ["--paged-world", "x", "--mesh-radius", "3"],
+                 ["--paged-world", "x", "--retain-meshes"], ["--paged-world", "x", "--screenshot", "index.gci"],
+                 ["--paged-world", "x", "--profile", "index.gci"]):
+        run([VIEWER, *args], expected=2)
     old_profile = BUILD / "existing profile with spaces" / "профили" / "frames.json"
     old_profile.parent.mkdir(parents=True, exist_ok=True)
     old_profile.write_bytes(b"retain profile")
@@ -491,6 +554,14 @@ def render_test(evidence):
         ("cache-stream-retained", [], ["--offscreen", "--stream-replay", "--retain-meshes"], 400, 0),
         ("cache-mid", [], ["--offscreen", "--stream-replay"], 340, 0),
         ("cache-mid-retained", [], ["--offscreen", "--stream-replay", "--retain-meshes"], 340, 0),
+        ("pages-idle", xvfb, ["--paged-world", saves / "pages-idle"], 180, 30),
+        ("pages-route", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "pages-route"], 680, 0),
+        ("pages-route-window", xvfb, ["--paging-replay", "--paged-world", saves / "pages-route-window"], 680, 0),
+        ("pages-route-debug", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "pages-route-debug"], 680, 0),
+        ("pages-route-legacy", [], ["--offscreen", "--paging-replay", "--world", saves / "pages-route.gcw"], 680, 0),
+        ("pages-mid", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "pages-mid"], 600, 0),
+        ("pages-mid-legacy", [], ["--offscreen", "--paging-replay", "--world", saves / "pages-mid.gcw"], 600, 0),
+        ("pages-imported", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "pages-imported"], 680, 0),
     ]
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
@@ -514,7 +585,13 @@ def render_test(evidence):
     for name, prefix, flags, frames, warmup in profile_specs:
         profile_paths[name].unlink(missing_ok=True)
         cases.append((name, prefix, [*flags, "--profile", profile_paths[name], "--profile-warmup", str(warmup)], frames))
-    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big", "cache-idle", "cache-idle-retained"}
+    cases += [("pages-reopen", xvfb, ["--paged-world", saves / "pages-route", "--mesh-radius", "1"], 30),
+              ("pages-reopen-legacy", xvfb, ["--world", saves / "pages-route.gcw", "--mesh-radius", "1"], 30)]
+    origin = saves / "pages-origin.gcw"
+    run([CLIENT, "--headless", "--generate-world", "12345", origin, "--radius", "4"])
+    origin_before = origin.read_bytes()
+    run([CLIENT, "--headless", "--import-world", origin, saves / "pages-imported"])
+    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big", "cache-idle", "cache-idle-retained", "pages-idle"}
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
@@ -529,7 +606,9 @@ def render_test(evidence):
             persisted_large = large_save.read_bytes()
         if name == "cache-load":
             persisted_cache = cache_save.read_bytes()
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug") else VIEWER
+        if name == "pages-reopen":
+            pages_before = {p.name: p.read_bytes() for p in (saves / "pages-route").iterdir() if p.suffix in (".gci", ".gcp")}
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -747,7 +826,7 @@ def render_test(evidence):
             raise RuntimeError("Profile state does not match the renderer")
         if trace["mesh_capacity_bytes"] != stdout["mesh_capacity_bytes"] or trace["mesh_buffer_creations"] != stdout["mesh_allocations"]:
             raise RuntimeError("Profile mesh accounting disagrees")
-        if trace["world_block_capacity_bytes"] != max(9, stdout["chunks"]) * 4096 or trace["overlay_buffer_capacity_bytes"] != 524672:
+        if trace["world_block_capacity_bytes"] != stdout["cpu_block_capacity_bytes"] or trace["overlay_buffer_capacity_bytes"] != 524672:
             raise RuntimeError("Known storage capacities changed")
         if (trace["world_radius"], trace["world_chunks"], trace["world_format"]) != (stdout["world_radius"], stdout["chunks"], stdout["world_format"]):
             raise RuntimeError("Profile world metadata disagrees with the actual world")
@@ -757,7 +836,8 @@ def render_test(evidence):
             expected_uploads = stdout["mesh_uploaded_bytes"] - stdout["initial_uploaded_bytes"] + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
             if sum(row["uploaded_bytes"] for row in rows) != expected_uploads:
                 raise RuntimeError("Per-frame uploads disagree with cumulative buffers")
-        for key in ("mesh_radius", "resident_chunks", "peak_resident_chunks", "mesh_evictions", "initial_meshes", "initial_uploaded_bytes", "peak_mesh_capacity_bytes"):
+        for key in ("mesh_radius", "resident_chunks", "peak_resident_chunks", "mesh_evictions", "initial_meshes", "initial_uploaded_bytes", "peak_mesh_capacity_bytes",
+                    "cpu_resident_chunks", "cpu_peak_chunks", "cpu_evictions", "page_commits", "page_writes", "page_loads"):
             if trace[key] != stdout[key]:
                 raise RuntimeError(f"Residency profile metadata disagrees: {name}: {key}")
         profiles[name] = {"file": str(profile_paths[name].relative_to(evidence)),
@@ -827,6 +907,32 @@ def render_test(evidence):
         "cpu_blocks_remain_resident": True,
         "scope": "Finite 81-chunk CPU world; bounded live API mesh handles; driver may defer actual destruction",
     }, indent=2) + "\n")
+    page_results = {}
+    for a, b in (("pages-route", "pages-route-legacy"), ("pages-route", "pages-route-window"),
+                 ("pages-route", "pages-route-debug"), ("pages-mid", "pages-mid-legacy"),
+                 ("pages-route", "pages-imported"), ("pages-reopen", "pages-reopen-legacy")):
+        if results[a]["png_sha256"] != results[b]["png_sha256"] or any(results[a][k] != results[b][k] for k in keys):
+            raise RuntimeError(f"CPU paging changed pixels or gameplay: {a}, {b}")
+    for name in ("pages-route", "pages-route-window", "pages-route-debug", "pages-imported"):
+        d = results[name]
+        if d["max_x"] < 64.5 or d["cpu_evictions"] < 20 or d["page_loads"] < 1 or d["cpu_peak_chunks"] > 49 or d["cpu_block_capacity_bytes"] != 200704:
+            raise RuntimeError(f"CPU paging did not exercise eviction/disk return within the bound: {d}")
+        root = saves / name
+        exported = saves / (name + "-export.gcw")
+        run([CLIENT, "--headless", "--export-pages", root, exported])
+        if exported.read_bytes() != (saves / "pages-route.gcw").read_bytes():
+            raise RuntimeError("Paged gameplay/export differs from resident GCW gameplay bytes")
+        page_results[name] = validate_pages(root, exported)
+    if pages_before != {p.name: p.read_bytes() for p in (saves / "pages-route").iterdir() if p.suffix in (".gci", ".gcp")} or origin.read_bytes() != origin_before:
+        raise RuntimeError("Reopen changed page files or import changed its source GCW")
+    if results["pages-idle"]["cpu_resident_chunks"] != 49 or results["pages-reopen"]["save_writes"] != 0:
+        raise RuntimeError("CPU residency/default or reopen write accounting differs")
+    (evidence / "paging-results.json").write_text(json.dumps({
+        "stores": page_results, "same_view_png_and_gameplay_equal": True,
+        "all_exported_gcw_bytes_match_resident_backend": True, "reopen_preserves_all_page_bytes": True,
+        "source_gcw_retained": True, "cpu_pool_bytes": 200704, "cpu_pool_slots": 49,
+        "scope": "Finite 81-chunk world, synchronous bounded CPU paging, software Vulkan/Xvfb",
+    }, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
           "frustum culling, terrain, release/debug/reference, saves, opt-in frame profiling, independent percentiles, no unrequested readback, cached overlays")
@@ -859,7 +965,7 @@ def package(graphics=False):
         "source_commit": revision, "source_dirty": bool(status.stdout) if status.returncode == 0 else None,
         "ci_url": ci_url,
         "target": "windows-x64" if WINDOWS else "linux-x64", "graphics": graphics,
-        "world_format": 2, "world_formats": [1, 2],
+        "world_format": 3, "world_formats": [1, 2, 3],
         "terrain_generator": 1,
         "profiling_schema": 1,
     }, indent=2) + "\n")

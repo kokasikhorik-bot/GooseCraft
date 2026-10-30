@@ -131,3 +131,21 @@ growable структуры выдал `codegen: comparing resizable structs is 
 Накопленные счётчики не сбрасываются, чтобы профиль не получил отрицательные
 upload deltas. 111 графических сценариев включают eviction/возврат, misuse=0;
 это не проверка полной VRAM и не запуск Windows GUI. [Результаты 0.9](residency-results.md).
+
+## Дополнение 0.10 — ограниченный файловый I/O
+
+В pinned `stdlib/os.goose` `read_file` добавляет целый файл в growable builder;
+API bounded read/file size не объявлен. Использован документированный sidecar
+`c_sources` и ABI slice `{data,len}` из `docs/packages.md` §3/4 и реального
+`test/packages/pkg_own_c_impl.c`. Собственные `.build` для client/viewer/core
+строят `native/fileio.c`: чтение в переданный фиксированный slice с проверкой
+EOF и OS file lock. Native/JIT проверены на Linux с UTF-8 путями; Windows
+проверяется своим CI. Native executable не требует C-компилятора при запуске.
+
+C не разбирает форматы и не содержит paging/gameplay: всё это Goose в pages/
+paged_world. Использованы `_wfopen`/CreateFileW без sharing и POSIX fopen/flock,
+с UTF-8→UTF-16 на Windows. В runtime_os.h отдельно проверен контракт
+`write_file_atomic`: flush временного файла и замена имени; sync directory
+на POSIX best effort. Не заявляется тест реальной потери питания.
+Фиксированный Paged поддерживает обычное сравнение в снимках тестов,
+в отличие от growable Map. [Результаты 0.10](paging-results.md).

@@ -15,6 +15,7 @@ struct Options {
     radius: i64 = 4, radius_explicit: bool = false,
     far_replay: bool = false,
     mesh_radius: i64 = 2, retain_meshes: bool = false, stream_replay: bool = false,
+    paged: bool = false, paging_replay: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -25,14 +26,7 @@ fn run(options: Options) {
     if profiled && (file_exists(options.profile_path) || is_dir(options.profile_path)) {
         write_stderr("profile path already exists; original file was not changed\n"); exit(7);
     }
-    var profiles: profiling::Log[>..] = [];
-    if profiled { profiles.push(profiling::Log { warmup: options.profile_warmup }); }
-    let offscreen = options.offscreen;
-    let preview = options.preview;
-    let replay_input = options.replay_input;
-    let reference = options.reference;
-    let frames = options.frames;
-    let output = options.output;
+    if options.paged { run_paged(options, startup_begin); return; }
     var chunk = world::Map {};
     var loaded = false;
     if options.persistent {
@@ -56,6 +50,19 @@ fn run(options: Options) {
     }
     let generated = !loaded && !options.demo && !options.empty;
     let seed_report: i64 = if generated { options.seed } else { -1 };
+    run_world(options, chunk, loaded, generated, seed_report, startup_begin);
+}
+
+fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed_report: i64, startup_begin: i64) {
+    let profiled = options.profile_path.len > 0;
+    var profiles: profiling::Log[>..] = [];
+    if profiled { profiles.push(profiling::Log { warmup: options.profile_warmup }); }
+    let offscreen = options.offscreen;
+    let preview = options.preview;
+    let replay_input = options.replay_input;
+    let reference = options.reference;
+    let frames = options.frames;
+    let output = options.output;
     var saved_revision: i64 = if loaded { chunk.revision } else { -1 };
     var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
     var save_writes: i64 = 0;
@@ -68,16 +75,16 @@ fn run(options: Options) {
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.9.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.10.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
     var buffers: chunks::Cache[>..] = [];
-    buffers.resize(chunk.chunks.len, chunks::Cache {});
+    buffers.resize(world::slots(chunk), chunks::Cache {});
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
     let initial_mesh_begin = if profiled { clock_ns() } else { 0 };
-    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, chunk.chunks.len, reference, options.raw);
+    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, world::slots(chunk), reference, options.raw);
     let initial_meshes = remeshes;
     let initial_uploaded_bytes = chunks::stats(buffers).uploaded_bytes;
     var peak_mesh_capacity = chunks::stats(buffers).capacity;
@@ -143,7 +150,8 @@ fn run(options: Options) {
     let startup_ns = if profiled { loop_begin - startup_begin } else { 0 };
     while true {
         if replay_input {
-            if options.stream_replay { replay::stream_input(drawn); }
+            if options.paging_replay { replay::paging_input(drawn); }
+            else if options.stream_replay { replay::stream_input(drawn); }
             else if options.terrain_replay { replay::terrain_input(drawn); }
             else { replay::inject(drawn, options.seam_replay); }
         }
@@ -204,6 +212,7 @@ fn run(options: Options) {
                     max_x = max(max_x, state.position.x);
                     accumulator -= player::STEP;
                 }
+                ensure_cpu(options, chunk, state);
                 hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
                 var dirty = false;
                 if !resumed && gfx::mouse_pressed(gfx::MOUSE_LEFT) && interaction::remove(chunk, hit) {
@@ -228,7 +237,7 @@ fn run(options: Options) {
         var save_calls: i64 = 0;
         if options.persistent && gfx::key_pressed("F5") {
             save_calls = 1;
-            if storage::save(options.world_path, chunk) {
+            if pages::save(options.world_path, chunk) {
                 saved_revision = chunk.revision; save_status = 2; save_writes++;
             } else { save_status = 3; write_stderr("world save failed; previous file retained\n"); }
         }
@@ -269,7 +278,7 @@ fn run(options: Options) {
         drawn_chunks = 0; culled_chunks = 0; drawn_vertices = 0;
         let rows: float4[4] = [gfx::row(camera.view_projection, 0), gfx::row(camera.view_projection, 1),
                                 gfx::row(camera.view_projection, 2), gfx::row(camera.view_projection, 3)];
-        for at in chunk.chunks.len {
+        for at in world::slots(chunk) {
             if !resident.ready[at] || !residency::includes(chunk, cx, cz, options.mesh_radius, at) || buffers[at].indices == 0 { continue; }
             let origin = chunks::origin(chunk, at);
             if !reference && !visibility::intersects(rows, origin, origin + float3 { 16.0, 16.0, 16.0 }) {
@@ -331,13 +340,14 @@ fn run(options: Options) {
     gfx::check();
     let exit_save_begin = if profiled { clock_ns() } else { 0 };
     if options.persistent && saved_revision != chunk.revision {
-        if !storage::save(options.world_path, chunk) {
+        if !pages::save(options.world_path, chunk) {
             write_stderr("world save failed on exit; previous file retained\n"); exit(6);
         }
         saved_revision = chunk.revision; save_writes++;
     }
     let exit_save_ns = if profiled { clock_ns() - exit_save_begin } else { 0 };
     let totals = chunks::stats(buffers);
+    let cpu = pages::stats(chunk);
     if profiled {
         let driver = gfx::driver();
         let context = profiling::Context { driver: driver, offscreen: offscreen, replay: replay_input,
@@ -345,14 +355,16 @@ fn run(options: Options) {
             tail_flush_ns: tail_flush_ns, exit_readback_ns: readback_ns, exit_save_ns: exit_save_ns,
             loop_session_ns: loop_session_ns, collector_ns_total: collector_ns_total,
             readback: output.len > 0, world_block_capacity_bytes: bytes_of(chunk.chunks).len,
-            active_world_block_bytes: world::count(chunk) * 4096,
+            active_world_block_bytes: world::resident_count(chunk) * 4096,
             mesh_bytes: totals.vertices * 16 + totals.indices * 4, mesh_capacity_bytes: totals.capacity,
             mesh_buffer_creations: totals.allocations, overlay_buffer_capacity_bytes: 512 * 1024 + 24 * 16,
             overlay_buffer_creations: 2,
-            world_radius: chunk.radius, world_chunks: world::count(chunk), world_format: storage::version(chunk),
+            world_radius: chunk.radius, world_chunks: world::count(chunk), world_format: pages::format(chunk),
             mesh_radius: options.mesh_radius, resident_chunks: resident.resident, peak_resident_chunks: resident.peak,
             mesh_evictions: resident.evictions, initial_meshes: initial_meshes,
             initial_uploaded_bytes: initial_uploaded_bytes, peak_mesh_capacity_bytes: peak_mesh_capacity,
+            cpu_resident_chunks: cpu.resident, cpu_peak_chunks: cpu.peak, cpu_evictions: cpu.evictions,
+            page_commits: cpu.commits, page_writes: cpu.writes, page_loads: cpu.loads,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -394,12 +406,38 @@ fn run(options: Options) {
         ",\"drawn_vertices\":", drawn_vertices, ",\"dirty_remaining\":", world::pending(chunk),
         ",\"revision\":", chunk.revision, ",\"save_enabled\":", options.persistent,
         ",\"loaded\":", loaded, ",\"save_writes\":", save_writes,
-        ",\"world_radius\":", chunk.radius, ",\"world_format\":", storage::version(chunk), ",\"chunk_rebuilds\":[");
+        ",\"world_radius\":", chunk.radius, ",\"world_format\":", pages::format(chunk), ",\"chunk_rebuilds\":[");
     var rebuild_report: u8[>..] = [];
     for at in buffers.len {
         if at > 0 { rebuild_report.push(','); }
         rebuild_report.append(str(buffers[at].rebuilds));
     }
-    rebuild_report.append("]}");
+    rebuild_report.append("]"); rebuild_report.append(pages::report(chunk));
+    rebuild_report.append(str(",\"cpu_block_capacity_bytes\":", bytes_of(chunk.chunks).len, "}"));
     print(rendering_report, gameplay_report, rebuild_report);
+}
+
+fn ensure_cpu<T>(options: Options, chunk: T&, state: player::State&) {
+    if !pages::ensure(options.world_path, chunk, world::chunk_coord(floor(state.position.x) as i64),
+                      world::chunk_coord(floor(state.position.z) as i64), options.mesh_radius) {
+        let saved = pages::save(options.world_path, chunk);
+        write_stderr(str("paged I/O failed; stopped before using missing blocks; pending checkpoint=", saved, "\n")); exit(8);
+    }
+}
+
+fn run_paged(options: Options, startup_begin: i64) {
+    let fresh = !is_dir(options.world_path) && !file_exists(options.world_path);
+    if fresh && !pages::prepare_new(options.world_path) { write_stderr("cannot create paged world directory\n"); exit(6); }
+    if !is_dir(options.world_path) { write_stderr("paged world requires a directory\n"); exit(5); }
+    let handle = pages::lock(options.world_path);
+    if handle == 0 { write_stderr("paged world is locked or unavailable\n"); exit(8); }
+    defer pages::unlock(handle);
+    if !fresh && options.seed_explicit { write_stderr("--seed requires a new world path\n"); exit(2); }
+    if fresh && !pages::create(options.world_path, options.seed, options.radius) { write_stderr("paged world creation failed\n"); exit(6); }
+    var chunk = world::Paged {};
+    if !pages::open(options.world_path, chunk) { write_stderr("invalid paged index\n"); exit(5); }
+    if options.radius_explicit && options.radius != chunk.radius { write_stderr("existing world radius differs\n"); exit(2); }
+    var state = player::State {}; if options.far_replay { state.position.x = 31.5; }
+    ensure_cpu(options, chunk, state);
+    run_world(options, chunk, !fresh, fresh, if fresh { options.seed } else { -1 }, startup_begin);
 }

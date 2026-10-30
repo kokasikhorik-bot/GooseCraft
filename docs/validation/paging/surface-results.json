@@ -1,0 +1,847 @@
+{
+  "overviews": {
+    "surface-0-0": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 0,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": []
+      }
+    },
+    "surface-0-1": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 1,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 152,
+            "y": 269,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              50,
+              115,
+              71,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-0-2": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 1,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 363,
+            "y": 131,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              44,
+              102,
+              63,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-0-3": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 1,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 222,
+            "y": 200,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              41,
+              95,
+              59,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-1-0": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 4,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 412,
+            "y": 151,
+            "optimized": [
+              56,
+              128,
+              79,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 252,
+            "y": 159,
+            "optimized": [
+              50,
+              115,
+              71,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 304,
+            "y": 247,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              50,
+              115,
+              71,
+              255
+            ]
+          },
+          {
+            "x": 437,
+            "y": 309,
+            "optimized": [
+              56,
+              128,
+              79,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-1-1": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 2,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 274,
+            "y": 183,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              50,
+              115,
+              71,
+              255
+            ]
+          },
+          {
+            "x": 274,
+            "y": 210,
+            "optimized": [
+              50,
+              115,
+              71,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-1-2": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 3,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 353,
+            "y": 128,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              44,
+              102,
+              63,
+              255
+            ]
+          },
+          {
+            "x": 460,
+            "y": 221,
+            "optimized": [
+              56,
+              128,
+              79,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 399,
+            "y": 249,
+            "optimized": [
+              56,
+              128,
+              79,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-1-3": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 5,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 296,
+            "y": 120,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              41,
+              95,
+              59,
+              255
+            ]
+          },
+          {
+            "x": 463,
+            "y": 142,
+            "optimized": [
+              44,
+              102,
+              63,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 508,
+            "y": 160,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              44,
+              102,
+              63,
+              255
+            ]
+          },
+          {
+            "x": 450,
+            "y": 179,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              44,
+              102,
+              63,
+              255
+            ]
+          },
+          {
+            "x": 452,
+            "y": 212,
+            "optimized": [
+              44,
+              102,
+              63,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-12345-0": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 2,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 433,
+            "y": 160,
+            "optimized": [
+              56,
+              128,
+              79,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 103,
+            "y": 185,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              56,
+              128,
+              79,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-12345-1": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 1,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 168,
+            "y": 264,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              50,
+              115,
+              71,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-12345-2": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 2,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 355,
+            "y": 125,
+            "optimized": [
+              44,
+              102,
+              63,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 335,
+            "y": 247,
+            "optimized": [
+              44,
+              102,
+              63,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-12345-3": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 0,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": []
+      }
+    },
+    "surface-4294967295-0": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 4,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 124,
+            "y": 179,
+            "optimized": [
+              50,
+              115,
+              71,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 161,
+            "y": 182,
+            "optimized": [
+              50,
+              115,
+              71,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 108,
+            "y": 195,
+            "optimized": [
+              50,
+              115,
+              71,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 399,
+            "y": 231,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              50,
+              115,
+              71,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-4294967295-1": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 4,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 501,
+            "y": 191,
+            "optimized": [
+              41,
+              95,
+              59,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 397,
+            "y": 196,
+            "optimized": [
+              50,
+              115,
+              71,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 417,
+            "y": 200,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              41,
+              95,
+              59,
+              255
+            ]
+          },
+          {
+            "x": 237,
+            "y": 275,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              50,
+              115,
+              71,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-4294967295-2": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 3,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 357,
+            "y": 112,
+            "optimized": [
+              15,
+              23,
+              35,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 176,
+            "y": 142,
+            "optimized": [
+              44,
+              102,
+              63,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 322,
+            "y": 378,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              56,
+              128,
+              79,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "surface-4294967295-3": {
+      "enclosed_clear": [],
+      "reference_enclosed_clear": [],
+      "comparison": {
+        "changed_pixels": 2,
+        "limit": 8,
+        "shared_edge_colors_only": true,
+        "pixels": [
+          {
+            "x": 399,
+            "y": 231,
+            "optimized": [
+              44,
+              102,
+              63,
+              255
+            ],
+            "reference": [
+              72,
+              165,
+              102,
+              255
+            ]
+          },
+          {
+            "x": 423,
+            "y": 242,
+            "optimized": [
+              72,
+              165,
+              102,
+              255
+            ],
+            "reference": [
+              44,
+              102,
+              63,
+              255
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "raw_control_enclosed_clear": [
+    {
+      "x": 433,
+      "y": 160
+    },
+    {
+      "x": 327,
+      "y": 312
+    }
+  ],
+  "raw_control_differences": [
+    {
+      "x": 379,
+      "y": 112,
+      "optimized": [
+        15,
+        23,
+        35,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 433,
+      "y": 160,
+      "optimized": [
+        15,
+        23,
+        35,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 103,
+      "y": 185,
+      "optimized": [
+        72,
+        165,
+        102,
+        255
+      ],
+      "reference": [
+        56,
+        128,
+        79,
+        255
+      ]
+    },
+    {
+      "x": 127,
+      "y": 258,
+      "optimized": [
+        50,
+        115,
+        71,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 327,
+      "y": 312,
+      "optimized": [
+        15,
+        23,
+        35,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 424,
+      "y": 351,
+      "optimized": [
+        186,
+        135,
+        52,
+        255
+      ],
+      "reference": [
+        56,
+        128,
+        79,
+        255
+      ]
+    }
+  ],
+  "scope": "Unedited bounded heightfields, 4 seeds x 4 fixed views, CPU Vulkan; shared edge colors may differ at <=8 pixels"
+}

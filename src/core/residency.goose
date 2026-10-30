@@ -9,19 +9,19 @@ struct State {
     admissions: i64 = 0, evictions: i64 = 0, shifts: i64 = 0,
 }
 
-fn includes(map: world::Map&, cx: i64, cz: i64, radius: i64, at: i64) -> bool {
+fn includes<T>(map: T&, cx: i64, cz: i64, radius: i64, at: i64) -> bool {
     world::active(map, at) && (radius == 0 ||
         (abs(world::chunk_x(map, at) - cx) <= radius && abs(world::chunk_z(map, at) - cz) <= radius))
 }
 
-fn update(map: world::Map&, state: State&, cx: i64, cz: i64, radius: i64) {
+fn update<T>(map: T&, state: State&, cx: i64, cz: i64, radius: i64) {
     assert(radius >= 0 && radius <= 4);
     let x = clamp(cx, -map.radius, map.radius);
     let z = clamp(cz, -map.radius, map.radius);
     if state.initialized && (state.center_x != x || state.center_z != z) { state.shifts++; }
     state.center_x = x; state.center_z = z; state.radius = radius; state.initialized = true;
     state.desired = 0;
-    for at in map.chunks.len {
+    for at in world::slots(map) {
         let wanted = includes(map, x, z, radius, at);
         if wanted { state.desired++; }
         if state.ready[at] && !wanted {
@@ -35,9 +35,9 @@ fn update(map: world::Map&, state: State&, cx: i64, cz: i64, radius: i64) {
     }
 }
 
-fn next(map: world::Map&, state: State&) -> i64 {
+fn next<T>(map: T&, state: State&) -> i64 {
     var best: i64 = -1; var score: i64 = 1000000;
-    for at in map.chunks.len {
+    for at in world::slots(map) {
         if !state.wanted[at] || !map.dirty[at] { continue; }
         let dx = abs(world::chunk_x(map, at) - state.center_x);
         let dz = abs(world::chunk_z(map, at) - state.center_z);
@@ -47,7 +47,7 @@ fn next(map: world::Map&, state: State&) -> i64 {
     return best;
 }
 
-fn complete(map: world::Map&, state: State&, at: i64) {
+fn complete<T>(map: T&, state: State&, at: i64) {
     assert(state.wanted[at] && map.dirty[at]);
     if !state.ready[at] {
         state.ready[at] = true; state.resident++; state.admissions++;

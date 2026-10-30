@@ -58,7 +58,7 @@ fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]
     cache.uploaded_bytes += vb.len + ib.len; cache.rebuilds++;
 }
 
-fn rebuild_dirty(map: world::Map&, resident: residency::State&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
+fn rebuild_dirty<T>(map: T&, resident: residency::State&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
                  budget: i64, reference: bool, raw: bool) -> i64 {
     var done: i64 = 0;
     while done < budget {
@@ -72,7 +72,7 @@ fn rebuild_dirty(map: world::Map&, resident: residency::State&, caches: Cache[:]
     return done;
 }
 
-fn origin(map: world::Map&, at: i64) -> float3 {
+fn origin<T>(map: T&, at: i64) -> float3 {
     float3 { world::chunk_x(map, at) * 16, 0.0, world::chunk_z(map, at) * 16 }
 }
 

@@ -14,6 +14,9 @@ GooseCraft/
 │   │   ├── stitch.goose      # согласование рёбер и триангуляция без T-стыков
 │   │   ├── profiling.goose   # bounded ring, nearest-rank summary, JSON export
 │   │   ├── residency.goose   # desired/ready, ближайшая очередь и GPU-резидентность
+│   │   ├── paged_world.goose # фиксированный CPU-пул 49 и mapping максимум 81 чанка
+│   │   ├── pages.goose       # формат 3, preflight, commit, import/export
+│   │   ├── fileio.goose      # объявления тонкого системного I/O
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # GCW v1/v2, транзакционная загрузка и atomic save
@@ -36,12 +39,14 @@ GooseCraft/
 │   ├── profiling.goose       # прогрев, rollover, summary и JSON I/O
 │   ├── large.goose           # большой мир, GCW v2, копии, движение и геометрия
 │   ├── residency.goose       # переходы/смена направления/правки вне GPU-набора
+│   ├── paging.goose          # CPU-пул, immutable pages, сбои, checksum и lock
 │   ├── support/surface.goose # независимая проверка покрытия меша
 │   ├── support/triangles.goose # clipping к единичным клеткам и поиск T-стыков
 │   └── fixtures/type_error.goose
 ├── benchmarks/mesh.goose     # native CPU benchmark: reference/greedy
 ├── benchmarks/stitch.goose   # reference/raw greedy/stitched, включая 9 чанков
 ├── resources/windows/       # process UTF-8 manifest, встраивается SDK mt.exe
+├── native/fileio.c           # только ограниченное чтение и OS file lock
 ├── tools/
 │   ├── bootstrap.py         # закреплённый Goose и опциональный gfx
 │   ├── project.py           # build/test/render-build/render-test/package
@@ -144,6 +149,15 @@ Goose хранит изменяемые массивы на data stacks; вых�
 CPU-блоков/halo. Начальный набор полон до первого кадра; дальше бюджет два.
 Старый dirty вне GPU-набора можно снять: admission всегда ставит новый dirty.
 Это не выгрузка CPU-данных или paged storage. [Границы проверки](residency-results.md).
+
+В 0.10 добавлен отдельный `world::Paged` и общий generic игровой цикл для
+Map/Paged. CPU-пул 49, logical world slots до 81; это разные индексы.
+Один дополнительный слой `pages` загружает CPU до raycast/правок и строит
+halo из реальных соседей. CPU-резидентность шире GPU на один чанк, spawn
+закреплён. `residency` и GPU metadata обходят logical slots, не размер CPU-пула.
+Все codec/policy/gameplay остаются на Goose. Sidecars client/viewer/core.build
+компилируют только системный I/O из native/fileio.c. [Спецификация](paged-world-format.md),
+[доказательства и ограничения](paging-results.md).
 
 Сохранение — отдельный версионный кодек на Goose. Проверяет весь ввод до
 замены мира; GPU-данные восстанавливаются из блоков. F5 и штатный выход

@@ -1,4 +1,5 @@
 import .world;
+import .paged_world;
 import .simulation;
 import .mesh;
 import .player;
@@ -9,3 +10,4 @@ import .terrain;
 import .stitch;
 import .profiling;
 import .residency;
+import .pages;

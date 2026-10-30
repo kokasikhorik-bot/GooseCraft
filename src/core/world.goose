@@ -168,7 +168,7 @@ fn get(halo: Halo&, x: i64, y: i64, z: i64) -> u8 {
 
 fn sample(halo: Halo&, x: i64, y: i64, z: i64) -> u8 { get(halo, x, y, z) }
 
-fn neighborhood(map: Map&, at: i64) -> Halo {
+fn neighborhood<T>(map: T&, at: i64) -> Halo {
     assert(active(map, at));
     let ox = chunk_x(map, at) * 16;
     let oz = chunk_z(map, at) * 16;

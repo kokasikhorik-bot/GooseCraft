@@ -9,3 +9,6 @@ __pycache__/
 .minecraft/
 *.jar
 *.gcw
+*.gcp
+*.gci
+world.lock
