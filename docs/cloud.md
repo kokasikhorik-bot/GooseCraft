@@ -118,8 +118,9 @@ render-test в graphics-контейнере и публикует PNG/JSON ка
 На этапе 3 `render-build` собирает release и debug; `render-test` проверяет
 также игровой ввод, движение, редактирование, паузу/фокус/возрождение и
 совпадение release/debug/window/offscreen. Отдельные headless-тесты включают
-физику и DDA-выбор без gfx. Предыдущий публичный CI успешно выполнил все jobs
-этапа 2; результат CI игровых изменений публикуется отдельно.
+физику и DDA-выбор без gfx. Публичный CI игрового цикла 0.3
+[#41015539670](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
+успешно выполнил все три jobs, включая Windows physics/launcher и Linux replay.
 Windows GUI не открывался; точные границы проверки
 описаны в [github-ci.md](github-ci.md).
 

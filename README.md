@@ -69,10 +69,11 @@ Goose, Python, Java или локальная среда разработки. �
 `goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
-Предыдущий [CI #41010605234](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41010605234)
-успешно собрал графическую основу 0.2 и проверил Windows-лаунчер.
-Текущий игровой цикл 0.3 проверен на Linux GCC 14.2/12.2, software Vulkan и Xvfb;
-новый Windows CI будет записан в [отчёт](docs/github-ci.md) после запуска.
+[CI игрового прототипа 0.3 — #41015539670](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
+успешно прошёл все три jobs: Windows x64, Linux headless и Linux Vulkan/Xvfb
+с игровым input replay. [Скачать Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670/artifacts/12959044218),
+распаковать и запустить `goosecraft.cmd` — это первый кандидат для локальной
+проверки управления. [Подробности и границы проверки](docs/github-ci.md).
 Windows GUI и пользовательская Windows 10 ещё не проверены.
 
 ## Документация

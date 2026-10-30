@@ -1,13 +1,49 @@
-# GitHub: CI GooseCraft
+# GitHub: успешный CI GooseCraft 0.3 — 2026-10-30
 
 ## Игровой цикл 0.3
 
-Новые исходники этапа 3 проверены на Linux; новый Windows CI ожидает публикации
-commit. Приведённый ниже успешный запуск относится к графической основе 0.2.
-Не используйте его старый ZIP для проверки движения и редактирования.
-После нового CI здесь появятся его run, tested SHA и Windows-артефакт.
+[Run 41015539670](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
+для commit `27f31391bf5c9951d2d10d5d2c275869f557c999` завершился **success**.
+Это исходники первого игрового цикла: WASD/мышь, прыжок, коллизии, выбор,
+удаление/установка блока, перестроение меша, HUD и пауза.
 
-## Графическая основа 0.2 — 2026-10-30
+| Job | Результат | Проверенное поведение |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Компилятор Goose, release/debug графического клиента, TinyCC/native core/mesh/player в release/debug, CLI, настоящий cmd.exe-лаунчер и упаковка |
+| ubuntu-22.04 / x64 | success | Компилятор, headless core/mesh/player в четырёх режимах, CLI и упаковка |
+| Linux / software Vulkan and X11 | success | Graphics Docker из закреплённых исходников, десять render/input сценариев без сети, включая игру в Xvfb и совпадение release/debug/window/offscreen |
+
+**Новый [Windows ZIP 0.3](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670/artifacts/12959044218)**:
+`goosecraft-windows-2022-x64-27f31391bf5c9951d2d10d5d2c275869f557c999`,
+1 372 675 байт. Включает release `goosecraft-client.exe`, `goosecraft-headless.exe`,
+`goosecraft.cmd`, документацию и лицензии. Debug EXE не включён в поставку.
+GitHub API сообщил SHA-256 ZIP:
+`eb0544d4f04f3ae7cbc1ab20ab4984d00a1b38e8314b351eba9585a0619786ee`.
+Для скачивания Actions artifact через браузер может потребоваться вход в GitHub.
+[Инструкция первого запуска](first-play.md).
+
+Также созданы [Linux headless ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670/artifacts/12958964279)
+(176 360 байт) и [PNG/JSON/Vulkan evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670/artifacts/12959672378)
+(40 588 байт). [Полные метаданные API](validation/github-actions-41015539670.json)
+содержат tested SHA, jobs/steps и artifacts; credentials не включены.
+
+Границы проверки: Windows job открыл графический EXE только для `--help`
+и ошибочных аргументов, окно не запускалось. Реальный графический запуск
+подтверждён на Linux software Vulkan/X11 в Xvfb. Replay использует инъекцию
+событий SDL/gfx и фиксированное время; физические устройства ввода он не
+проверяет. Пользовательская Windows 10, её Direct3D/GPU driver и GUI ещё
+не проверены. Это первый кандидат для такого локального теста.
+
+Новый ZIP в Codex Cloud не скачивался: размер и digest здесь получены от API,
+а не пересчитаны по локальному архиву. Предыдущее скачивание Actions ZIP
+было заблокировано proxy на redirect storage (описано ниже). Проверки `.exe`
+выполнены непосредственно в Windows job.
+
+Отчёт после успешного run сохраняется отдельным docs-only commit с `[skip ci]`.
+Проверенные исходники и workflow при этом не меняются. Сопроводительные документы
+в ZIP соответствуют состоянию на момент сборки; итог CI публикуется здесь.
+
+## История: графическая основа 0.2 — 2026-10-30
 
 Репозиторий [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft)
 сделан публичным по явному решению владельца. Доступ без авторизации проверен:

@@ -90,10 +90,14 @@ Replay подаёт события через настоящий SDL/gfx input A
 
 Windows workflow теперь собирает release и debug графического клиента,
 выполняет headless physics/interaction suite и существующий cmd.exe smoke.
-Результат нового запуска CI будет записан отдельно после его выполнения.
-Успешный CI предыдущего этапа не считается проверкой новых исходников.
+[CI #41015539670](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
+для commit `27f31391bf5c9951d2d10d5d2c275869f557c999` прошёл все три jobs:
+Windows x64, Linux headless и Linux software Vulkan/Xvfb с полным input replay.
+Windows действительно выполнил TinyCC/native core/mesh/player в release/debug,
+CLI и cmd.exe-лаунчер; графический клиент выполнил `--help` и неверные аргументы,
+без открытия окна. [Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670/artifacts/12959044218)
+готов для первого пользовательского теста. [Метаданные CI](validation/github-actions-41015539670.json).
 
 Окно на Windows, Direct3D 12 и пользовательская Windows 10 ещё не проверены.
-Первый пользовательский тест теперь имеет смысл после получения новой
-Windows-сборки. Мир временный, один чанк; нет сохранения, сети, инвентаря,
+Мир временный, один чанк; нет сохранения, сети, инвентаря,
 крафта, загрузки Minecraft-миров и заявления о совместимости с Java Edition.
