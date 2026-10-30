@@ -62,7 +62,8 @@ Python 3.12.14 и CMake 3.31.6. Получен тот же Goose commit и runti
 - На момент этапа 1 GitHub Actions не запускался: remote не был задан.
   Позднейшая публикация и результат первого CI описаны в [github-ci.md](github-ci.md).
   Workflow подготовлен; настоящую Windows x64 сборку и `.cmd`-лаунчер проверит
-  Windows job после разблокировки Actions. Их успех сейчас не заявляется.
+  Windows job после разблокировки Actions. Позднее Windows console/launcher
+  проверки успешно выполнены; Windows GUI не проверен (см. отчёт GitHub выше).
 - Нет запуска GUI, GPU-кадра или Windows 10. Headless-успех этого не доказывает.
 - Нет играбельности, Minecraft-протокола, совместимости файлов/генерации мира
   или доказательства эквивалентности Java Edition.

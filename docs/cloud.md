@@ -67,8 +67,9 @@ Workflow строит Goose из того же commit, затем нативны
 
 GitHub-репозиторий создан, `origin` настроен и исходники загружены в `main`.
 По решению владельца 2026-10-30 он сделан публичным для повторной проверки CI.
-Первый запуск зарегистрирован, но jobs не получили runners из-за платежей/лимита
-расходов аккаунта. Подробности и ссылка на run — в [github-ci.md](github-ci.md).
+Первый приватный запуск не получил runners из-за платежей/лимита аккаунта.
+После публикации CI #41010605234 успешно выполнил Windows x64, Linux headless
+и software Vulkan/Xvfb. Метаданные и ссылки на артефакты — в [github-ci.md](github-ci.md).
 Наличие YAML не означает, что Windows-сборка уже прошла. Windows Server runner
 также не заменяет будущую проверку игры на Windows 10 с настоящим видеодрайвером.
 
@@ -114,8 +115,9 @@ headless-бинарник, если первый аргумент `--headless`; 
 Windows job теперь получает gfx, собирает графический бинарник и запускает
 его `--help`/некорректные аргументы без GUI. Отдельный Linux job запускает
 render-test в graphics-контейнере и публикует PNG/JSON как Actions artifacts.
-В первом приватном запуске ни один шаг GitHub jobs не выполнился: блокировка аккаунта
-описана в [github-ci.md](github-ci.md). Windows GUI не проверен.
+Финальный публичный CI успешно выполнил все jobs, включая Windows console/launcher
+и Linux graphics smoke. Windows GUI не открывался; точные границы проверки
+описаны в [github-ci.md](github-ci.md).
 
 ### Доступность Python на Windows runner
 

@@ -1,0 +1,357 @@
+{
+  "repository": {
+    "full_name": "kokasikhorik-bot/GooseCraft",
+    "visibility": "public",
+    "url": "https://github.com/kokasikhorik-bot/GooseCraft"
+  },
+  "provenance": "Selected fields from GitHub REST API, collected 2026-10-30; no authentication data included.",
+  "run": {
+    "id": 41010605234,
+    "name": "Native builds and rendering",
+    "event": "push",
+    "head_sha": "d21220f887a9b710b0e02c7c5ac3be3d8bcfbc7a",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41010605234",
+    "run_attempt": 1,
+    "created_at": "2026-10-30T05:50:00Z",
+    "updated_at": "2026-10-30T05:54:25Z"
+  },
+  "jobs": [
+    {
+      "id": 123915502379,
+      "name": "Linux / software Vulkan and X11",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "GitHub Actions 1000001063",
+      "started_at": "2026-10-30T05:50:28Z",
+      "completed_at": "2026-10-30T05:54:25Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T05:50:29Z",
+          "completed_at": "2026-10-30T05:50:30Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T05:50:30Z",
+          "completed_at": "2026-10-30T05:50:31Z"
+        },
+        {
+          "name": "Build pinned graphics environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T05:50:31Z",
+          "completed_at": "2026-10-30T05:53:19Z"
+        },
+        {
+          "name": "Render offscreen and in an Xvfb window with networking disabled",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T05:53:19Z",
+          "completed_at": "2026-10-30T05:54:21Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T05:54:21Z",
+          "completed_at": "2026-10-30T05:54:23Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-30T05:54:23Z",
+          "completed_at": "2026-10-30T05:54:23Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-30T05:54:23Z",
+          "completed_at": "2026-10-30T05:54:23Z"
+        }
+      ]
+    },
+    {
+      "id": 123915502598,
+      "name": "windows-2022 / x64",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "GitHub Actions 1000001064",
+      "started_at": "2026-10-30T05:50:28Z",
+      "completed_at": "2026-10-30T05:54:16Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T05:50:29Z",
+          "completed_at": "2026-10-30T05:50:30Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T05:50:30Z",
+          "completed_at": "2026-10-30T05:50:35Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T05:50:35Z",
+          "completed_at": "2026-10-30T05:50:35Z"
+        },
+        {
+          "name": "Install pinned build helper",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T05:50:35Z",
+          "completed_at": "2026-10-30T05:50:48Z"
+        },
+        {
+          "name": "Build pinned Goose and fetch optional graphics sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T05:50:48Z",
+          "completed_at": "2026-10-30T05:52:47Z"
+        },
+        {
+          "name": "Compile graphical Windows client without opening a window",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T05:52:47Z",
+          "completed_at": "2026-10-30T05:54:04Z"
+        },
+        {
+          "name": "Build and test without a display",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T05:54:04Z",
+          "completed_at": "2026-10-30T05:54:07Z"
+        },
+        {
+          "name": "Prepare native distribution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-30T05:54:07Z",
+          "completed_at": "2026-10-30T05:54:10Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-30T05:54:10Z",
+          "completed_at": "2026-10-30T05:54:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-30T05:54:13Z",
+          "completed_at": "2026-10-30T05:54:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-30T05:54:13Z",
+          "completed_at": "2026-10-30T05:54:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-30T05:54:14Z",
+          "completed_at": "2026-10-30T05:54:14Z"
+        }
+      ]
+    },
+    {
+      "id": 123915502817,
+      "name": "ubuntu-22.04 / x64",
+      "status": "completed",
+      "conclusion": "success",
+      "runner_name": "GitHub Actions 1000001065",
+      "started_at": "2026-10-30T05:50:28Z",
+      "completed_at": "2026-10-30T05:52:36Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T05:50:29Z",
+          "completed_at": "2026-10-30T05:50:30Z"
+        },
+        {
+          "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T05:50:30Z",
+          "completed_at": "2026-10-30T05:50:31Z"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T05:50:31Z",
+          "completed_at": "2026-10-30T05:50:38Z"
+        },
+        {
+          "name": "Install pinned build helper",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T05:50:38Z",
+          "completed_at": "2026-10-30T05:50:41Z"
+        },
+        {
+          "name": "Build pinned Goose and fetch optional graphics sources",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T05:50:41Z",
+          "completed_at": "2026-10-30T05:52:30Z"
+        },
+        {
+          "name": "Compile graphical Windows client without opening a window",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-30T05:52:30Z",
+          "completed_at": "2026-10-30T05:52:30Z"
+        },
+        {
+          "name": "Build and test without a display",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T05:52:30Z",
+          "completed_at": "2026-10-30T05:52:32Z"
+        },
+        {
+          "name": "Prepare native distribution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-30T05:52:32Z",
+          "completed_at": "2026-10-30T05:52:32Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-30T05:52:32Z",
+          "completed_at": "2026-10-30T05:52:33Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-10-30T05:52:33Z",
+          "completed_at": "2026-10-30T05:52:34Z"
+        },
+        {
+          "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-10-30T05:52:34Z",
+          "completed_at": "2026-10-30T05:52:34Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-10-30T05:52:34Z",
+          "completed_at": "2026-10-30T05:52:34Z"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12957815526,
+      "name": "goosecraft-windows-2022-x64-d21220f887a9b710b0e02c7c5ac3be3d8bcfbc7a",
+      "size_in_bytes": 1290170,
+      "expired": false,
+      "created_at": "2026-10-30T05:54:12Z",
+      "archive_download_url": "https://api.github.com/repos/kokasikhorik-bot/GooseCraft/actions/artifacts/12957815526/zip"
+    },
+    {
+      "id": 12957312102,
+      "name": "graphics-evidence-d21220f887a9b710b0e02c7c5ac3be3d8bcfbc7a",
+      "size_in_bytes": 8504,
+      "expired": false,
+      "created_at": "2026-10-30T05:54:22Z",
+      "archive_download_url": "https://api.github.com/repos/kokasikhorik-bot/GooseCraft/actions/artifacts/12957312102/zip"
+    },
+    {
+      "id": 12956729264,
+      "name": "goosecraft-ubuntu-22.04-x64-d21220f887a9b710b0e02c7c5ac3be3d8bcfbc7a",
+      "size_in_bytes": 114525,
+      "expired": false,
+      "created_at": "2026-10-30T05:52:33Z",
+      "archive_download_url": "https://api.github.com/repos/kokasikhorik-bot/GooseCraft/actions/artifacts/12956729264/zip"
+    }
+  ],
+  "windows_artifact": {
+    "id": 12957815526,
+    "node_id": "MDg6QXJ0aWZhY3QxMjk1NzgxNTUyNg==",
+    "name": "goosecraft-windows-2022-x64-d21220f887a9b710b0e02c7c5ac3be3d8bcfbc7a",
+    "size_in_bytes": 1290170,
+    "url": "https://api.github.com/repos/kokasikhorik-bot/GooseCraft/actions/artifacts/12957815526",
+    "archive_download_url": "https://api.github.com/repos/kokasikhorik-bot/GooseCraft/actions/artifacts/12957815526/zip",
+    "expired": false,
+    "digest": "sha256:172eb30b6b7d5bc1608802f1fd10b860ec0f394aa9b649806329e3003c41d09c",
+    "created_at": "2026-10-30T05:54:12Z",
+    "updated_at": "2026-10-30T05:54:12Z",
+    "expires_at": "2027-01-28T05:50:00Z",
+    "workflow_run": {
+      "id": 41010605234,
+      "repository_id": 1438914287,
+      "head_repository_id": 1438914287,
+      "head_branch": "main",
+      "head_sha": "d21220f887a9b710b0e02c7c5ac3be3d8bcfbc7a"
+    }
+  },
+  "validation_boundaries": {
+    "windows_console_and_launcher_tests": "executed successfully in windows-2022 runner",
+    "windows_gui_opened": false,
+    "user_windows_10_tested": false,
+    "linux_software_vulkan_and_xvfb": "passed",
+    "artifact_archive_downloaded_in_codex_cloud": false,
+    "archive_download_limitation": "The cloud HTTP proxy returned HTTP 403 for the GitHub storage redirect. Artifact existence, size and digest are reported by the GitHub API; the digest was not rehashed from a local download."
+  }
+}

@@ -57,10 +57,11 @@ Goose, Python, Java или локальная среда разработки. �
 `goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
-Код загружен в `main`. По решению владельца 2026-10-30 репозиторий открыт
-для повторной проверки Actions. Первоначальный запуск в приватном репозитории
-был заблокирован платежами/лимитом аккаунта. [Текущий статус CI](docs/github-ci.md).
-Запуск на пользовательской Windows 10 ещё не подтверждён.
+Код загружен в `main`. [CI #41010605234](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41010605234)
+успешно собрал Windows x64 и Linux, проверил headless-клиент, мешер, Windows-лаунчер
+и Linux Vulkan/Xvfb. [Windows-артефакт](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41010605234/artifacts/12957815526)
+готов; [границы проверки и история CI](docs/github-ci.md).
+Windows GUI и пользовательская Windows 10 ещё не проверены.
 
 ## Документация
 
