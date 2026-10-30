@@ -1,7 +1,7 @@
 # Первый запуск GooseCraft на Windows 10 x64
 
-[Windows x64 ZIP 0.15.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13006622913),
-source `2a9afe9`, все три jobs [CI #41117617172](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172) завершились success.
+[Windows x64 ZIP 0.16.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13009486157),
+source `444c954`, все три jobs [CI #41121279582](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582) завершились success.
 [Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md).
 В 0.8 новый обычный мир расширен до 81 чанка; старые сохранения сохраняют
 прежние блоки и размер. Генератор рельефа v1 не изменён.

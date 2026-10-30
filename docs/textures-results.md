@@ -97,8 +97,29 @@ harness (`--export-world` вместо существующего `--export-page
 Runtime network=none; Linux x86-64, Mesa lavapipe LLVM15, Xvfb.
 [Архитектура](architecture.md).
 
-Windows Actions будет запущен после публикации source commit. Итоговый ZIP
-и REST snapshot добавляются после завершения CI.
+Source `444c9545b4f77290e2e24f594e58e75417ed16fa` опубликован;
+[Actions 41121279582](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582)
+создал [Windows ZIP 0.16](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13009486157).
+Workflow и все три jobs завершились **success**. Изначальное отставание
+header API от steps/artifacts исчезло; итоговый snapshot согласован.
+[REST snapshot](validation/github-actions-41121279582.json),
+[дополнительные наблюдения](validation/github-actions-41121279582-observations.json),
+[отчёт CI](github-ci.md). Windows release/debug клиент и GPU probe собраны,
+16 suites и два native-only, CLI/cmd, benchmark/package/upload steps прошли.
+GPU probe исполнялся на Linux; на Windows только компилировался. Окно Windows
+не открывалось, builder Server 2022.
+
+Проверена отдельная Linux-поставка: UID1000, cwd `/tmp`, network=none,
+root filesystem read-only, `/work` с исходниками и Goose compiler скрыт tmpfs.
+Упакованный native client создал Tall, выполнил 90 кадров с textures/AO,
+inventory/play/edit на Y35. PNG и GCW bytes совпали с основным набором,
+native headless прочитал тот же save. Оба binary и все 12 лицензий сохранены
+побайтно; миров, debug/test executables и внешних texture files в поставке нет.
+BUILD-INFO: 0.16.0, source `444c954`, source_dirty=false. Владение скопированных
+Docker файлов приведено к UID1000 без изменения содержимого.
+[Итог](validation/textures/package-results.json),
+[log](validation/textures/package/run.log), [кадр](validation/textures/package/frame.png).
+Это Linux-проверка; Windows ZIP пока локально не скачивался.
 
 ## Границы
 

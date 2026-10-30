@@ -1,4 +1,58 @@
-# GitHub: успешный CI GooseCraft 0.15 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.16 — 2026-10-30
+
+## Оригинальные текстуры 0.16
+
+Source `444c9545b4f77290e2e24f594e58e75417ed16fa`,
+[run 41121279582](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582).
+Workflow и все три jobs завершились **success**. Все выполненные steps
+успешны, Windows-only compile на Linux пропущен как предусмотрено workflow.
+Первоначально API заголовки отставали от completed steps и готовых artifacts;
+последний полный REST snapshot уже согласован: run/jobs completed/success.
+Статусы не исправлялись вручную.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | completed/success | Все 14 completed/success: release/debug client и texture probe собраны, UTF-8 manifests, 16 suites JIT/native release/debug, два native-only, byte oracle/geometry/UV/metadata, legacy formats/CLI/cmd, benchmark, package и upload |
+| ubuntu-22.04 / x64 | completed/success | Все 14 completed, success или expected Windows-only skip: 16 suites и два native-only, генераторы/форматы/миграция, CLI, benchmark и доставка |
+| Linux / software Vulkan and X11 | completed/success | Все 7 steps success: 182 game scenarios, 24 shared-pipeline texture probe frames / 7 372 800 exact pixel checks, 173 game PNG + 24 probe PNG, 90 profiles |
+
+[Windows x64 ZIP 0.16.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13009486157),
+**19,576,940 байт**. BUILD-INFO содержит source SHA, 0.16.0,
+world formats [1,2,3,4], generators [1,2], profiling schema 1, optional AO/textures.
+[Первый запуск](first-play.md), [кадры, проверки и стоимость](textures-results.md).
+
+SHA-256 ZIP из GitHub API:
+`4c528f528f15b621139cf68433bded7d3985045c126ae2e97be59316fd7bedf4`.
+Срок хранения по API: `2027-01-28T20:11:45Z`, если artifact не удалят раньше.
+ZIP локально не скачивался, digest не пересчитывался. Для Actions artifact
+может потребоваться вход в GitHub. Windows GUI не открывалось; builder —
+Windows Server 2022, пользовательская Windows 10 и физический GPU не проверены.
+
+Другие artifacts:
+
+- [goosecraft-ubuntu-22.04-x64](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13009275655): 18,220,714 байт.
+- [benchmark-windows-2022-x64](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13008797172): 5,449 байт.
+- [graphics-evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13008338452): 3,514,277 байт.
+- [benchmark-ubuntu-22.04-x64](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41121279582/artifacts/13007374196): 5,679 байт.
+
+[Run/jobs/steps/artifacts](validation/github-actions-41121279582.json),
+[дополнительные raw наблюдения отставания API](validation/github-actions-41121279582-observations.json).
+Source commit проверен; docs-only commit с `[skip ci]` меняет отчёты/evidence
+и ссылки. Документы ZIP соответствуют моменту сборки; текущие ссылки здесь.
+
+Все пиксели tiles, выбор материала/грани, геометрия и policy — Goose. C,
+toolchain pins и лицензии прежние. GLSL проецирует affine UV и умножает texel
+на neutral face/AO light. Vertex 20 bytes только при `--textures`, atlas
+4096 useful bytes, один mip, nearest/repeat. Оба opt-in режима выключены
+по умолчанию. Старые 159 PNG локально совпали с baseline 0.15; world bytes
+и число triangles от textures не меняются. Полное RSS/VRAM, GPU timestamps
+и FPS-преимущество не измерялись.
+
+Linux-поставка без исходников/Goose compiler проверена отдельно: UID1000,
+network=none, root read-only, 90 кадров textures/AO/play/edit/inventory на Y35.
+PNG/GCW bytes и оба binary совпали с tested outputs; 12 лицензий сохранены,
+texture files не нужны, test/debug binaries и миров в поставке нет.
+BUILD-INFO source_dirty=false. [Доказательства](validation/textures/package-results.json).
 
 ## Локальный vertex AO 0.15
 
