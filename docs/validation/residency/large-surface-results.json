@@ -1,0 +1,176 @@
+{
+  "large-preview": {
+    "enclosed_clear": [],
+    "reference_enclosed_clear": [],
+    "differences": [
+      {
+        "x": 231,
+        "y": 170,
+        "optimized": [
+          72,
+          165,
+          102,
+          255
+        ],
+        "reference": [
+          50,
+          115,
+          71,
+          255
+        ]
+      },
+      {
+        "x": 460,
+        "y": 193,
+        "optimized": [
+          72,
+          165,
+          102,
+          255
+        ],
+        "reference": [
+          56,
+          128,
+          79,
+          255
+        ]
+      },
+      {
+        "x": 404,
+        "y": 221,
+        "optimized": [
+          72,
+          165,
+          102,
+          255
+        ],
+        "reference": [
+          50,
+          115,
+          71,
+          255
+        ]
+      },
+      {
+        "x": 178,
+        "y": 229,
+        "optimized": [
+          72,
+          165,
+          102,
+          255
+        ],
+        "reference": [
+          50,
+          115,
+          71,
+          255
+        ]
+      },
+      {
+        "x": 203,
+        "y": 260,
+        "optimized": [
+          56,
+          128,
+          79,
+          255
+        ],
+        "reference": [
+          72,
+          165,
+          102,
+          255
+        ]
+      },
+      {
+        "x": 350,
+        "y": 349,
+        "optimized": [
+          72,
+          165,
+          102,
+          255
+        ],
+        "reference": [
+          56,
+          128,
+          79,
+          255
+        ]
+      }
+    ],
+    "pixel_equivalence_claimed": false
+  },
+  "large-other-view": {
+    "enclosed_clear": [],
+    "reference_enclosed_clear": [],
+    "differences": [
+      {
+        "x": 305,
+        "y": 155,
+        "optimized": [
+          44,
+          102,
+          63,
+          255
+        ],
+        "reference": [
+          72,
+          165,
+          102,
+          255
+        ]
+      },
+      {
+        "x": 374,
+        "y": 171,
+        "optimized": [
+          56,
+          128,
+          79,
+          255
+        ],
+        "reference": [
+          72,
+          165,
+          102,
+          255
+        ]
+      },
+      {
+        "x": 145,
+        "y": 225,
+        "optimized": [
+          44,
+          102,
+          63,
+          255
+        ],
+        "reference": [
+          72,
+          165,
+          102,
+          255
+        ]
+      },
+      {
+        "x": 281,
+        "y": 235,
+        "optimized": [
+          72,
+          165,
+          102,
+          255
+        ],
+        "reference": [
+          56,
+          128,
+          79,
+          255
+        ]
+      }
+    ],
+    "pixel_equivalence_claimed": false
+  }
+}

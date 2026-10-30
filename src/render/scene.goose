@@ -14,6 +14,7 @@ struct Options {
     raw: bool = false, preview_view: i64 = 0,
     radius: i64 = 4, radius_explicit: bool = false,
     far_replay: bool = false,
+    mesh_radius: i64 = 2, retain_meshes: bool = false, stream_replay: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -58,8 +59,16 @@ fn run(options: Options) {
     var saved_revision: i64 = if loaded { chunk.revision } else { -1 };
     var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
     var save_writes: i64 = 0;
+    var state = player::State {};
+    if options.seam_replay { state.position.x = 15.5; }
+    if options.far_replay { state.position.x = 31.5; }
+    while player::collides(chunk, state.position) { state.position.y += 1.0; }
+    var resident = residency::State {};
+    let cache_radius = if options.retain_meshes { 0 } else { options.mesh_radius };
+    residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
+                      world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.8.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.9.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -68,7 +77,10 @@ fn run(options: Options) {
     buffers.resize(chunk.chunks.len, chunks::Cache {});
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
     let initial_mesh_begin = if profiled { clock_ns() } else { 0 };
-    var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, chunk.chunks.len, reference, options.raw);
+    var remeshes = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, chunk.chunks.len, reference, options.raw);
+    let initial_meshes = remeshes;
+    let initial_uploaded_bytes = chunks::stats(buffers).uploaded_bytes;
+    var peak_mesh_capacity = chunks::stats(buffers).capacity;
     let initial_mesh_ns = if profiled { clock_ns() - initial_mesh_begin } else { 0 };
     let vs = embed_shader("vert", """
         layout(location = 0) in vec3 position;
@@ -108,10 +120,6 @@ fn run(options: Options) {
     var hud_uploaded_bytes: i64 = 0;
     var outline_uploads: i64 = 0;
     var outline_uploaded_bytes: i64 = 0;
-    var state = player::State {};
-    if options.seam_replay { state.position.x = 15.5; }
-    if options.far_replay { state.position.x = 31.5; }
-    while player::collides(chunk, state.position) { state.position.y += 1.0; }
     var active = true;
     var was_focused = true;
     var accumulator: f32 = 0.0;
@@ -135,7 +143,8 @@ fn run(options: Options) {
     let startup_ns = if profiled { loop_begin - startup_begin } else { 0 };
     while true {
         if replay_input {
-            if options.terrain_replay { replay::terrain_input(drawn); }
+            if options.stream_replay { replay::stream_input(drawn); }
+            else if options.terrain_replay { replay::terrain_input(drawn); }
             else { replay::inject(drawn, options.seam_replay); }
         }
         let t0 = if profiled { clock_ns() } else { 0 };
@@ -208,7 +217,12 @@ fn run(options: Options) {
             assert(!player::collides(chunk, state.position));
         }
         let t2 = if profiled { clock_ns() } else { 0 };
-        let rebuilt = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 2, reference, options.raw);
+        let cx = world::chunk_coord(floor(state.position.x) as i64);
+        let cz = world::chunk_coord(floor(state.position.z) as i64);
+        residency::update(chunk, resident, cx, cz, cache_radius);
+        for at in buffers.len { if !resident.wanted[at] { chunks::evict(buffers[at]); } }
+        let rebuilt = chunks::rebuild_dirty(chunk, resident, buffers, vertices, indices, 2, reference, options.raw);
+        peak_mesh_capacity = max(peak_mesh_capacity, chunks::stats(buffers).capacity);
         remeshes += rebuilt;
         let t3 = if profiled { clock_ns() } else { 0 };
         var save_calls: i64 = 0;
@@ -256,7 +270,7 @@ fn run(options: Options) {
         let rows: float4[4] = [gfx::row(camera.view_projection, 0), gfx::row(camera.view_projection, 1),
                                 gfx::row(camera.view_projection, 2), gfx::row(camera.view_projection, 3)];
         for at in chunk.chunks.len {
-            if !world::active(chunk, at) || buffers[at].indices == 0 { continue; }
+            if !resident.ready[at] || !residency::includes(chunk, cx, cz, options.mesh_radius, at) || buffers[at].indices == 0 { continue; }
             let origin = chunks::origin(chunk, at);
             if !reference && !visibility::intersects(rows, origin, origin + float3 { 16.0, 16.0, 16.0 }) {
                 culled_chunks++; continue;
@@ -336,6 +350,9 @@ fn run(options: Options) {
             mesh_buffer_creations: totals.allocations, overlay_buffer_capacity_bytes: 512 * 1024 + 24 * 16,
             overlay_buffer_creations: 2,
             world_radius: chunk.radius, world_chunks: world::count(chunk), world_format: storage::version(chunk),
+            mesh_radius: options.mesh_radius, resident_chunks: resident.resident, peak_resident_chunks: resident.peak,
+            mesh_evictions: resident.evictions, initial_meshes: initial_meshes,
+            initial_uploaded_bytes: initial_uploaded_bytes, peak_mesh_capacity_bytes: peak_mesh_capacity,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -351,6 +368,13 @@ fn run(options: Options) {
         ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
         ",\"mesh_capacity_bytes\":", totals.capacity,
         ",\"mesh_allocations\":", totals.allocations, ",\"mesh_uploaded_bytes\":", totals.uploaded_bytes,
+        ",\"mesh_radius\":", options.mesh_radius, ",\"retain_meshes\":", options.retain_meshes,
+        ",\"resident_chunks\":", resident.resident, ",\"desired_chunks\":", resident.desired,
+        ",\"peak_resident_chunks\":", resident.peak, ",\"mesh_admissions\":", resident.admissions,
+        ",\"mesh_evictions\":", resident.evictions, ",\"mesh_eviction_buffer_releases\":", totals.releases,
+        ",\"residency_shifts\":", resident.shifts, ",\"initial_meshes\":", initial_meshes,
+        ",\"initial_uploaded_bytes\":", initial_uploaded_bytes,
+        ",\"peak_mesh_capacity_bytes\":", peak_mesh_capacity,
         ",\"mesh_patches\":", totals.patches, ",\"split_patches\":", totals.split_patches,
         ",\"raw_greedy\":", options.raw,
         ",\"hud_uploads\":", hud_uploads, ",\"hud_uploaded_bytes\":", hud_uploaded_bytes,

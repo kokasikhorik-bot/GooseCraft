@@ -11,6 +11,7 @@ fn main() {
     var view_given = false;
     var warmup_given = false;
     var radius_given = false;
+    var mesh_radius_given = false;
     var output: u8[>..] = [];
     var world_path: u8[>..] = [];
     var profile_path: u8[>..] = [];
@@ -18,12 +19,14 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.8.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.9.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
             print("       [--radius 1..4] (new regular games default to 4: 81 chunks, 144x144)");
             print("       [--profile NEW-FILE.json [--profile-warmup N]]");
+            print("       [--mesh-radius 0..4] (regular games default to 2; 0 keeps the whole world)");
+            print("Diagnostics: --retain-meshes keeps all GPU meshes but draws the same mesh-radius window; --stream-replay walks out and respawns.");
             print("WASD move; mouse/arrows look; Space jump; LMB break; RMB place; 1/2 block.");
             print("Escape pauses; click/Enter resumes; R respawns; F5 saves; F10 quits and saves.");
             print("Default world: user profile / GooseCraft/worlds/default-v1.gcw. Player position is not saved.");
@@ -38,12 +41,13 @@ fn main() {
         } else if flag == "--offscreen" { options.offscreen = true; }
         else if flag == "--empty" { options.empty = true; }
         else if flag == "--preview" { options.preview = true; }
-        else if flag == "--replay" || flag == "--seam-replay" || flag == "--terrain-replay" || flag == "--far-replay" {
+        else if flag == "--replay" || flag == "--seam-replay" || flag == "--terrain-replay" || flag == "--far-replay" || flag == "--stream-replay" {
             if options.replay_input { abort_args(); }
             options.replay_input = true;
             options.seam_replay = flag == "--seam-replay";
-            options.terrain_replay = flag == "--terrain-replay" || flag == "--far-replay";
-            options.far_replay = flag == "--far-replay";
+            options.terrain_replay = flag == "--terrain-replay" || flag == "--far-replay" || flag == "--stream-replay";
+            options.far_replay = flag == "--far-replay" || flag == "--stream-replay";
+            options.stream_replay = flag == "--stream-replay";
         }
         else if flag == "--demo-world" { options.demo = true; }
         else if flag == "--seed" {
@@ -61,6 +65,13 @@ fn main() {
             options.radius = n; radius_given = true; options.radius_explicit = true;
         }
         else if flag == "--raw-greedy" { options.raw = true; }
+        else if flag == "--retain-meshes" { options.retain_meshes = true; }
+        else if flag == "--mesh-radius" {
+            if i + 1 >= argv.len || mesh_radius_given { abort_args(); }
+            i++; let n, ok = parse_int(argv[i]);
+            if !ok || n < 0 || n > 4 { abort_args(); }
+            options.mesh_radius = n; mesh_radius_given = true;
+        }
         else if flag == "--preview-view" {
             if i + 1 >= argv.len { abort_args(); }
             i++; let n, ok = parse_int(argv[i]);
@@ -106,7 +117,7 @@ fn main() {
     if options.terrain_replay && options.demo { abort_args(); }
     if options.seam_replay && !options.demo { abort_args(); }
     if no_save && world_path.len > 0 { abort_args(); }
-    if options.replay_input && options.frames < 0 { options.frames = if options.terrain_replay { 120 } else { 110 }; }
+    if options.replay_input && options.frames < 0 { options.frames = if options.stream_replay { 400 } else if options.terrain_replay { 120 } else { 110 }; }
     if options.offscreen && !options.replay_input { options.preview = true; }
     if options.empty { options.preview = true; }
     if options.away && !options.preview { abort_args(); }
@@ -118,6 +129,11 @@ fn main() {
         options.radius = if options.far_replay { 4 } else if options.preview || options.replay_input || options.demo || options.single { 1 } else { 4 };
     }
     if options.far_replay && (options.radius < 2 || options.single) { abort_args(); }
+    if !mesh_radius_given {
+        options.mesh_radius = if options.stream_replay { 1 } else if options.preview || options.replay_input || options.demo || options.single { 0 } else { 2 };
+    }
+    if options.preview && options.mesh_radius != 0 { abort_args(); }
+    if options.retain_meshes && options.mesh_radius == 0 { abort_args(); }
     if options.offscreen && options.frames < 0 { options.frames = 3; }
     options.persistent = world_path.len > 0 || !(no_save || options.offscreen || options.preview || options.replay_input || options.single);
     if options.persistent && world_path.len == 0 { world_path.append(storage::default_path()); }

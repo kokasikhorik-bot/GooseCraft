@@ -87,7 +87,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -228,7 +228,7 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling/large (JIT/native, release/debug), "
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch/profiling/large/residency (JIT/native, release/debug), "
           "growable world owners and v1/v2 vectors, "
           "profile ring and independent percentile recomputation, "
           "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
@@ -359,6 +359,10 @@ def render_build():
                  ["--radius", "1", "--radius", "2"], ["--radius", "1", "--single-chunk"],
                  ["--far-replay", "--radius", "1"]):
         run([VIEWER, *args], expected=2)
+    for args in (["--mesh-radius"], ["--mesh-radius", "-1"], ["--mesh-radius", "5"], ["--mesh-radius", "abc"],
+                 ["--mesh-radius", "1", "--mesh-radius", "2"], ["--preview", "--mesh-radius", "1"],
+                 ["--retain-meshes", "--mesh-radius", "0"]):
+        run([VIEWER, *args], expected=2)
     old_profile = BUILD / "existing profile with spaces" / "профили" / "frames.json"
     old_profile.parent.mkdir(parents=True, exist_ok=True)
     old_profile.write_bytes(b"retain profile")
@@ -468,17 +472,29 @@ def render_test(evidence):
         ("timing-window", xvfb, ["--terrain-replay", "--no-save"], 120, 0),
         ("timing-debug", [], ["--offscreen", "--terrain-replay", "--no-save"], 120, 0),
         ("timing-reference", [], ["--offscreen", "--terrain-replay", "--no-save", "--reference-renderer"], 120, 0),
-        ("timing-idle", xvfb, ["--no-save"], 180, 30),
+        ("timing-idle", xvfb, ["--no-save", "--mesh-radius", "0"], 180, 30),
         ("timing-short", [], ["--offscreen", "--preview"], 3, 30),
         ("timing-ring", [], ["--offscreen", "--preview"], 1100, 3),
         ("timing-save", [], ["--offscreen", "--terrain-replay", "--world", saves / "timing-world.gcw"], 120, 0),
         ("timing-paused", [], ["--offscreen", "--replay", "--demo-world", "--single-chunk", "--no-save"], 110, 0),
         ("large-timing-small", xvfb, ["--no-save", "--radius", "1"], 180, 30),
-        ("large-timing-big", xvfb, ["--no-save", "--radius", "4"], 180, 30),
+        ("large-timing-big", xvfb, ["--no-save", "--radius", "4", "--mesh-radius", "0"], 180, 30),
         ("large-travel", [], ["--offscreen", "--far-replay", "--no-save"], 120, 0),
         ("large-travel-window", xvfb, ["--far-replay", "--no-save"], 120, 0),
+        ("cache-idle", xvfb, ["--no-save"], 180, 30),
+        ("cache-idle-retained", xvfb, ["--no-save", "--retain-meshes"], 180, 30),
+        ("cache-far", [], ["--offscreen", "--far-replay", "--mesh-radius", "2"], 120, 0),
+        ("cache-far-retained", [], ["--offscreen", "--far-replay", "--mesh-radius", "2", "--retain-meshes"], 120, 0),
+        ("cache-stream", [], ["--offscreen", "--stream-replay"], 400, 0),
+        ("cache-stream-window", xvfb, ["--stream-replay", "--no-save"], 400, 0),
+        ("cache-stream-debug", [], ["--offscreen", "--stream-replay"], 400, 0),
+        ("cache-stream-retained", [], ["--offscreen", "--stream-replay", "--retain-meshes"], 400, 0),
+        ("cache-mid", [], ["--offscreen", "--stream-replay"], 340, 0),
+        ("cache-mid-retained", [], ["--offscreen", "--stream-replay", "--retain-meshes"], 340, 0),
     ]
     large_save = saves / "large" / "world.gcw"
+    cache_save = saves / "cache" / "world.gcw"
+    cache_retained_save = saves / "cache-retained" / "world.gcw"
     cases += [
         ("large-preview", [], ["--offscreen", "--preview", "--radius", "4"], 3),
         ("large-window", xvfb, ["--preview", "--radius", "4", "--no-save"], 3),
@@ -490,12 +506,15 @@ def render_test(evidence):
         ("radius3-preview", [], ["--offscreen", "--preview", "--radius", "3"], 3),
         ("large-save", [], ["--offscreen", "--terrain-replay", "--radius", "4", "--world", large_save], 120),
         ("large-load", [], ["--offscreen", "--world", large_save], 3),
+        ("cache-save", [], ["--offscreen", "--stream-replay", "--world", cache_save], 400),
+        ("cache-save-retained", [], ["--offscreen", "--stream-replay", "--retain-meshes", "--world", cache_retained_save], 400),
+        ("cache-load", xvfb, ["--world", cache_save, "--mesh-radius", "1"], 20),
     ]
     profile_paths = {name: evidence / "profiles" / (name + ".json") for name, *_ in profile_specs}
     for name, prefix, flags, frames, warmup in profile_specs:
         profile_paths[name].unlink(missing_ok=True)
         cases.append((name, prefix, [*flags, "--profile", profile_paths[name], "--profile-warmup", str(warmup)], frames))
-    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big"}
+    no_capture = {"timing-idle", "timing-short", "timing-ring", "timing-save", "large-timing-small", "large-timing-big", "cache-idle", "cache-idle-retained"}
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
@@ -508,7 +527,9 @@ def render_test(evidence):
             persisted_terrain = terrain_save.read_bytes()
         if name == "large-load":
             persisted_large = large_save.read_bytes()
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug") else VIEWER
+        if name == "cache-load":
+            persisted_cache = cache_save.read_bytes()
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -538,6 +559,8 @@ def render_test(evidence):
         results[name] = data
     if single_save.read_bytes() != persisted_single or multi_save.read_bytes() != persisted_region or terrain_save.read_bytes() != persisted_terrain or large_save.read_bytes() != persisted_large:
         raise RuntimeError("Loading a save rewrote its bytes without edits")
+    if cache_save.read_bytes() != persisted_cache or persisted_cache != cache_retained_save.read_bytes():
+        raise RuntimeError("Cache eviction/reload changed persistent blocks or save bytes")
     if results["offscreen"]["png_sha256"] != results["window"]["png_sha256"]:
         raise RuntimeError("Window and offscreen rendering disagree")
     if not results["play-window"]["interactive"] or results["play-window"]["replay"]:
@@ -729,13 +752,14 @@ def render_test(evidence):
         if (trace["world_radius"], trace["world_chunks"], trace["world_format"]) != (stdout["world_radius"], stdout["chunks"], stdout["world_format"]):
             raise RuntimeError("Profile world metadata disagrees with the actual world")
         if trace["warmup_requested"] == 0:
-            if sum(row["rebuilt"] for row in rows) + stdout["chunks"] != stdout["remeshes"]:
+            if sum(row["rebuilt"] for row in rows) + stdout["initial_meshes"] != stdout["remeshes"]:
                 raise RuntimeError("Per-frame remesh events were lost")
-            expected_uploads = stdout["mesh_uploaded_bytes"] - results["terrain-preview"]["mesh_uploaded_bytes"] + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
-            # The exact initial mesh differs in reference/one-chunk modes;
-            # check the comparable full-terrain stitched replay here.
-            if name in ("timing-offscreen", "timing-window", "timing-debug", "timing-save") and sum(row["uploaded_bytes"] for row in rows) != expected_uploads:
+            expected_uploads = stdout["mesh_uploaded_bytes"] - stdout["initial_uploaded_bytes"] + stdout["hud_uploaded_bytes"] + stdout["outline_uploads"] * 384
+            if sum(row["uploaded_bytes"] for row in rows) != expected_uploads:
                 raise RuntimeError("Per-frame uploads disagree with cumulative buffers")
+        for key in ("mesh_radius", "resident_chunks", "peak_resident_chunks", "mesh_evictions", "initial_meshes", "initial_uploaded_bytes", "peak_mesh_capacity_bytes"):
+            if trace[key] != stdout[key]:
+                raise RuntimeError(f"Residency profile metadata disagrees: {name}: {key}")
         profiles[name] = {"file": str(profile_paths[name].relative_to(evidence)),
                           "seen": trace["seen"], "retained": trace["retained"], "overwritten": trace["overwritten"],
                           "summary": trace["summary"], "collector_ns_total": trace["collector_ns_total"],
@@ -775,6 +799,34 @@ def render_test(evidence):
         "existing_world_seed_refused": True,
         "failed_save_exit": 6, "blocked_file_preserved": True}, indent=2) + "\n")
     (evidence / "pixel-comparisons.json").write_text(json.dumps(comparisons, indent=2) + "\n")
+    for a, b in (("cache-far", "cache-far-retained"), ("cache-stream", "cache-stream-retained"),
+                 ("cache-stream", "cache-stream-window"), ("cache-stream", "cache-stream-debug"),
+                 ("cache-mid", "cache-mid-retained"), ("cache-save", "cache-save-retained")):
+        if results[a]["png_sha256"] != results[b]["png_sha256"] or any(results[a][k] != results[b][k] for k in keys):
+            raise RuntimeError(f"Eviction changed pixels or gameplay compared to retained meshes: {a}, {b}")
+    for name, data in results.items():
+        limit = data["chunks"] if data["retain_meshes"] or data["mesh_radius"] == 0 else min(data["chunks"], (2 * data["mesh_radius"] + 1) ** 2)
+        if data["peak_resident_chunks"] > limit or data["resident_chunks"] > data["desired_chunks"] or data["dirty_remaining"] != 0:
+            raise RuntimeError(f"Resident mesh set exceeded its bounds or did not drain: {name}")
+    for name in ("cache-stream", "cache-stream-window", "cache-stream-debug", "cache-save"):
+        d = results[name]
+        if d["max_x"] < 48.5 or d["respawns"] != 1 or d["mesh_evictions"] < 9 or d["residency_shifts"] < 3:
+            raise RuntimeError(f"Streaming replay did not evict, return and reload: {name}: {d}")
+        if d["mesh_eviction_buffer_releases"] != 2 * d["mesh_evictions"] or d["mesh_admissions"] <= d["peak_resident_chunks"]:
+            raise RuntimeError("Actual nonempty GPU buffers were not released and readmitted")
+    if results["cache-idle"]["resident_chunks"] != 25 or results["cache-idle-retained"]["resident_chunks"] != 81:
+        raise RuntimeError("Default game did not bound the GPU set to 25 meshes")
+    if results["cache-idle"]["mesh_capacity_bytes"] >= results["cache-idle-retained"]["mesh_capacity_bytes"]:
+        raise RuntimeError("Bounded GPU residency did not reduce requested capacity")
+    if results["cache-load"]["save_writes"] != 0 or not results["cache-load"]["loaded"]:
+        raise RuntimeError("Streamed save was not reopened without writes")
+    (evidence / "residency-results.json").write_text(json.dumps({
+        "same_view_retained_meshes_png_and_gameplay_equal": True,
+        "bounded_resident_meshes": True, "evictions_and_return_checked": True,
+        "streamed_and_retained_save_bytes_equal": True, "reopen_preserves_bytes": True,
+        "cpu_blocks_remain_resident": True,
+        "scope": "Finite 81-chunk CPU world; bounded live API mesh handles; driver may defer actual destruction",
+    }, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
           "frustum culling, terrain, release/debug/reference, saves, opt-in frame profiling, independent percentiles, no unrequested readback, cached overlays")

@@ -8,3 +8,4 @@ import .visibility;
 import .terrain;
 import .stitch;
 import .profiling;
+import .residency;

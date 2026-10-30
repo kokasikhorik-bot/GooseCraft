@@ -115,6 +115,14 @@ JSON-массив и служебные значения. Размер samples �
 девять для старого single-chunk diagnostic), а не размер всего Map/резерва
 data stack. Дополнительные metadata не меняют порядок columns/rows schema 1.
 
+В 0.9 добавлены `mesh_radius`, `resident_chunks`, `peak_resident_chunks`,
+`mesh_evictions`, `initial_meshes`, `initial_uploaded_bytes`,
+`peak_mesh_capacity_bytes`. Накопленные uploads/allocations/rebuilds не
+сбрасываются при вытеснении; `mesh_bytes` и `mesh_capacity_bytes` описывают
+текущие живые API-буферы, peak — максимум на границах кадров/после initial build.
+SDL может отложить физическое удаление до завершения GPU-команд; эти значения
+не измеряют полную VRAM. Raw columns по-прежнему schema 1, 12 целых на кадр.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 

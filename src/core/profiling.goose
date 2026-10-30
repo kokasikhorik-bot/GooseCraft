@@ -28,6 +28,9 @@ struct Context {
     mesh_bytes: i64 = 0, mesh_capacity_bytes: i64 = 0, mesh_buffer_creations: i64 = 0,
     overlay_buffer_capacity_bytes: i64 = 0, overlay_buffer_creations: i64 = 0,
     world_radius: i64 = -1, world_chunks: i64 = 0, world_format: i64 = 0,
+    mesh_radius: i64 = 0, resident_chunks: i64 = 0, peak_resident_chunks: i64 = 0,
+    mesh_evictions: i64 = 0, initial_meshes: i64 = 0, initial_uploaded_bytes: i64 = 0,
+    peak_mesh_capacity_bytes: i64 = 0,
 }
 
 fn value(s: Sample, metric: i64) -> i64 {
@@ -89,7 +92,7 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
     if context.driver != "headless" && context.driver != "vulkan" && context.driver != "metal" &&
        context.driver != "direct3d12" && context.driver != "unknown" { return false; }
     let warmup = min(log.seen, log.warmup);
-    output.append(str("{\"schema\":1,\"client_version\":\"0.8.0\",\"clock\":\"os.clock_ns\",",
+    output.append(str("{\"schema\":1,\"client_version\":\"0.9.0\",\"clock\":\"os.clock_ns\",",
         "\"scope\":\"CPU loop wall time; pump includes previous-frame submission/presentation; not GPU timestamps\",",
         "\"percentiles\":\"nearest-rank on retained samples\",\"driver\":\"", context.driver,
         "\",\"offscreen\":", context.offscreen, ",\"replay\":", context.replay,
@@ -107,6 +110,10 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
         ",\"mesh_buffer_creations\":", context.mesh_buffer_creations,
         ",\"world_radius\":", context.world_radius, ",\"world_chunks\":", context.world_chunks,
         ",\"world_format\":", context.world_format,
+        ",\"mesh_radius\":", context.mesh_radius, ",\"resident_chunks\":", context.resident_chunks,
+        ",\"peak_resident_chunks\":", context.peak_resident_chunks, ",\"mesh_evictions\":", context.mesh_evictions,
+        ",\"initial_meshes\":", context.initial_meshes, ",\"initial_uploaded_bytes\":", context.initial_uploaded_bytes,
+        ",\"peak_mesh_capacity_bytes\":", context.peak_mesh_capacity_bytes,
         ",\"overlay_buffer_capacity_bytes\":", context.overlay_buffer_capacity_bytes,
         ",\"overlay_buffer_creations\":", context.overlay_buffer_creations, ","));
     output.append("\"memory_scope\":\"known block storage and requested GPU buffer bytes; excludes allocator, driver, RSS/VRAM totals\",\"summary\":{");

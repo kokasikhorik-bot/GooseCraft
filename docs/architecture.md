@@ -13,6 +13,7 @@ GooseCraft/
 │   │   ├── mesh.goose        # CPU-мешер видимых граней; без gfx/SDL
 │   │   ├── stitch.goose      # согласование рёбер и триангуляция без T-стыков
 │   │   ├── profiling.goose   # bounded ring, nearest-rank summary, JSON export
+│   │   ├── residency.goose   # desired/ready, ближайшая очередь и GPU-резидентность
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # GCW v1/v2, транзакционная загрузка и atomic save
@@ -34,6 +35,7 @@ GooseCraft/
 │   ├── stitch.goose          # площадь/цвет треугольников и T-стыки всего мира
 │   ├── profiling.goose       # прогрев, rollover, summary и JSON I/O
 │   ├── large.goose           # большой мир, GCW v2, копии, движение и геометрия
+│   ├── residency.goose       # переходы/смена направления/правки вне GPU-набора
 │   ├── support/surface.goose # независимая проверка покрытия меша
 │   ├── support/triangles.goose # clipping к единичным клеткам и поиск T-стыков
 │   └── fixtures/type_error.goose
@@ -133,7 +135,15 @@ Goose хранит изменяемые массивы на data stacks; вых�
 в transactional loader и снимках тестов. Backend закреплённого компилятора
 не поддерживает `==` для такой структуры, поэтому состояние сравнивает
 `world::equal` по metadata и блокам. Тесты проверяют независимость владельцев.
-Все чанки/меши конечного мира пока резидентны; это не streaming.
+В 0.9 CPU-блоки конечного мира остаются резидентными, GPU-меши имеют
+отдельную ограниченную резидентность. `residency.goose` не импортирует gfx:
+выбирает квадрат вокруг игрока и ближайший dirty-чанк, хранит ready отдельно
+от пустого меша. Рендерер освобождает vertex/index буферы вышедших чанков через
+проверенный `gfx::release`, сбрасывает live capacity и geometry counts, сохраняя
+накопленные uploads/allocations/rebuilds. Повторный вход строит меш из текущих
+CPU-блоков/halo. Начальный набор полон до первого кадра; дальше бюджет два.
+Старый dirty вне GPU-набора можно снять: admission всегда ставит новый dirty.
+Это не выгрузка CPU-данных или paged storage. [Границы проверки](residency-results.md).
 
 Сохранение — отдельный версионный кодек на Goose. Проверяет весь ввод до
 замены мира; GPU-данные восстанавливаются из блоков. F5 и штатный выход

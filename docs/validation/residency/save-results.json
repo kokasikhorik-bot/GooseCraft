@@ -1,0 +1,12 @@
+{
+  "single_bytes": 4112,
+  "region_bytes": 36880,
+  "reopen_preserved_bytes": true,
+  "independent_adler32": true,
+  "default_profile_saved": true,
+  "terrain_reopen_preserved_bytes": true,
+  "default_profile_matches_golden_seed": 12345,
+  "existing_world_seed_refused": true,
+  "failed_save_exit": 6,
+  "blocked_file_preserved": true
+}

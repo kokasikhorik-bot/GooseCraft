@@ -22,6 +22,20 @@ fn terrain_input(frame: i64) {
     if frame == 111 { key("F5", false); }
 }
 
+// Walk out far enough to evict the edited starting chunk, then use the normal
+// R handler to return. No direct mutation of player, blocks or cache state.
+fn stream_input(frame: i64) {
+    terrain_input(frame);
+    if frame == 96 { key("D", true); }
+    if frame >= 100 && frame < 350 && frame % 40 == 20 { key("Space", true); }
+    if frame >= 100 && frame < 350 && frame % 40 == 21 { key("Space", false); }
+    if frame == 350 { key("D", false); }
+    if frame == 360 { key("R", true); }
+    if frame == 361 { key("R", false); }
+    if frame == 380 { key("F5", true); }
+    if frame == 381 { key("F5", false); }
+}
+
 fn inject(frame: i64, seam: bool) {
     if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }
     if frame == 2 { gfx::inject_mouse(320.0, 240.0, gfx::MOUSE_LEFT, true); }

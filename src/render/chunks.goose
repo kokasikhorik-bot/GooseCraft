@@ -13,10 +13,20 @@ struct Cache {
     rebuilds: i64 = 0,
     patches: i64 = 0,
     split_patches: i64 = 0,
+    releases: i64 = 0,
 }
 
 struct Stats { vertices: i64 = 0, indices: i64 = 0, capacity: i64 = 0,
-               allocations: i64 = 0, uploaded_bytes: i64 = 0, patches: i64 = 0, split_patches: i64 = 0 }
+               allocations: i64 = 0, uploaded_bytes: i64 = 0, patches: i64 = 0, split_patches: i64 = 0, releases: i64 = 0 }
+
+fn evict(cache: Cache&) {
+    if cache.vertex.id != 0 { gfx::release(cache.vertex); cache.releases++; }
+    if cache.index.id != 0 { gfx::release(cache.index); cache.releases++; }
+    cache.vertex = gfx::Buffer { 0 }; cache.index = gfx::Buffer { 0 };
+    cache.vertex_capacity = 0; cache.index_capacity = 0;
+    cache.vertices = 0; cache.indices = 0; cache.patches = 0; cache.split_patches = 0;
+    // Cumulative uploads/allocations/rebuilds survive eviction for profiling.
+}
 
 fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, reference: bool) -> bool {
     if reference && buffer.id != 0 {
@@ -48,14 +58,15 @@ fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]
     cache.uploaded_bytes += vb.len + ib.len; cache.rebuilds++;
 }
 
-fn rebuild_dirty(map: world::Map&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
+fn rebuild_dirty(map: world::Map&, resident: residency::State&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
                  budget: i64, reference: bool, raw: bool) -> i64 {
     var done: i64 = 0;
     while done < budget {
-        let at = world::pop_dirty(map);
+        let at = residency::next(map, resident);
         if at < 0 { break; }
         var source = world::neighborhood(map, at);
         rebuild(source, vertices, indices, caches[at], reference, raw);
+        residency::complete(map, resident, at);
         done++;
     }
     return done;
@@ -72,6 +83,7 @@ fn stats(caches: Cache[:]) -> Stats {
         result.capacity += cache.vertex_capacity + cache.index_capacity;
         result.allocations += cache.allocations; result.uploaded_bytes += cache.uploaded_bytes;
         result.patches += cache.patches; result.split_patches += cache.split_patches;
+        result.releases += cache.releases;
     }
     return result;
 }
