@@ -35,3 +35,10 @@ fn flat_fixture() -> Chunk {
     }
     return chunk;
 }
+
+fn demo_fixture() -> Chunk {
+    var chunk = flat_fixture();
+    for y in 1..5 { assert(set(chunk, 5, y, 5, 2)); }
+    for y in 1..8 { assert(set(chunk, 10, y, 9, 2)); }
+    return chunk;
+}

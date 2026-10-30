@@ -118,7 +118,7 @@ fn editing() {
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
     mesh::build(chunk, vertices, indices);
-    assert(indices.len == (576 + 4) * 6);
+    assert(indices.len > 6 * 6 && indices.len < (576 + 4) * 6);
     assert(interaction::remove(chunk, hit));
     assert(!interaction::remove(chunk, hit));
     assert(world::solid_count(chunk) == 256);

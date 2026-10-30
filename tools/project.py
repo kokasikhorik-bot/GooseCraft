@@ -3,9 +3,11 @@ import argparse
 import hashlib
 import json
 import os
+import platform
 from pathlib import Path
 import shutil
 import struct
+import statistics
 import subprocess
 import sys
 
@@ -56,7 +58,7 @@ def build():
 
 
 def test():
-    run([GOOSE, "format", "--check", ROOT / "src", ROOT / "tests/headless.goose", ROOT / "tests/mesh.goose", ROOT / "tests/player.goose"])
+    run([GOOSE, "format", "--check", ROOT / "src", ROOT / "tests/headless.goose", ROOT / "tests/mesh.goose", ROOT / "tests/player.goose", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
     bad = run([GOOSE, "check", ROOT / "tests/fixtures/type_error.goose", "--offline"], expected=1)
     if "expected a value of type i64" not in bad.stderr:
@@ -117,6 +119,49 @@ def test():
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
     print("PASS: compiler probes, Goose core/mesh/player (JIT/native, release/debug), CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
+
+
+def benchmark(evidence):
+    evidence.mkdir(parents=True, exist_ok=True)
+    binary = BUILD / ("mesh-benchmark" + EXT)
+    run([GOOSE, "build", ROOT / "benchmarks/mesh.goose", "--offline", "-o", binary])
+    toolchain = run([GOOSE, "toolchain"]).stdout
+    result = run([binary, "--iterations", "200"])
+    samples = [json.loads(line) for line in result.stdout.splitlines()]
+    summaries = {}
+    for name in ("empty", "flat", "full", "demo", "terrain", "checker"):
+        rows = [row for row in samples if row["scene"] == name]
+        if len(rows) != 7 or {row["sample"] for row in rows} != set(range(7)):
+            raise RuntimeError("Benchmark is missing samples")
+        first = rows[0]
+        if any(row["checksum"] != first["checksum"] or row["iterations"] != 200 for row in rows):
+            raise RuntimeError("Benchmark geometry changed between samples")
+        old_us = statistics.median(row["reference_ns"] / row["iterations"] / 1000 for row in rows)
+        new_us = statistics.median(row["greedy_ns"] / row["iterations"] / 1000 for row in rows)
+        old_bytes = first["reference_vertices"] * 16 + first["reference_indices"] * 4
+        new_bytes = first["greedy_vertices"] * 16 + first["greedy_indices"] * 4
+        if not (old_us > 0 and new_us > 0 and 0 <= new_bytes <= old_bytes):
+            raise RuntimeError("Invalid benchmark result")
+        summaries[name] = {"reference_quads": first["reference_vertices"] // 4,
+                           "greedy_quads": first["greedy_vertices"] // 4,
+                           "reference_mesh_bytes": old_bytes, "greedy_mesh_bytes": new_bytes,
+                           "reference_median_us": old_us, "greedy_median_us": new_us,
+                           "cpu_speedup": old_us / new_us}
+    if any(summaries[name]["greedy_quads"] != 6 for name in ("flat", "full")):
+        raise RuntimeError("Greedy meshing did not merge the uniform surface")
+    if summaries["checker"]["reference_quads"] != summaries["checker"]["greedy_quads"]:
+        raise RuntimeError("Checkerboard worst case must preserve its isolated faces")
+    report = {"platform": platform.platform(), "architecture": platform.machine(),
+              "toolchain": toolchain, "lock": json.loads((ROOT / "toolchain.lock.json").read_text()),
+              "method": {"samples": 7, "iterations_per_sample": 200, "warmup_builds": 8,
+                         "alternating_algorithm_order": True, "clock": "os.clock_ns (monotonic)",
+                         "scope": "one-chunk CPU meshing; no FPS or Minecraft comparison",
+                         "memory_scope": "logical vertex/index bytes; excludes capacity, scratch, total RSS/VRAM",
+                         "greedy_scratch_bytes": 24672},
+              "scenes": summaries, "raw_samples": samples}
+    (evidence / "mesh-benchmark.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps(summaries, indent=2))
+    print("PASS: native meshing benchmark recorded; timings are observations, not CI performance gates")
 
 
 def render_build():
@@ -244,13 +289,17 @@ def package(graphics=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["build", "test", "package", "render-build", "render-test"])
+    parser.add_argument("command", choices=["build", "test", "benchmark", "package", "render-build", "render-test"])
     parser.add_argument("--graphics", action="store_true", help="include graphical client when packaging")
     parser.add_argument("--evidence", type=Path, default=BUILD / "render-evidence")
     opts = parser.parse_args()
     os.chdir(ROOT)
     if not GOOSE.is_file():
         parser.error("Run python tools/bootstrap.py first")
+    if opts.command == "benchmark":
+        BUILD.mkdir(exist_ok=True)
+        benchmark(opts.evidence.resolve())
+        return
     if opts.command in ("render-build", "render-test"):
         render_build()
         if opts.command == "render-test":
