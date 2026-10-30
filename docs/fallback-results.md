@@ -5,6 +5,8 @@
 файловом replay основной поток вызывает подготовку **30 раз вместо 38 в 0.11**,
 а uncached `--sync-paging` — 48 раз. Worker читает ещё пять страниц; всего
 35 файловых подготовок вместо 43 в 0.11. Это вызовы helper, не kernel syscalls.
+Эти счётчики относятся к игровому циклу; начальная загрузка и импорт/экспорт
+в них не входят.
 
 ![Настоящий GPU readback после возврата по R, Linux lavapipe](validation/fallback/pages-route.png)
 
@@ -64,6 +66,20 @@ shutdown, readback, источника импорта и неизменност�
 [итог/PNG hashes](validation/fallback/render-results.json),
 [подписи исходников и окружение](validation/fallback/provenance.json).
 
+Упакованный Linux-клиент дополнительно прошёл 680 кадров как UID 1000 из `/tmp`,
+network=none, root filesystem read-only, исходный `/work` и Goose compiler скрыты
+tmpfs. При искусственно опоздавшем worker: 13 fallback reuses, 0 worker hits,
+все задания завершены, misuse=0. PNG совпал с основным delayed replay. Свой
+упакованный headless проверил сохранённый каталог; повторная проверка не изменила
+index/page hashes. Бинарники совпали с тестовыми, все 12 лицензий сохранены
+побайтно, миров и debug-программ в поставке нет. При локальной упаковке владелец
+выходного каталога приведён к UID 1000; содержимое binary/license не менялось.
+BUILD-INFO: 0.11.1, source `7ff602d`, formats [1,2,3], profiling schema 1.
+[Итог поставки](validation/fallback/package-results.json),
+[кадр](validation/fallback/package/frame.png),
+[raw profile](validation/fallback/package/frames.json).
+Это проверка Linux-поставки, не скачанного Windows ZIP.
+
 ## Парное сравнение с 0.11.0
 
 Сохранённый native binary source `437bed6` сверён по SHA-256 с проверенной
@@ -117,3 +133,10 @@ python tools/compare_paging.py --baseline /baseline/goosecraft-client \
 состоянием ожидания данных. Общий FPS, полный RSS/VRAM, физическая видеокарта
 и Windows 10 GUI не проверены. Мир конечный, подключения к серверам Minecraft
 ещё нет. Итоги Windows сборки публикуются в [отчёте CI](github-ci.md).
+
+Все три jobs [Actions 41095302452](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452)
+для source `7ff602dddcfe93506134f87305f8a929bea16f22` завершились **success**.
+Windows выполнил native/JIT/CLI проверки и собрал release/debug графику;
+Linux graphics CI подтвердил 128 сценариев. [Windows ZIP 0.11.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452/artifacts/12996891028)
+создан. Полные API metadata и границы подтверждения сохранены в отчёте CI;
+пользовательское окно Windows 10 этим не проверяется.

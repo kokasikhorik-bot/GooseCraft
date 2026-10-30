@@ -1,0 +1,55 @@
+{
+  "source_commit": "7ff602dddcfe93506134f87305f8a929bea16f22",
+  "build_info": {
+    "client_version": "GooseCraft 0.11.1",
+    "source_commit": "7ff602dddcfe93506134f87305f8a929bea16f22",
+    "source_dirty": null,
+    "ci_url": null,
+    "target": "linux-x64",
+    "graphics": true,
+    "world_format": 3,
+    "world_formats": [
+      1,
+      2,
+      3
+    ],
+    "terrain_generator": 1,
+    "profiling_schema": 1
+  },
+  "runtime_network": "none",
+  "uid": 1000,
+  "execution_cwd": "/tmp",
+  "image_root_read_only": true,
+  "work_tree_and_goose_compiler_hidden": true,
+  "native_graphics_frames": 680,
+  "delayed_worker_ms": 10,
+  "fallback_reuses": 13,
+  "prefetch_hits": 0,
+  "worker_joined": true,
+  "misuse_count": 0,
+  "png_equals_full_suite_delayed_replay": true,
+  "inspection": {
+    "mode": "pages-inspect",
+    "format": 3,
+    "chunks": 81,
+    "solid_blocks": 144444,
+    "generator": 1,
+    "seed": 12345,
+    "serial": 1
+  },
+  "headless_inspection_preserved_index_and_pages": true,
+  "page_hashes": {
+    "chunk_1_0_1.gcp": "46bb8787e13cccd7594132540be2a6069570f63346fd4ca388848b1b6d037e12",
+    "index.gci": "47b0d42aa54f731d01b7ad3a53d61aca75a405e376f5fe91f810681339ab262c"
+  },
+  "matching_license_files": 12,
+  "release_binaries_match_tested_outputs": true,
+  "no_world_files": true,
+  "no_debug_binaries": true,
+  "binaries": {
+    "goosecraft-client": "b520b35db2ebd1b2fcd0ae74e744471812cf96de5bf67e6fe5822424be6d2caf",
+    "goosecraft-headless": "fd0d2d123ec5868bb50af2086e19527c1f6654f17af554af3caafb463784ad4c"
+  },
+  "local_package_owner_adjusted_to_uid_1000": true,
+  "scope": "Local Linux distribution, not downloaded Windows artifact; generated and file-backed preparation counters are separate"
+}

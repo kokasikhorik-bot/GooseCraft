@@ -153,6 +153,8 @@ Raw columns/schema 1 остаются прежними.
 вызова, один fallback reuse — один. `prefetch_staging_bytes` теперь 32976 вместо
 32968: восемь дополнительных bool, число page slots прежнее. Полного RSS это
 не измеряет; raw columns/schema 1 не менялись.
+`main_page_read_ns` измеряет вызов `read_page`; поиск в кеше и копирование Chunk
+в этот таймер не входят, но входят в `game_ns` и полный wall кадра.
 
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.

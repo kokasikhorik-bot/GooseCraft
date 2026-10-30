@@ -1,6 +1,58 @@
-# GitHub: успешный CI GooseCraft 0.11 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.11.1 — 2026-10-30
 
-## Фоновая подготовка страниц 0.11
+## Повторное использование preflight 0.11.1
+
+[Run 41095302452](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452)
+для `7ff602dddcfe93506134f87305f8a929bea16f22` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug graphical clients, UTF-8 PE manifests, 12 suites TinyCC/native release/debug, native-only worker release/debug, bounded fallback reuse, холодный край/teleport, corrupt preflight и dirty-commit failure, stale cache, Unicode I/O/lock, CLI/cmd.exe, benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | 12 JIT/native suites и native worker release/debug, кодеки/сохранения/отказы, profiling, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 128 сценариев: прежние 127 плюс файловый fallback с задержкой worker; 38 профилей, 119 PNG, точное gameplay/GCW equality, bounded lifecycle и раздельные счётчики двух источников кеша |
+
+**[Windows ZIP 0.11.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452/artifacts/12996891028)**:
+`goosecraft-windows-2022-x64-7ff602dddcfe93506134f87305f8a929bea16f22`,
+8 843 426 байт. Release graphical/headless клиенты, `.cmd`-лаунчер, лицензии,
+документы и BUILD-INFO: 0.11.1, source SHA, formats [1,2,3], generator 1,
+profiling schema 1. [Первый запуск](first-play.md), [проверки и парные замеры](fallback-results.md).
+
+SHA-256 ZIP по GitHub API:
+`0797d10de9939f8ad9a029408f42192db906efc2aec4aec5083ac13c150151b8`.
+Хранение по API до `2027-01-28T17:02:35Z`, если артефакт не удалят раньше.
+ZIP локально не скачивался и не хешировался. Для Actions artifact в браузере
+может потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452/artifacts/12996411846): 5 444 байта, mesh/stitch без GUI.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452/artifacts/12996471462): 5 674 байта.
+- [Graphics/profile evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452/artifacts/12995992222): 1 171 859 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41095302452/artifacts/12996131691): 7 548 432 байта.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41095302452.json)
+сохранены без credentials. Код проверен как source `7ff602d`; итоговый
+docs-only commit с `[skip ci]` меняет только отчёты/evidence и ссылки.
+Документы в ZIP отражают момент сборки; текущая ссылка и результаты — здесь.
+
+Дополнительные локальные Linux-проверки: GCC 14.2/12.2, 128 graphics scenarios,
+12 парных запусков двух версий с чередованием порядка. На файловом replay
+main preparations 30 вместо 38 в 0.11, uncached control — 48. В трёх парах
+с искусственными 2 мс медиана wall кадра R 64,5 вместо 81,3 мс; обычный полный
+кадр R не ускорился. FPS-прирост и полный RSS/VRAM не заявляются. Startup,
+не поместившийся preflight и commit всё ещё могут ждать диск.
+
+Локальная Linux-поставка прошла 680 кадров без доступа к source/Goose compiler,
+network=none, UID 1000, 13 fallback reuses при опоздавшем worker; проверены
+shutdown/save, exact PNG, неизменность страниц после inspection и 12 лицензий.
+Это не проверка скачанного Windows ZIP.
+
+Windows job собрал графику и выполнил native/JIT/CLI, но окно **не открывалось**.
+Builder — Windows Server 2022; пользовательская Windows 10/физический GPU
+не проверены. UTF-8 argv использует manifest Windows 10 1903+.
+Графический CI — Linux Mesa/lavapipe/Xvfb. Сети Java Edition пока нет.
+
+## Фоновая подготовка страниц 0.11 (предыдущая версия)
 
 [Run 41091361216](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41091361216)
 для `437bed6259aff94d534bd53eaf7f4d662b1a7c9e` завершился **success**.
