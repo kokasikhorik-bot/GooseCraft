@@ -1,6 +1,53 @@
-# GitHub: успешный CI GooseCraft 0.5 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.6 — 2026-10-30
 
-## Несколько чанков 0.5
+## Рельеф 0.6
+
+[Run 41040892876](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876)
+для `958076edf3fb97aba3eea2733bc6ffe2eaa5ffc9` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графики, UTF-8 manifests через SDK mt.exe, семь suites TinyCC/native release/debug, четыре SHA-256 terrain vectors, Unicode saves, CLI/cmd.exe launcher, benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | Семь suites, четыре terrain vectors, сохранение/ошибки, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 40 сценариев: старые single/multi/seams, рельеф, другой seed, traversal/edit/jump, release/debug/window/offscreen, culling и persistence |
+
+**[Windows ZIP 0.6](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12969759287)**:
+`goosecraft-windows-2022-x64-958076edf3fb97aba3eea2733bc6ffe2eaa5ffc9`,
+1 904 581 байт. В поставке release-клиент, headless-клиент, `.cmd`-лаунчер,
+лицензии, документация и BUILD-INFO (версия, source SHA, CI URL, версия
+формата мира и генератора). Сохранения и debug EXE не включены.
+[Первый запуск](first-play.md), [результаты 0.6](terrain-results.md).
+
+API сообщил SHA-256 ZIP:
+`246931ca20aeb157b04b064bd618460dff0ae32eaf7bf9722a5d20116200a25a`.
+Срок хранения по API: `2027-01-28T10:27:31Z`, если артефакт не удалят раньше.
+Размер/digest — метаданные GitHub; Windows ZIP локально не скачивался и не
+хешировался. Для скачивания в браузере может потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12971100082): 2 511 байт.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12969049300): 2 528 байт.
+- [Graphics evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12970860562): 206 893 байта.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12969434033): 676 267 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41040892876.json)
+сохранены без credentials. PE manifest проверен внутри Windows job,
+действительные Unicode argv/I/O проверены native-клиентами. Само окно
+на Windows Server 2022/Windows 10 **не открывалось**. Минимум для UTF-8
+activeCodePage — Windows 10 1903+; пользователю инструменты сборки не нужны.
+
+Новый мир по seed 12345, прежний GCW v1 читается без перегенерации. В обзорном
+кадре Linux lavapipe известны два одиночных просвета greedy-меша; GPU
+эквивалентность reference для рельефа не заявляется. Сырые различия и PNG
+сохранены, прежние строгие сравнения плоских сцен сохранены.
+Подробности и следующий шаг исправления — [в отчёте](terrain-results.md).
+
+Итоговый docs-only commit с `[skip ci]` меняет только документацию/evidence,
+проверенные исходники остаются от `958076e`. Документы внутри ZIP отражают
+момент сборки; актуальные ссылки и итог CI находятся в этом отчёте.
+
+## Несколько чанков 0.5 (предыдущая версия)
 
 [Run 41034821463](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463)
 для `5f4a14cc007e916969cf4db689f05304b7b9a19a` завершился **success**.

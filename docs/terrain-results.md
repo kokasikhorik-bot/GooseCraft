@@ -38,7 +38,8 @@ goosecraft.cmd --headless --generate-world 12345 "D:\Games\Headless Hills.gcw"
 
 ## Реальные проверки в облаке
 
-Семь headless suites проходят в TinyCC JIT и native AOT, release и debug.
+Семь headless suites проходят в TinyCC JIT и native AOT, release и debug;
+локально проверены GCC 14.2 на хосте и GCC 12.2 в закреплённом Docker.
 Новый suite проверяет обратный порядок генерации чанков, границы высот,
 отрицательные координаты, поверхность на всех стыках, отсутствие внутренних
 граней, точное покрытие/цвета/winding greedy и reference, приземление на обеих
@@ -85,6 +86,20 @@ release/debug. Это искусственный ввод, не проверка
 с `equivalence_verified=false`, оба PNG доступны рядом. Прежний строгий
 pixel-check плоских сцен не ослаблен. Устранение просветов и измерение цены
 исправления — следующий этап рендерера.
+
+Поставка Linux 0.6 собрана и проверена из `/tmp`: оба release-бинарника
+запускают CLI, присутствуют BUILD-INFO, инструкции и все 12 неизменных
+лицензионных файлов; debug-бинарников и сохранений нет. `.git` в Docker
+отсутствует, поэтому `source_dirty=null`, а source SHA передан явно.
+[Результат](validation/terrain/package-results.json).
+
+[GitHub Actions 41040892876](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876)
+проверил `958076edf3fb97aba3eea2733bc6ffe2eaa5ffc9`: все три jobs успешны.
+На Windows Server 2022 собраны release/debug графики, встроены и извлечены
+UTF-8 PE manifests, выполнены семь suites во всех четырёх режимах и сравнение
+GCW с четырьмя фиксированными SHA-256. Unicode I/O, cmd.exe launcher, benchmark
+и упаковка тоже прошли. Ubuntu job успешен, отдельный Linux graphics job
+прошёл 40 сценариев. [Windows ZIP 0.6](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12969759287).
 
 Логи/JSON/PNG: [evidence](validation/terrain/). Окно запускалось на Linux/Xvfb
 с CPU Vulkan, не на Windows 10 или физическом GPU. Итог Windows CI отдельно
