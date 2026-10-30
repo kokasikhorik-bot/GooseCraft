@@ -107,12 +107,13 @@ def test():
         p = run(command, cwd=scratch)
         if json.loads(p.stdout)["ticks"] != 3:
             raise RuntimeError("Launcher arguments were not forwarded")
-        run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
+        run('cmd.exe /d /s /c ""' + str(launcher) + '" --headless --invalid"', expected=2, cwd=scratch)
         if VIEWER.is_file():
             shutil.copy2(VIEWER, folder / VIEWER.name)
             help_result = run('cmd.exe /d /s /c ""' + str(launcher) + '" --help"', cwd=scratch)
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
+            run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
     print("PASS: compiler probes, Goose core/mesh (JIT/native, release/debug), CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
 
