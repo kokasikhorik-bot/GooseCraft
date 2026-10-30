@@ -105,7 +105,20 @@ Bulk import/export использует полный Map и отдельные b
 Один процесс на мир; стороннее изменение файлов/сетевые FS не проверялись.
 Power-loss fault injection не выполнялся.
 
-Отдельный Windows CI проверяет native/JIT, Unicode I/O, lock, CLI/launcher и
-сборку графики; актуальные результаты в [github-ci.md](github-ci.md).
+Все три jobs [GitHub Actions 41081936076](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076)
+для source `5bd71bdcba539abade725fe62df23344d53cb1f5` завершились success:
+Windows native/JIT, собственный C ABI/Unicode I/O/lock, CLI/launcher,
+Linux и 121 графический сценарий.
+[Windows ZIP 0.10](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12990900263)
+создан; metadata/digest и границы — в [github-ci.md](github-ci.md).
 GUI на Windows 10 и физический GPU пока не проверены. Linux lavapipe/Xvfb
 этого не заменяет. Сети Java Edition и бесконечного мира ещё нет.
+
+Локальная Linux-поставка собрана из уже проверенных native outputs. Из `/tmp`
+выполнены headless `--version`, graphical `--help` без открытия GUI и полная
+проверка paged-store упакованным headless-клиентом. Индекс/страницы не изменились;
+оба бинарника совпали с тестовыми, 12 файлов лицензий сохранились побайтно.
+BUILD-INFO указывает 0.10.0, source `5bd71bd`, world formats [1,2,3], profiling
+schema 1. Миры и debug-программы отсутствуют.
+[Проверка состава](validation/paging/package-results.json) относится к Linux,
+не к скачанному Windows ZIP.

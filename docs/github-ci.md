@@ -1,6 +1,61 @@
-# GitHub: успешный CI GooseCraft 0.9 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.10 — 2026-10-30
 
-## Ограниченный GPU-кеш 0.9
+## CPU-пул и страницы мира 0.10
+
+[Run 41081936076](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076)
+для `5bd71bdcba539abade725fe62df23344d53cb1f5` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графики, UTF-8 PE manifests, 12 suites TinyCC/native release/debug, собственные C sidecars/ABI, Unicode fixed-buffer I/O и lock, CPU/GPU paging, сбои записи/публикации, CRC/ID/coords, GCW v1/v2 vectors, import/export 1/9/81, malformed 1 ГБ, profiling, CLI/cmd.exe, два benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | 12 suites, bounded I/O/lock, CPU/GPU paging, codec/отказы, source-preserving import/export, profiling, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 121 сценарий: прежние 111 плюс CPU pages/дальний маршрут/R, window/debug/offscreen, 31 профиль, PNG equality с полным CPU Map, побайтный GCW export и сохранность page files после reopen |
+
+**[Windows ZIP 0.10](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12990900263)**:
+`goosecraft-windows-2022-x64-5bd71bdcba539abade725fe62df23344d53cb1f5`,
+6 162 727 байт. Workflow упаковал release graphical/headless клиент,
+`.cmd`-лаунчер, лицензии, документы и BUILD-INFO с world formats [1,2,3],
+generator 1 и profiling schema 1. Миры и debug EXE не предусмотрены упаковкой.
+[Первый запуск](first-play.md), [проверки и затраты](paging-results.md),
+[формат страниц и перенос](paged-world-format.md).
+
+SHA-256 ZIP по GitHub API:
+`2f2bc87c0112b8a5d25c4d1045157203d7652df296ed2e710981dfeadf747004`.
+Хранение по API до `2027-01-28T15:34:20Z`, если артефакт не удалят раньше.
+Windows ZIP локально не скачивался и не хешировался. PE manifests извлекались
+SDK mt.exe внутри Windows job. Для Actions artifact в браузере может
+потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12989512855): 5 459 байт, mesh/stitch без GUI.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12989418742): 5 650 байт.
+- [Graphics/profile evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12990027476): 1 066 357 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41081936076/artifacts/12990646585): 4 882 154 байта.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41081936076.json)
+сохранены без credentials. CPU-пул 49 включается отдельно `--paged-world DIR`;
+обычные GCW v1/v2 остаются в прежнем backend. Перенос требует нового каталога,
+источник не меняется. Новый procedural store хранит seed; импорт без известного
+seed сохраняет все страницы явно. Мир остаётся конечным, I/O синхронным.
+
+Подтверждено сокращение блока данных CPU-пула на 128 КиБ для 81-чанкового
+мира; общий RSS/VRAM и улучшение FPS не измерены. В локальном idle-прогоне
+p50 CPU wall paged оказался выше. Возможны задержки I/O/pop-in; сборщика
+старых generations нет. Bulk import/export не ограничен рабочим пулом 49.
+Все codec/policy/gameplay — Goose; C содержит только системный I/O.
+
+Windows job проверил native/JIT, собственный C ABI, I/O/lock, manifest и
+лаунчер; окно **не открывалось**. Builder — Windows Server 2022;
+Windows 10/физический GPU не проверены. UTF-8 argv использует manifest
+Windows 10 1903+. Графический CI — Linux Mesa/lavapipe/Xvfb.
+Power-loss durability/fault injection не проверялись. Сети Java Edition пока нет.
+
+Проверенный source — `5bd71bd`. Итоговый docs-only commit с `[skip ci]`
+меняет только документы/evidence. Документы внутри ZIP отражают момент сборки;
+актуальный итог CI и ссылки находятся в этом файле.
+
+## Ограниченный GPU-кеш 0.9 (предыдущая версия)
 
 [Run 41073792518](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41073792518)
 для `8978d6ad64a2414d71f35c7ec760423d3496588b` завершился **success**.
