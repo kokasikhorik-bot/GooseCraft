@@ -1,0 +1,58 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "toolchain": "C compiler:   gcc 14.2.0, found on PATH\n              /usr/bin/cc\nC++ compiler: /usr/bin/g++\nstyle:        cc\nid:           gcc-14.2.0-a920ca84\ncmake:       /home/agent/.local/bin/cmake (3.31.6)\ngit:         /usr/local/bin/git (2.52.0)\nbuilt in:     no packages\nGOOSE_HOME:   /workspace/GooseCraft/.cache/goose-home\n",
+  "lock": {
+    "schema": 1,
+    "goose": {
+      "repository": "https://github.com/aardappel/goose.git",
+      "commit": "cce94b919d27458856ae2685974049eac78debcf",
+      "builtin_libs": ""
+    },
+    "cmake": "3.31.6",
+    "reference_only": {
+      "horizon": {
+        "repository": "https://github.com/horizon-rust/horizon.git",
+        "commit": "7ebf7d26cbe58d65ef873767c639f144dc403554"
+      }
+    },
+    "graphics": {
+      "repository": "https://github.com/aardappel/goose_gfx.git",
+      "commit": "6cfa3dec2ef2a6cb19ee71548b38151094e947bd",
+      "submodules": {
+        "third_party/SDL": "fa2c02bb6e21974a89ea9824bc53c9932abe5f9c",
+        "third_party/nuklear": "9f7750296f176e506c2b24ff55bc24495e2db750"
+      }
+    }
+  },
+  "sources": {
+    "benchmarks/stitch.goose": "76b8454d60302cf03adabd53a6e8e1cc566ff5f45ec48f8c3e7218c6456c31e1",
+    "src/client.goose": "c260afa0ade0d573b689fa5676fdee56fd29b1a57ab06ade7dfc09dc26593348",
+    "src/core/core.goose": "f7f3080195a99590c8b5f99ce1da68db8dfc9949da959341ff843872472aba30",
+    "src/core/interaction.goose": "9bdef3676ac7a62fbc3ce67060c8cd3065c0200b9d2507ee65292647f4adf7a3",
+    "src/core/mesh.goose": "24cf710be9448681cafaac8a34612ae8077ac7bf3d3de5e53128e107adf69f73",
+    "src/core/player.goose": "7c56983ffff849fea4d6075cdf56162eea7d230f50d5bfe0415af8c4c66878c8",
+    "src/core/simulation.goose": "d888031b35613184a1efd1232742a92abd66af4fbd298a4ea1854aa1e1142073",
+    "src/core/stitch.goose": "ece9e40a512ca79b934d41ba0427b75f5ebed118b2b03f4604e4d493fa9e51a8",
+    "src/core/storage.goose": "3b1c15cca66e605370ab036ea96c4bfbbe7fe39f741254f15d9655df30d8c2a7",
+    "src/core/terrain.goose": "58a83bea1987cd272f4ef33fcb1f4c8af89c81c49e7fe30cd5d939c928165ce8",
+    "src/core/visibility.goose": "c9dbbd952d7d9abeb445a829430694e5e7f1c15a467d51351b47db0b0a7a7e57",
+    "src/core/world.goose": "618458792bdcbb2a72f1a155defb1fca487dba4e14821cc19f3c37776eb17c47",
+    "src/render/chunks.goose": "03f5cf9322ddf7e2d5b8c7d92027c9e9a657d1ce64e40f69cebd53ade52ebc65",
+    "src/render/hud.goose": "30cb810d69bd5259c50e71a382bc95d48320784f936808d75da2636308edff63",
+    "src/render/replay.goose": "2ed20e68a63b7c034c55a3df43c149d97c23bae10db04a0fee57ad29d911ead2",
+    "src/render/scene.goose": "83b2ad9f9dfb29ec5c4fb71c113245d3cd25a528004422644d79c877c6e2084f",
+    "src/viewer.goose": "10bbc96b2d59a87074dbdd64279faf686d2cc0c2510c6bc91d7eac60ff8650a0",
+    "tests/stitch.goose": "ec42260b25762dca8adb949ecf071ecd2d2c5442648d7e03f302a3a1468e03bc",
+    "tests/support/triangles.goose": "fc6e8fca81274d46ea455338effb03727cc3ee4729c0bc6cc80ddbaeefe54724",
+    "tools/png_readback.py": "cc2116eaec6e229c03b969a777b236dfcf231e4ae7f9d99ef91291ad48026d9f",
+    "tools/project.py": "95e5109c363255df8e4719f127c2c57140e16eb528b888aa93c002b09fc0cb63"
+  },
+  "graphics_scenarios": 75,
+  "unedited_terrain_overviews": 16,
+  "max_changed_edge_pixels_observed": 5,
+  "pixel_equality_claimed": false,
+  "geometry_coverage_absolute_tolerance": 1e-07,
+  "edit_replay_upload_reduction": 5.625515534781413,
+  "windows_gui_checked": false,
+  "physical_gpu_checked": false
+}

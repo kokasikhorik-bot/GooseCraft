@@ -1,0 +1,194 @@
++ /work/.cache/toolchain/build/goose check /work/src/client.goose --offline
++ /work/.cache/toolchain/build/goose build /work/src/client.goose --offline -o /work/build/goosecraft-headless
+built /work/build/goosecraft-headless
++ /work/.cache/toolchain/build/goose format --check /work/src /work/tests/headless.goose /work/tests/mesh.goose /work/tests/player.goose /work/tests/region.goose /work/tests/storage.goose /work/tests/visibility.goose /work/tests/terrain.goose /work/tests/stitch.goose /work/tests/support /work/benchmarks
++ /work/.cache/toolchain/build/goose check /work/tests/headless.goose --offline
++ /work/.cache/toolchain/build/goose check /work/tests/fixtures/type_error.goose --offline
+/work/tests/fixtures/type_error.goose:3: error: expected a value of type i64, got const u8[:]
+    let bad: i64 = "not an integer";
+  in fn main() instantiated from /work/tests/fixtures/type_error.goose:2
++ /work/.cache/toolchain/build/goose run /work/tests/headless.goose --offline
+headless core: ok
++ /work/.cache/toolchain/build/goose build /work/tests/headless.goose --offline -o /work/build/core-tests
+built /work/build/core-tests
++ /work/build/core-tests
+headless core: ok
++ /work/.cache/toolchain/build/goose run /work/tests/headless.goose --offline --debug
+headless core: ok
++ /work/.cache/toolchain/build/goose build /work/tests/headless.goose --offline --debug -o /work/build/core-tests-debug
+built /work/build/core-tests-debug
++ /work/build/core-tests-debug
+headless core: ok
++ /work/.cache/toolchain/build/goose run /work/tests/mesh.goose --offline
+headless mesh: ok
++ /work/.cache/toolchain/build/goose build /work/tests/mesh.goose --offline -o /work/build/mesh-tests
+built /work/build/mesh-tests
++ /work/build/mesh-tests
+headless mesh: ok
++ /work/.cache/toolchain/build/goose run /work/tests/mesh.goose --offline --debug
+headless mesh: ok
++ /work/.cache/toolchain/build/goose build /work/tests/mesh.goose --offline --debug -o /work/build/mesh-tests-debug
+built /work/build/mesh-tests-debug
++ /work/build/mesh-tests-debug
+headless mesh: ok
++ /work/.cache/toolchain/build/goose run /work/tests/player.goose --offline
+headless player: ok
++ /work/.cache/toolchain/build/goose build /work/tests/player.goose --offline -o /work/build/player-tests
+built /work/build/player-tests
++ /work/build/player-tests
+headless player: ok
++ /work/.cache/toolchain/build/goose run /work/tests/player.goose --offline --debug
+headless player: ok
++ /work/.cache/toolchain/build/goose build /work/tests/player.goose --offline --debug -o /work/build/player-tests-debug
+built /work/build/player-tests-debug
++ /work/build/player-tests-debug
+headless player: ok
++ /work/.cache/toolchain/build/goose run /work/tests/region.goose --offline
+headless region: ok
++ /work/.cache/toolchain/build/goose build /work/tests/region.goose --offline -o /work/build/region-tests
+built /work/build/region-tests
++ /work/build/region-tests
+headless region: ok
++ /work/.cache/toolchain/build/goose run /work/tests/region.goose --offline --debug
+headless region: ok
++ /work/.cache/toolchain/build/goose build /work/tests/region.goose --offline --debug -o /work/build/region-tests-debug
+built /work/build/region-tests-debug
++ /work/build/region-tests-debug
+headless region: ok
++ /work/.cache/toolchain/build/goose run /work/tests/storage.goose --offline -- /work/build/storage smoke with spaces/миры/nested/world.gcw /work/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /work/.cache/toolchain/build/goose build /work/tests/storage.goose --offline -o /work/build/storage-tests
+built /work/build/storage-tests
++ /work/build/storage-tests /work/build/storage smoke with spaces/миры/nested/world.gcw /work/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /work/.cache/toolchain/build/goose run /work/tests/storage.goose --offline --debug -- /work/build/storage smoke with spaces/миры/nested/world.gcw /work/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /work/.cache/toolchain/build/goose build /work/tests/storage.goose --offline --debug -o /work/build/storage-tests-debug
+built /work/build/storage-tests-debug
++ /work/build/storage-tests-debug /work/build/storage smoke with spaces/миры/nested/world.gcw /work/build/storage smoke with spaces/миры/blocked/world.gcw
+headless storage: ok
++ /work/.cache/toolchain/build/goose run /work/tests/visibility.goose --offline
+headless visibility: ok
++ /work/.cache/toolchain/build/goose build /work/tests/visibility.goose --offline -o /work/build/visibility-tests
+built /work/build/visibility-tests
++ /work/build/visibility-tests
+headless visibility: ok
++ /work/.cache/toolchain/build/goose run /work/tests/visibility.goose --offline --debug
+headless visibility: ok
++ /work/.cache/toolchain/build/goose build /work/tests/visibility.goose --offline --debug -o /work/build/visibility-tests-debug
+built /work/build/visibility-tests-debug
++ /work/build/visibility-tests-debug
+headless visibility: ok
++ /work/.cache/toolchain/build/goose run /work/tests/terrain.goose --offline
+headless terrain: ok
++ /work/.cache/toolchain/build/goose build /work/tests/terrain.goose --offline -o /work/build/terrain-tests
+built /work/build/terrain-tests
++ /work/build/terrain-tests
+headless terrain: ok
++ /work/.cache/toolchain/build/goose run /work/tests/terrain.goose --offline --debug
+headless terrain: ok
++ /work/.cache/toolchain/build/goose build /work/tests/terrain.goose --offline --debug -o /work/build/terrain-tests-debug
+built /work/build/terrain-tests-debug
++ /work/build/terrain-tests-debug
+headless terrain: ok
++ /work/.cache/toolchain/build/goose run /work/tests/stitch.goose --offline
+headless stitch: ok
++ /work/.cache/toolchain/build/goose build /work/tests/stitch.goose --offline -o /work/build/stitch-tests
+built /work/build/stitch-tests
++ /work/build/stitch-tests
+headless stitch: ok
++ /work/.cache/toolchain/build/goose run /work/tests/stitch.goose --offline --debug
+headless stitch: ok
++ /work/.cache/toolchain/build/goose build /work/tests/stitch.goose --offline --debug -o /work/build/stitch-tests-debug
+built /work/build/stitch-tests-debug
++ /work/build/stitch-tests-debug
+headless stitch: ok
++ /work/build/goosecraft-headless --headless --inspect-world /work/build/storage smoke with spaces/миры/nested/world.gcw
+{"mode":"world-inspect","chunks":9,"solid_blocks":2333,"format":1}
++ /work/build/goosecraft-headless --headless --inspect-world /work/build/storage smoke with spaces/миры/corrupt.gcw
+invalid or unreadable world file
++ /work/build/goosecraft-headless --headless --generate-world 0 /work/build/storage smoke with spaces/миры/terrain-0-native.gcw
+{"mode":"world-generate","seed":0,"generator":1,"chunks":9,"solid_blocks":14109}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --generate-world 0 /work/build/storage smoke with spaces/миры/terrain-0-jit.gcw
+{"mode":"world-generate","seed":0,"generator":1,"chunks":9,"solid_blocks":14109}
++ /work/build/goosecraft-headless --headless --generate-world 0 /work/build/storage smoke with spaces/миры/terrain-0-jit.gcw
+world path already exists; original file was not changed
++ /work/build/goosecraft-headless --headless --generate-world 1 /work/build/storage smoke with spaces/миры/terrain-1-native.gcw
+{"mode":"world-generate","seed":1,"generator":1,"chunks":9,"solid_blocks":16243}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --generate-world 1 /work/build/storage smoke with spaces/миры/terrain-1-jit.gcw
+{"mode":"world-generate","seed":1,"generator":1,"chunks":9,"solid_blocks":16243}
++ /work/build/goosecraft-headless --headless --generate-world 1 /work/build/storage smoke with spaces/миры/terrain-1-jit.gcw
+world path already exists; original file was not changed
++ /work/build/goosecraft-headless --headless --generate-world 12345 /work/build/storage smoke with spaces/миры/terrain-12345-native.gcw
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":9,"solid_blocks":19196}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --generate-world 12345 /work/build/storage smoke with spaces/миры/terrain-12345-jit.gcw
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":9,"solid_blocks":19196}
++ /work/build/goosecraft-headless --headless --generate-world 12345 /work/build/storage smoke with spaces/миры/terrain-12345-jit.gcw
+world path already exists; original file was not changed
++ /work/build/goosecraft-headless --headless --generate-world 4294967295 /work/build/storage smoke with spaces/миры/terrain-4294967295-native.gcw
+{"mode":"world-generate","seed":4294967295,"generator":1,"chunks":9,"solid_blocks":16387}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --generate-world 4294967295 /work/build/storage smoke with spaces/миры/terrain-4294967295-jit.gcw
+{"mode":"world-generate","seed":4294967295,"generator":1,"chunks":9,"solid_blocks":16387}
++ /work/build/goosecraft-headless --headless --generate-world 4294967295 /work/build/storage smoke with spaces/миры/terrain-4294967295-jit.gcw
+world path already exists; original file was not changed
++ /work/build/goosecraft-headless --headless --ticks 0
+{"mode":"headless","ticks":0,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 0
+{"mode":"headless","ticks":0,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 1
+{"mode":"headless","ticks":1,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 1
+{"mode":"headless","ticks":1,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 20
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 20
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 1000
+{"mode":"headless","ticks":1000,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 1000
+{"mode":"headless","ticks":1000,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 1000000
+{"mode":"headless","ticks":1000000,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 1000000
+{"mode":"headless","ticks":1000000,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /work/build/goosecraft-headless
+GooseCraft 0.6.1 (headless harness)
+usage: goosecraft-headless --headless [--ticks N | --inspect-world FILE] | --version | --help
+Graphical client: goosecraft-client.
+Generate a new terrain file: --headless --generate-world SEED FILE (never replaces existing files).
++ /work/build/goosecraft-headless --help
+GooseCraft 0.6.1 (headless harness)
+usage: goosecraft-headless --headless [--ticks N | --inspect-world FILE] | --version | --help
+Graphical client: goosecraft-client.
+Generate a new terrain file: --headless --generate-world SEED FILE (never replaces existing files).
++ /work/build/goosecraft-headless --version
+GooseCraft 0.6.1
++ /work/build/goosecraft-headless --unknown
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --ticks
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless extra
++ /work/build/goosecraft-headless --headless --ticks 1 extra
+invalid arguments: use --help
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --ticks -1
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --ticks 1000001
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --ticks abc
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --ticks 1.5
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --ticks 9999999999999999999999999999
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --generate-world -1 /work/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --generate-world 4294967296 /work/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --generate-world abc /work/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
++ /work/build/goosecraft-headless --headless --generate-world 1.5 /work/build/storage smoke with spaces/миры/invalid-seed.gcw
+invalid arguments: use --help
+PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch (JIT/native, release/debug), four fixed terrain SHA-256 vectors and refusal to replace existing worlds, independent save checksum and world inspection, CLI; Windows launcher not run on Linux

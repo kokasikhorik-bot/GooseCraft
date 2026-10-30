@@ -11,10 +11,12 @@ struct Cache {
     allocations: i64 = 0,
     uploaded_bytes: i64 = 0,
     rebuilds: i64 = 0,
+    patches: i64 = 0,
+    split_patches: i64 = 0,
 }
 
 struct Stats { vertices: i64 = 0, indices: i64 = 0, capacity: i64 = 0,
-               allocations: i64 = 0, uploaded_bytes: i64 = 0 }
+               allocations: i64 = 0, uploaded_bytes: i64 = 0, patches: i64 = 0, split_patches: i64 = 0 }
 
 fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, reference: bool) -> bool {
     if reference && buffer.id != 0 {
@@ -30,10 +32,12 @@ fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, refe
 }
 
 fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-           cache: Cache&, reference: bool) {
+           cache: Cache&, reference: bool, raw: bool) {
     vertices.clear(); indices.clear();
     if reference { mesh::build_reference(source, vertices, indices); }
     else { mesh::build(source, vertices, indices); }
+    cache.patches = vertices.len / 4;
+    cache.split_patches = if reference || raw { 0 } else { stitch::apply(vertices, indices) };
     let vb = bytes_of(vertices);
     let ib = bytes_of(indices);
     if reserve(cache.vertex, cache.vertex_capacity, vb.len, gfx::BUFFER_VERTEX, reference) { cache.allocations++; }
@@ -45,13 +49,13 @@ fn rebuild(source: world::Halo&, vertices: mesh::Vertex[>..]&, indices: u32[>..]
 }
 
 fn rebuild_dirty(map: world::Map&, caches: Cache[:], vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-                 budget: i64, reference: bool) -> i64 {
+                 budget: i64, reference: bool, raw: bool) -> i64 {
     var done: i64 = 0;
     while done < budget {
         let at = world::pop_dirty(map);
         if at < 0 { break; }
         var source = world::neighborhood(map, at);
-        rebuild(source, vertices, indices, caches[at], reference);
+        rebuild(source, vertices, indices, caches[at], reference, raw);
         done++;
     }
     return done;
@@ -65,6 +69,7 @@ fn stats(caches: Cache[:]) -> Stats {
         result.vertices += cache.vertices; result.indices += cache.indices;
         result.capacity += cache.vertex_capacity + cache.index_capacity;
         result.allocations += cache.allocations; result.uploaded_bytes += cache.uploaded_bytes;
+        result.patches += cache.patches; result.split_patches += cache.split_patches;
     }
     return result;
 }

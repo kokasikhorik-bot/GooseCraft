@@ -5,6 +5,7 @@ editor. Reconstruct PNG scanlines so GPU comparisons don't depend on Pillow.
 """
 import struct
 import zlib
+from collections import deque
 
 
 def rgba(path):
@@ -57,6 +58,50 @@ def differences(optimized, reference):
     return [{"x": (i // 4) % 640, "y": (i // 4) // 640,
              "optimized": list(a[i:i + 4]), "reference": list(b[i:i + 4])}
             for i in range(0, len(a), 4) if a[i:i + 4] != b[i:i + 4]]
+
+
+def enclosed_clear(path):
+    """Sky pixels with no 8-connected route to the border, in a solid overview.
+
+    Applied only to unedited filled heightfields: real edited holes/overlays
+    are not suitable inputs. Coordinates are evidence, not image edits.
+    """
+    pixels = rgba(path)
+    clear = bytes((15, 23, 35, 255))
+    sky = bytearray(pixels[i:i + 4] == clear for i in range(0, len(pixels), 4))
+    reached = bytearray(640 * 480)
+    queue = deque()
+    for at in [*range(640), *range(640 * 479, 640 * 480),
+               *(y * 640 for y in range(480)), *(y * 640 + 639 for y in range(480))]:
+        if sky[at] and not reached[at]:
+            reached[at] = 1; queue.append(at)
+    while queue:
+        at = queue.popleft()
+        x, y = at % 640, at // 640
+        for ny in range(max(0, y - 1), min(480, y + 2)):
+            for nx in range(max(0, x - 1), min(640, x + 2)):
+                neighbor = ny * 640 + nx
+                if sky[neighbor] and not reached[neighbor]:
+                    reached[neighbor] = 1; queue.append(neighbor)
+    return [{"x": at % 640, "y": at // 640} for at in range(640 * 480) if sky[at] and not reached[at]]
+
+
+def compare_surface_edges(optimized, reference):
+    """Terrain: small edge-color rounding is allowed, interior errors are not."""
+    a, b = rgba(optimized), rgba(reference)
+    changes = differences(optimized, reference)
+    if len(changes) > 8:
+        raise RuntimeError(f"Terrain differs at {len(changes)} pixels, limit 8")
+    for change in changes:
+        x, y = change["x"], change["y"]
+        colors = {bytes(change["optimized"]), bytes(change["reference"])}
+        for pixels in (a, b):
+            neighbors = {pixels[(ny * 640 + nx) * 4:(ny * 640 + nx) * 4 + 4]
+                         for ny in range(max(0, y - 1), min(480, y + 2))
+                         for nx in range(max(0, x - 1), min(640, x + 2))}
+            if not colors.issubset(neighbors):
+                raise RuntimeError(f"Terrain mismatch is not a shared 3x3 color boundary: {change}")
+    return {"changed_pixels": len(changes), "limit": 8, "shared_edge_colors_only": True, "pixels": changes}
 
 
 def compare_boundary_pixels(optimized, reference):

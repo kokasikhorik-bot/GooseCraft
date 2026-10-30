@@ -6,3 +6,4 @@ import .interaction;
 import .storage;
 import .visibility;
 import .terrain;
+import .stitch;

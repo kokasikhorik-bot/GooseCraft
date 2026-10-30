@@ -1,6 +1,6 @@
-# Первый запуск GooseCraft 0.6 на Windows 10 x64
+# Первый запуск GooseCraft 0.6.1 на Windows 10 x64
 
-[Скачать Windows x64 ZIP 0.6](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12969759287),
+Предыдущая опубликованная [Windows x64 ZIP 0.6](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876/artifacts/12969759287),
 успешный CI #41040892876, source `958076e`.
 [Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md). В 0.5 мир расширен до девяти чанков и появился файл
 сохранения. В 0.6 новые миры получают рельеф по seed; старые сохранения
@@ -89,5 +89,6 @@ Windows, модель видеокарты, появился ли кадр и к
 Облачные проверки пока подтверждают Windows-сборку/CLI и Linux-рендеринг.
 Окно на пользовательской Windows 10 и её видеодрайвере должен подтвердить
 реальный локальный запуск; успешный Linux-тест этого не доказывает.
-На обзорном кадре lavapipe есть два одиночных просвета greedy-меша;
-[известный дефект и исходные PNG](terrain-results.md). Он ещё не исправлен.
+В 0.6.1 исправлены два наблюдавшихся просвета greedy-меша, проверены другие
+seed и ракурсы на Linux lavapipe. [Проверки и ограничения](stitch-results.md).
+Это не заменяет проверку на Windows 10 и физическом GPU.

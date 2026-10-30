@@ -8,13 +8,14 @@ fn main() {
     let argv = args();
     var options = scene::Options {};
     var no_save = false;
+    var view_given = false;
     var output: u8[>..] = [];
     var world_path: u8[>..] = [];
     var i: i64 = 1;
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.6.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.6.1: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
@@ -23,6 +24,7 @@ fn main() {
             print("Default world: user profile / GooseCraft/worlds/default-v1.gcw. Player position is not saved.");
             print("New worlds: terrain v1, seed 12345. --seed applies only to a new world; existing saves are preserved.");
             print("Diagnostics: --single-chunk; --reference-renderer; --view-away (preview only); --seam-replay requires --demo-world.");
+            print("Diagnostics: --raw-greedy disables edge stitching; --preview-view 0..3 changes overview direction.");
             print("Replay, preview and single-chunk modes are temporary unless --world is explicit.");
             return;
         } else if flag == "--offscreen" { options.offscreen = true; }
@@ -43,6 +45,13 @@ fn main() {
             options.seed = n as u32; options.seed_explicit = true;
         }
         else if flag == "--reference-renderer" { options.reference = true; }
+        else if flag == "--raw-greedy" { options.raw = true; }
+        else if flag == "--preview-view" {
+            if i + 1 >= argv.len { abort_args(); }
+            i++; let n, ok = parse_int(argv[i]);
+            if !ok || n < 0 || n > 3 { abort_args(); }
+            options.preview_view = n; view_given = true;
+        }
         else if flag == "--single-chunk" { options.single = true; }
         else if flag == "--view-away" { options.away = true; }
         else if flag == "--no-save" { no_save = true; }
@@ -75,6 +84,8 @@ fn main() {
     if options.offscreen && !options.replay_input { options.preview = true; }
     if options.empty { options.preview = true; }
     if options.away && !options.preview { abort_args(); }
+    if view_given && (!options.preview || options.away) { abort_args(); }
+    if options.raw && options.reference { abort_args(); }
     if options.offscreen && options.frames < 0 { options.frames = 3; }
     options.persistent = world_path.len > 0 || !(no_save || options.offscreen || options.preview || options.replay_input || options.single);
     if options.persistent && world_path.len == 0 { world_path.append(storage::default_path()); }

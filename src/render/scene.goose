@@ -11,6 +11,7 @@ struct Options {
     replay_input: bool = false, seam_replay: bool = false, reference: bool = false,
     single: bool = false, persistent: bool = false, away: bool = false, frames: i64 = -1,
     demo: bool = false, terrain_replay: bool = false, seed_explicit: bool = false, seed: u32 = terrain::DEFAULT_SEED,
+    raw: bool = false, preview_view: i64 = 0,
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
 
@@ -45,14 +46,14 @@ fn run(options: Options) {
     var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
     var save_writes: i64 = 0;
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.6.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.6.1", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
     var buffers: chunks::Cache[9] = [chunks::Cache {}; 9];
     // Complete startup meshes once; subsequent frames have a two-chunk budget.
-    var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 9, reference);
+    var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 9, reference, options.raw);
     let vs = embed_shader("vert", """
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec4 color;
@@ -182,16 +183,20 @@ fn run(options: Options) {
             hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
             assert(!player::collides(chunk, state.position));
         }
-        remeshes += chunks::rebuild_dirty(chunk, buffers, vertices, indices, 2, reference);
+        remeshes += chunks::rebuild_dirty(chunk, buffers, vertices, indices, 2, reference, options.raw);
         if options.persistent && gfx::key_pressed("F5") {
             if storage::save(options.world_path, chunk) {
                 saved_revision = chunk.revision; save_status = 2; save_writes++;
             } else { save_status = 3; write_stderr("world save failed; previous file retained\n"); }
         }
         let size = gfx::screen_size();
-        let eye = if options.away { float3 { 80.0, 40.0, 80.0 } } else if preview {
+        var eye = if options.away { float3 { 80.0, 40.0, 80.0 } } else if preview {
             if chunk.radius == 0 { float3 { 25.0, 23.0, 29.0 } } else { float3 { 52.0, 43.0, 55.0 } }
         } else { player::eye(state) };
+        if preview && !options.away {
+            if options.preview_view % 2 == 1 { eye.x = 16.0 - eye.x; }
+            if options.preview_view >= 2 { eye.z = 16.0 - eye.z; }
+        }
         let target = if options.away { float3 { 96.0, 40.0, 96.0 } }
                      else if preview { float3 { 8.0, 0.0, 8.0 } } else { eye + player::direction(state) };
         let camera = Camera { view_projection: gfx::mul(
@@ -272,6 +277,8 @@ fn run(options: Options) {
         ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
         ",\"mesh_capacity_bytes\":", totals.capacity,
         ",\"mesh_allocations\":", totals.allocations, ",\"mesh_uploaded_bytes\":", totals.uploaded_bytes,
+        ",\"mesh_patches\":", totals.patches, ",\"split_patches\":", totals.split_patches,
+        ",\"raw_greedy\":", options.raw,
         ",\"hud_uploads\":", hud_uploads, ",\"hud_uploaded_bytes\":", hud_uploaded_bytes,
         ",\"outline_uploads\":", outline_uploads,
         ",\"terrain_generated\":", generated,

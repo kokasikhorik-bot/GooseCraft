@@ -13,7 +13,7 @@ import sys
 import zlib
 import traceback
 import xml.etree.ElementTree as ET
-from png_readback import compare_boundary_pixels, differences
+from png_readback import compare_boundary_pixels, differences, enclosed_clear, compare_surface_edges
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -86,7 +86,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -194,7 +194,7 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain (JIT/native, release/debug), "
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain/stitch (JIT/native, release/debug), "
           "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
           "independent save checksum and world inspection, CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
@@ -245,6 +245,47 @@ def benchmark(evidence):
     (evidence / "mesh-benchmark.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(summaries, indent=2))
     print("PASS: native meshing benchmark recorded; timings are observations, not CI performance gates")
+    stitch_benchmark(evidence)
+
+
+def stitch_benchmark(evidence):
+    binary = BUILD / ("stitch-benchmark" + EXT)
+    native_build(ROOT / "benchmarks/stitch.goose", binary)
+    iterations = 1000
+    result = run([binary, "--iterations", str(iterations)])
+    rows = [json.loads(line) for line in result.stdout.splitlines()]
+    scenes = {}
+    for name in ("empty", "flat", "full", "demo", "terrain-region", "checker"):
+        modes = {}
+        for mode in ("reference", "raw-greedy", "stitched"):
+            samples = [row for row in rows if row["scene"] == name and row["mode"] == mode]
+            if len(samples) != 7 or {s["sample"] for s in samples} != set(range(7)):
+                raise RuntimeError("Stitch benchmark is missing samples")
+            first = samples[0]
+            stable = ("vertices", "indices", "checksum", "chunks", "iterations")
+            if any(any(s[k] != first[k] for k in stable) or s["ns"] <= 0 for s in samples):
+                raise RuntimeError("Stitch benchmark geometry changed between samples")
+            modes[mode] = {"vertices": first["vertices"], "indices": first["indices"], "chunks": first["chunks"],
+                           "mesh_bytes": first["vertices"] * 16 + first["indices"] * 4,
+                           "median_us": statistics.median(s["ns"] / iterations / 1000 for s in samples)}
+        if modes["stitched"]["mesh_bytes"] > modes["reference"]["mesh_bytes"]:
+            raise RuntimeError("Stitched benchmark geometry exceeded unit-face reference")
+        if name in ("empty", "checker") and modes["stitched"]["mesh_bytes"] != modes["raw-greedy"]["mesh_bytes"]:
+            raise RuntimeError("Unit-quads/empty fast path changed geometry")
+        scenes[name] = modes
+    report = {"platform": platform.platform(), "architecture": platform.machine(),
+              "lock": json.loads((ROOT / "toolchain.lock.json").read_text()),
+              "sources": {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+                          for name in ("src/core/mesh.goose", "src/core/stitch.goose", "src/core/terrain.goose", "benchmarks/stitch.goose")},
+              "method": {"samples": 7, "iterations_per_sample": iterations, "warmup_builds_per_chunk": 8,
+                         "clock": "os.clock_ns, monotonic", "build": "native release",
+                         "rotating_order": True, "scope": "CPU meshing, prepared halos; excludes generation/halo snapshots, GPU, frames",
+                         "memory_scope": "logical vertex/index bytes; excludes capacity, scratch, RSS/VRAM",
+                         "stitch_scratch_bytes": 5169},
+              "scenes": scenes, "raw_samples": rows}
+    (evidence / "stitch-benchmark.json").write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps(scenes, indent=2))
+    print("PASS: reference/raw-greedy/stitched costs recorded; no timing pass/fail threshold")
 
 
 def render_build():
@@ -267,6 +308,10 @@ def render_build():
     for args in (["--seed"], ["--seed", "-1"], ["--seed", "4294967296"], ["--seed", "1.5"],
                  ["--seed", "1", "--seed", "2"], ["--seed", "1", "--demo-world"],
                  ["--seed", "1", "--empty"], ["--terrain-replay", "--demo-world"]):
+        run([VIEWER, *args], expected=2)
+    for args in (["--preview-view"], ["--preview-view", "-1"], ["--offscreen", "--preview-view", "4"],
+                 ["--preview-view", "0"], ["--offscreen", "--view-away", "--preview-view", "1"],
+                 ["--raw-greedy", "--reference-renderer"]):
         run([VIEWER, *args], expected=2)
     corrupt = BUILD / "invalid load.gcw"
     corrupt.write_bytes(b"corrupt world")
@@ -356,6 +401,16 @@ def render_test(evidence):
         ("terrain-save", [], ["--offscreen", "--terrain-replay", "--seed", "12345", "--world", terrain_save], 120),
         ("terrain-load", [], ["--offscreen", "--world", terrain_save], 3),
     ]
+    for seed in (0, 1, 12345, 4294967295):
+        for view in range(4):
+            flags = ["--offscreen", "--preview", "--seed", str(seed), "--preview-view", str(view)]
+            name = f"surface-{seed}-{view}"
+            cases += [(name, [], flags, 3), (name + "-reference", [], [*flags, "--reference-renderer"], 3)]
+    cases += [
+        ("terrain-raw", [], ["--offscreen", "--preview", "--raw-greedy"], 3),
+        ("surface-window", xvfb, ["--preview", "--no-save", "--preview-view", "2"], 3),
+        ("surface-debug", [], ["--offscreen", "--preview", "--preview-view", "2"], 3),
+    ]
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
@@ -366,7 +421,7 @@ def render_test(evidence):
             persisted_region = multi_save.read_bytes()
         if name == "terrain-load":
             persisted_terrain = terrain_save.read_bytes()
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug") else VIEWER
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         p = run([*prefix, binary, *flags, "--frames", str(frames), "--screenshot", png], extra_env=case_env)
@@ -438,8 +493,10 @@ def render_test(evidence):
     optimized, reference = results["replay-offscreen"], results["reference-replay"]
     if optimized["mesh_allocations"] >= reference["mesh_allocations"] or optimized["hud_uploads"] >= 30:
         raise RuntimeError("Replay did not reuse GPU buffers and overlay geometry")
-    if optimized["mesh_uploaded_bytes"] * 10 >= reference["mesh_uploaded_bytes"]:
-        raise RuntimeError("Greedy meshing did not reduce world upload traffic")
+    # Conforming boundaries add geometry; the original 10x raw-quad budget
+    # no longer applies. Keep a measured 5x upload bound for this fixed replay.
+    if optimized["mesh_uploaded_bytes"] * 5 >= reference["mesh_uploaded_bytes"]:
+        raise RuntimeError("Conforming greedy replay did not retain a 5x upload reduction")
     for name, remeshes, rebuilds in (("multi-replay", 11, [1,1,1,1,3,1,1,1,1]),
                                     ("seam-replay", 13, [1,1,1,1,3,3,1,1,1])):
         data = results[name]
@@ -472,13 +529,26 @@ def render_test(evidence):
                            ("terrain-replay", "terrain-replay-window"), ("terrain-replay", "terrain-replay-debug")):
         if results[a_name]["png_sha256"] != results[b_name]["png_sha256"]:
             raise RuntimeError(f"Terrain PNG differs: {a_name} / {b_name}")
-    # Diagnostic only: CPU unit-face equality is checked in terrain.goose, but
-    # the overview exposes rasterization differences/T-junction pinholes.
-    # Do not weaken the existing strict image checks or claim GPU equivalence.
-    terrain_pixels = differences(evidence / "terrain-preview.png", evidence / "terrain-reference.png")
-    (evidence / "terrain-reference-differences.json").write_text(json.dumps({
-        "equivalence_verified": False, "changed_pixels": len(terrain_pixels), "pixels": terrain_pixels,
-        "limitation": "Terrain overview rasterization differs; includes internal clear pixels. Suspected greedy T-junctions; unresolved.",
+    surface_results = {}
+    for seed in (0, 1, 12345, 4294967295):
+        for view in range(4):
+            name = f"surface-{seed}-{view}"
+            a, b = evidence / f"{name}.png", evidence / f"{name}-reference.png"
+            holes, reference_holes = enclosed_clear(a), enclosed_clear(b)
+            if holes or reference_holes:
+                raise RuntimeError(f"Enclosed clear pixels in solid terrain {name}: {holes}, reference: {reference_holes}")
+            surface_results[name] = {"enclosed_clear": holes, "reference_enclosed_clear": reference_holes,
+                                     "comparison": compare_surface_edges(a, b)}
+    raw_holes = enclosed_clear(evidence / "terrain-raw.png")
+    if raw_holes != [{"x": 433, "y": 160}, {"x": 327, "y": 312}]:
+        raise RuntimeError("Raw greedy control did not reproduce the known rasterization regression")
+    for name in ("surface-window", "surface-debug"):
+        if results[name]["png_sha256"] != results["surface-12345-2"]["png_sha256"]:
+            raise RuntimeError("Stitched alternate overview differs between window/offscreen/debug")
+    (evidence / "surface-results.json").write_text(json.dumps({
+        "overviews": surface_results, "raw_control_enclosed_clear": raw_holes,
+        "raw_control_differences": differences(evidence / "terrain-raw.png", evidence / "terrain-reference.png"),
+        "scope": "Unedited bounded heightfields, 4 seeds x 4 fixed views, CPU Vulkan; shared edge colors may differ at <=8 pixels",
     }, indent=2) + "\n")
     for name in ("terrain-replay", "terrain-replay-window", "terrain-replay-debug", "terrain-save"):
         data = results[name]
