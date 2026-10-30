@@ -55,12 +55,12 @@ def build():
 
 
 def test():
-    run([GOOSE, "format", "--check", ROOT / "src", ROOT / "tests/headless.goose", ROOT / "tests/mesh.goose"])
+    run([GOOSE, "format", "--check", ROOT / "src", ROOT / "tests/headless.goose", ROOT / "tests/mesh.goose", ROOT / "tests/player.goose"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
     bad = run([GOOSE, "check", ROOT / "tests/fixtures/type_error.goose", "--offline"], expected=1)
     if "expected a value of type i64" not in bad.stderr:
         raise RuntimeError("Negative probe failed for an unexpected reason")
-    for source, label in (("headless", "core"), ("mesh", "mesh")):
+    for source, label in (("headless", "core"), ("mesh", "mesh"), ("player", "player")):
         for flags in ([], ["--debug"]):
             run([GOOSE, "run", ROOT / f"tests/{source}.goose", "--offline", *flags])
             binary = BUILD / (label + "-tests" + ("-debug" if flags else "") + EXT)
@@ -114,7 +114,7 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, Goose core/mesh (JIT/native, release/debug), CLI" +
+    print("PASS: compiler probes, Goose core/mesh/player (JIT/native, release/debug), CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
 
 
