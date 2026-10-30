@@ -1,6 +1,55 @@
-# GitHub: успешный CI GooseCraft 0.6 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.6.1 — 2026-10-30
 
-## Рельеф 0.6
+## Согласование рёбер 0.6.1
+
+[Run 41053468183](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183)
+для `91889884ff1a90242bcb10158b115f8be57f853e` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графики, UTF-8 PE manifests, восемь suites TinyCC/native release/debug, triangle coverage/T-стыки, Unicode I/O, четыре terrain SHA-256 vectors, CLI/cmd.exe, два benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | Восемь suites, сохранения и terrain vectors, CLI, оба benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 75 сценариев, 16 обзоров рельефа без замкнутых clear-пикселей, shared color edges, raw control обоих старых просветов, window/debug, replay, culling, dirty и saves |
+
+**[Windows ZIP 0.6.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976740022)**:
+`goosecraft-windows-2022-x64-91889884ff1a90242bcb10158b115f8be57f853e`,
+2 521 015 байт. Workflow упаковал release-клиент, headless-клиент, `.cmd`,
+лицензии, документацию и BUILD-INFO. Debug EXE/пользовательские миры не
+предусмотрены упаковкой. [Первый запуск](first-play.md),
+[результаты и цена исправления](stitch-results.md).
+
+SHA-256 ZIP по API:
+`750b7f5078a2caa4553770c48ea811a43dd250f15adc51eea40c8d969de8233e`.
+Хранение по API до `2027-01-28T12:11:19Z`, если артефакт не удалят раньше.
+Windows ZIP локально не скачивался и не хешировался: размер/digest взяты
+из metadata. PE manifests проверены SDK mt.exe внутри Windows job.
+Для скачивания Actions artifact в браузере может потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976411262): 5 477 байт, mesh + stitch reports.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976076158): 5 672 байта.
+- [Graphics evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976545253): 559 915 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12975741715): 1 290 229 байт.
+
+[Run/jobs/steps/artifacts](validation/github-actions-41053468183.json)
+сохранены без credentials. Исправление не меняет GCW v1/seed и игровые правила.
+У рельефа 158 944 полезных mesh-байта против 71 896 raw / 589 424 reference.
+Цена CPU-построения на локальных GCC выросла на 27–30% относительно raw;
+это исправление корректности, преимущество FPS над Minecraft не измерено.
+На границах граней допускаются небольшие расхождения цвета с reference,
+точная попиксельная эквивалентность рельефа не заявляется.
+
+Windows GUI **не открывалось**. Builder — Windows Server 2022, не пользовательская
+Windows 10; физический GPU/реальные мышь и клавиатура не проверены. UTF-8 argv
+использует Windows 10 1903+ manifest. Пользователю не нужны Goose/Python/Java
+или инструменты сборки. Текущий мир всё ещё 48×16×48, без сети Java Edition.
+
+Итоговый docs-only commit с `[skip ci]` сохраняет отчёт и ссылки; проверенный
+код остаётся от `9188988`. Документы внутри ZIP отражают момент сборки,
+актуальный итог CI находится в этом файле.
+
+## Рельеф 0.6 (предыдущая версия)
 
 [Run 41040892876](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41040892876)
 для `958076edf3fb97aba3eea2733bc6ffe2eaa5ffc9` завершился **success**.

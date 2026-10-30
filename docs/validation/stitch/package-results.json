@@ -1,0 +1,22 @@
+{
+  "build_info": {
+    "client_version": "GooseCraft 0.6.1",
+    "source_commit": "91889884ff1a90242bcb10158b115f8be57f853e",
+    "source_dirty": null,
+    "ci_url": null,
+    "target": "linux-x64",
+    "graphics": true,
+    "world_format": 1,
+    "terrain_generator": 1
+  },
+  "executables": {
+    "goosecraft-client": "bd9ee1ad2e7968bdf25c995eb50d172d3c7565bcca548fc65c234f853132d07c",
+    "goosecraft-headless": "9e16a805cd3152a454f6ed935c349b0f1e3a6e2cb95a420c6d1706706f95c7de"
+  },
+  "cli_from_unrelated_cwd": true,
+  "licence_files_preserved_byte_for_byte": 12,
+  "contains_debug_executable": false,
+  "contains_saved_worlds": false,
+  "windows_package_checked_locally": false,
+  "gui_opened_in_this_package_check": false
+}

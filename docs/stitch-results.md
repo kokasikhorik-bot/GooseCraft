@@ -33,6 +33,9 @@
 Это не размер всего C stack/памяти клиента: есть служебные значения и растущие
 массивы выхода. Общие CPU/GPU-буферы и dirty-бюджет два чанка за кадр сохранены.
 Постпроцесс выполняется при построении/правке чанка, не каждый кадр.
+Единичные сегменты на внешних рёбрах не зависят от greedy-разбиения соседнего
+чанка. Поэтому правка внутри чанка по-прежнему не требует перестраивать
+соседа только ради обновившегося разбиения; правило dirty-флагов сохранено.
 
 `--raw-greedy` отключает постпроцесс и воспроизводит старый дефект;
 `--reference-renderer` использует единичные грани. Эти режимы взаимоисключающие.
@@ -120,3 +123,25 @@ GPU и кадры не входят в замер. Медиана микросе
 [GCC 12 benchmark](validation/stitch/benchmark-gcc12/stitch-benchmark.json)
 с сырыми samples сохранены в Git. Итог Windows CI публикуется отдельно
 в [github-ci.md](github-ci.md). GCW v1 и четыре SHA-256 миров не изменились.
+
+## Доставка и Windows CI
+
+[Run 41053468183](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183)
+проверил source `91889884ff1a90242bcb10158b115f8be57f853e`: все три jobs
+завершились успешно. Windows Server 2022 собрал графику release/debug,
+встроил и извлёк UTF-8 manifests, прошёл восемь headless suites во всех
+четырёх режимах, Unicode I/O, четыре terrain vectors, cmd.exe launcher,
+оба benchmark и упаковку. Ubuntu job тоже прошёл; Linux graphics CI выполнил
+75 сценариев, включая новый 5× upload gate и raw control двух просветов.
+
+[Windows ZIP 0.6.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976740022),
+[полные API metadata](validation/github-actions-41053468183.json).
+Windows ZIP локально не скачивался; его размер/digest в отчёте взяты из API.
+Окно Windows по-прежнему не проверено. Активная кодовая страница UTF-8 требует
+Windows 10 1903+; инструменты разработки пользователю не нужны.
+
+Локальная Linux-поставка 0.6.1 проверена из `/tmp`: оба release-бинарника
+запускают CLI, 12 лицензионных файлов сохранены побайтно, debug-бинарников
+и миров в поставке нет. BUILD-INFO указывает проверенный source SHA;
+`source_dirty=null`/`ci_url=null`, поскольку это локальный Docker без `.git`,
+не GitHub builder. [Результат](validation/stitch/package-results.json).
