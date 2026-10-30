@@ -2,9 +2,27 @@
 
 ## Несколько чанков 0.5
 
-Новые исходники прошли локальные облачные headless-тесты и 30 графических
-сценариев. Windows CI и ZIP ожидают публикации commit; результат будет записан
-отдельно. Ниже — история успешного 0.4, до Map/сохранения.
+Первый [run 41031858534](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41031858534)
+для `5d3536ca4ccf54f3bba7f7f9c542b352908f4ba9` прошёл оба Linux jobs,
+включая 30 графических сценариев. Windows собрал release/debug графики,
+но остановился на core/seam/save tests; benchmark и ZIP на Windows не создавались.
+[Метаданные](validation/github-actions-41031858534.json).
+
+Annotations сообщили только `Process completed with exit code 1`. Полный job log
+не удалось скачать через текущую сеть (URLError на скачивании, signed URL и
+Authorization не сохранялись). Поэтому конкретная трассировка Windows здесь
+не выдумывается. Независимо воспроизведён дефект Python-логирования при
+`PYTHONIOENCODING=cp1252`: вывод пути `миры` падает с UnicodeEncodeError до
+начала storage test. [До](validation/multichunk/cp1252-before.log) и
+[после](validation/multichunk/cp1252-fixed.log): с явной настройкой UTF-8 весь
+набор проходит при той же исходной cp1252.
+
+Workflow явно задаёт `PYTHONUTF8=1`/`PYTHONIOENCODING=utf-8`, entry point helper
+настраивает stdout/stderr в UTF-8. При неожиданном отказе helper публикует
+экранированную аннотацию с traceback и последними сообщениями дочернего процесса.
+Игровой Goose-код, формат сохранения и тесты кириллицы не упрощались.
+Повторный Windows CI будет записан после запуска; ZIP 0.5 пока не подтверждён.
+Ниже — история успешного 0.4, до Map/сохранения.
 
 ## История: успешный CI 0.4 — 2026-10-30
 

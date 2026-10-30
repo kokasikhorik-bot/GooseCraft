@@ -11,6 +11,7 @@ import statistics
 import subprocess
 import sys
 import zlib
+import traceback
 from png_readback import compare_boundary_pixels
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,7 +50,8 @@ def run(args, expected=0, cwd=ROOT, extra_env=None, timeout=180):
     if p.stderr:
         print(p.stderr, end="", file=sys.stderr)
     if p.returncode != expected:
-        raise RuntimeError(f"exit {p.returncode}, expected {expected}: {args}")
+        detail = (p.stderr or p.stdout)[-4000:]
+        raise RuntimeError(f"exit {p.returncode}, expected {expected}: {args}\n{detail}")
     return p
 
 
@@ -485,4 +487,15 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Windows redirected stdout can default to cp1252. Test paths are UTF-8,
+    # including Cyrillic; logging must not fail before the native I/O test.
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+    try:
+        main()
+    except Exception:
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            detail = traceback.format_exc(limit=12)
+            detail = detail.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+            print("::error title=GooseCraft validation failure::" + detail, file=sys.stderr, flush=True)
+        raise
