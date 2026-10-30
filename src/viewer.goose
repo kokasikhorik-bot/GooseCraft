@@ -21,7 +21,7 @@ fn main() {
     while i < argv.len {
         let flag = argv[i];
         if flag == "--help" {
-            print("GooseCraft 0.12.0: graphical scene and seeded terrain prototype");
+            print("GooseCraft 0.13.0: graphical scene and seeded terrain prototype");
             print("usage: goosecraft-client [--world FILE | --no-save] [--preview | --replay | --seam-replay]");
             print("       [--offscreen] [--empty] [--frames N] [--screenshot FILE]");
             print("       [--seed 0..4294967295 | --demo-world] [--terrain-replay]");
@@ -49,7 +49,7 @@ fn main() {
         } else if flag == "--offscreen" { options.offscreen = true; }
         else if flag == "--empty" { options.empty = true; }
         else if flag == "--preview" { options.preview = true; }
-        else if flag == "--replay" || flag == "--seam-replay" || flag == "--terrain-replay" || flag == "--far-replay" || flag == "--stream-replay" || flag == "--paging-replay" {
+        else if flag == "--replay" || flag == "--seam-replay" || flag == "--terrain-replay" || flag == "--far-replay" || flag == "--stream-replay" || flag == "--paging-replay" || flag == "--inventory-replay" {
             if options.replay_input { abort_args(); }
             options.replay_input = true;
             options.seam_replay = flag == "--seam-replay";
@@ -57,6 +57,7 @@ fn main() {
             options.far_replay = flag == "--far-replay" || flag == "--stream-replay" || flag == "--paging-replay";
             options.stream_replay = flag == "--stream-replay";
             options.paging_replay = flag == "--paging-replay";
+            options.inventory_replay = flag == "--inventory-replay";
         }
         else if flag == "--demo-world" { options.demo = true; }
         else if flag == "--seed" {
@@ -140,7 +141,7 @@ fn main() {
     if options.terrain_replay && options.demo { abort_args(); }
     if options.seam_replay && !options.demo { abort_args(); }
     if no_save && world_path.len > 0 { abort_args(); }
-    if options.replay_input && options.frames < 0 { options.frames = if options.paging_replay { 680 } else if options.stream_replay { 400 } else if options.terrain_replay { 120 } else { 110 }; }
+    if options.replay_input && options.frames < 0 { options.frames = if options.inventory_replay { 90 } else if options.paging_replay { 680 } else if options.stream_replay { 400 } else if options.terrain_replay { 120 } else { 110 }; }
     if options.offscreen && !options.replay_input && !options.paged { options.preview = true; }
     if options.empty { options.preview = true; }
     if options.away && !options.preview { abort_args(); }

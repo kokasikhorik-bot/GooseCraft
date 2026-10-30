@@ -20,6 +20,7 @@ struct Options {
     paged: bool = false, paging_replay: bool = false,
     sync_paging: bool = false, prefetch_delay: i64 = 0, page_delay: i64 = 0,
     deferred_respawn: bool = false,
+    inventory_replay: bool = false,
     profile_warmup: i64 = 30, profile_path: const u8[:] = "",
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
@@ -88,7 +89,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     residency::update(chunk, resident, world::chunk_coord(floor(state.position.x) as i64),
                       world::chunk_coord(floor(state.position.z) as i64), cache_radius);
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.12.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.13.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -145,6 +146,11 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     var accumulator: f32 = 0.0;
     var jump_pending = false;
     var selected: u8 = 1;
+    var bag = inventory::State {};
+    var inventory_frames: i64 = 0;
+    var inventory_opens: i64 = 0;
+    var inventory_clicks: i64 = 0;
+    var inventory_pointer_releases: i64 = 0;
     var broken: i64 = 0;
     var placed: i64 = 0;
     var paused_frames: i64 = 0;
@@ -164,7 +170,8 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     while true {
         if replay_input && !transfer::pending(transition) {
             let logical = drawn - loading_frames;
-            if options.paging_replay { replay::paging_input(logical); }
+            if options.inventory_replay { replay::inventory_input(logical); }
+            else if options.paging_replay { replay::paging_input(logical); }
             else if options.stream_replay { replay::stream_input(logical); }
             else if options.terrain_replay { replay::terrain_input(logical); }
             else { replay::inject(logical, options.seam_replay); }
@@ -178,21 +185,43 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             let focused = gfx::focused();
             if !focused {
                 if was_focused { focus_losses++; }
+                inventory::close(bag);
                 active = false;
             }
             was_focused = focused;
             var resumed = false;
-            if active && gfx::key_pressed("Escape") {
+            var inventory_closed = false;
+            if active && focused && !transfer::pending(transition) {
+                if bag.opened && (gfx::key_pressed("Escape") || gfx::key_pressed("E")) {
+                    inventory::close(bag); inventory_closed = true; resumed = true;
+                } else if !bag.opened && gfx::key_pressed("E") {
+                    inventory::toggle(bag); inventory_opens++;
+                }
+            }
+            if active && !bag.opened && !inventory_closed && gfx::key_pressed("Escape") {
                 active = false;
             } else if !active && focused && (gfx::key_pressed("Return") || gfx::mouse_pressed(gfx::MOUSE_LEFT)) {
                 active = true; resumed = true; resumes++;
             }
-            if !replay_input && active && (drawn == 0 || resumed) {
+            if (!replay_input || options.inventory_replay) && active && !bag.opened && (drawn == 0 || resumed) {
                 if !gfx::set_mouse_relative(true) {
                     write_stderr(str("mouse capture unavailable: ", gfx::error(), "; use arrows to look\n"));
                 }
             }
-            if active && options.deferred_respawn && !transfer::pending(transition) && gfx::key_pressed("R") {
+            if bag.opened {
+                if gfx::mouse_relative() { gfx::set_mouse_relative(false); inventory_pointer_releases++; }
+                let pointer = gfx::mouse_pos();
+                let screen = gfx::screen_size();
+                let target = inventory::target(screen.x, screen.y, pointer.x, pointer.y);
+                if gfx::mouse_pressed(gfx::MOUSE_LEFT) && inventory::click(bag, target, false) { inventory_clicks++; }
+                else if gfx::mouse_pressed(gfx::MOUSE_RIGHT) && inventory::click(bag, target, true) { inventory_clicks++; }
+            }
+            if active && !transfer::pending(transition) {
+                let keys: const u8[:][9] = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+                for slot in 9 { if gfx::key_pressed(keys[slot]) { inventory::select(bag, slot); } }
+            }
+            selected = inventory::material(bag);
+            if active && !bag.opened && options.deferred_respawn && !transfer::pending(transition) && gfx::key_pressed("R") {
                 transfer::begin(chunk, background[0], transition, 0, 0, options.mesh_radius);
             }
             if transfer::pending(transition) {
@@ -205,7 +234,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             if !active {
                 if gfx::mouse_relative() { gfx::set_mouse_relative(false); }
                 accumulator = 0.0; jump_pending = false; paused_frames++;
-            } else if transfer::pending(transition) {
+            } else if transfer::pending(transition) || bag.opened {
                 accumulator = 0.0; jump_pending = false;
             } else {
                 let elapsed: f32 = if replay_input { 1.0 / 60.0 } else { clamp(gfx::delta_time(), 0.0, 0.1) as! f32 };
@@ -221,8 +250,6 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 if !options.deferred_respawn && gfx::key_pressed("R") {
                     player::respawn(chunk, state); state.yaw = 0.0; state.pitch = 0.0;
                 }
-                if gfx::key_pressed("1") { selected = 1; }
-                if gfx::key_pressed("2") { selected = 2; }
                 jump_pending = jump_pending || gfx::key_pressed("Space");
                 var input = player::Input {
                     forward: (if gfx::key_down("W") { 1.0 } else { 0.0 }) - (if gfx::key_down("S") { 1.0 } else { 0.0 }),
@@ -243,17 +270,18 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 var dirty = false;
                 if !resumed && gfx::mouse_pressed(gfx::MOUSE_LEFT) && interaction::remove(chunk, hit) {
                     broken++; dirty = true;
-                } else if gfx::mouse_pressed(gfx::MOUSE_RIGHT) && interaction::place(chunk, hit, state.position, selected) {
+                } else if !resumed && gfx::mouse_pressed(gfx::MOUSE_RIGHT) && interaction::place(chunk, hit, state.position, selected) {
                     placed++; dirty = true;
                 }
                 if dirty && options.persistent { save_status = 1; }
             }
-            if !transfer::pending(transition) {
+            if !transfer::pending(transition) && !bag.opened {
                 hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
                 assert(!player::collides(chunk, state.position));
             }
         }
         let loading = transfer::pending(transition);
+        if bag.opened { inventory_frames++; }
         if loading { loading_frames++; sleep_ms(1); } // Bounded pacing, not a page wait or queue wait.
         let t2 = if profiled { clock_ns() } else { 0 };
         let cx = world::chunk_coord(floor(state.position.x) as i64);
@@ -290,9 +318,10 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, max(192.0, 64.0 * (2 * chunk.radius + 1)) as! f32),
             gfx::look_at(eye, target, float3 { 0.0, 1.0, 0.0 })) };
         if !preview {
-            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed, save_status, loading };
+            let pointer = if bag.opened { gfx::mouse_pos() } else { float2 { -1.0, -1.0 } };
+            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed, save_status, loading, bag, pointer };
             if reference || key != hud_key {
-                hud::build(hud_vertices, size, active, selected, hit, broken, placed, save_status, loading);
+                hud::build(hud_vertices, size, active, selected, hit, broken, placed, save_status, loading, bag, pointer);
                 let bytes = bytes_of(hud_vertices);
                 if !gfx::update_buffer(hud_buffer, bytes) { abort(str("HUD upload: ", gfx::error())); }
                 hud_uploads++; hud_uploaded_bytes += bytes.len; hud_key = key;
@@ -340,7 +369,7 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
                 frame: drawn, wall_ns: t5 - t0, pump_ns: t1 - t0, game_ns: t2 - t1,
                 mesh_ns: t3 - t2, save_ns: t4 - t3, submit_ns: t5 - t4,
                 rebuilt: rebuilt, draw_calls: draws, uploaded_bytes: total_uploads - last_upload_total,
-                paused: if active && !loading { 0 } else { 1 }, save_calls: save_calls,
+                paused: if active && !loading && !bag.opened { 0 } else { 1 }, save_calls: save_calls,
             }));
             last_upload_total = total_uploads;
             collector_ns_total += clock_ns() - t5;
@@ -410,6 +439,8 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
             transfer_starts: transition.starts, transfer_completed: transition.completed, transfer_requests: transition.requests,
             transfer_incoming: transition.incoming, transfer_validated: transition.validated, transfer_admitted: transition.admitted,
             transfer_max_admitted: transition.max_admitted, transfer_phase: transition.phase,
+            inventory_frames: inventory_frames, inventory_opens: inventory_opens, inventory_open: bag.opened,
+            selected_slot: bag.selected + 1, selected_material: selected,
         };
         if !profiling::save(options.profile_path, profiles[0], context) {
             write_stderr("profile export failed; existing files retained\n"); exit(7);
@@ -460,6 +491,13 @@ fn run_world<T>(options: Options, chunk: T&, loaded: bool, generated: bool, seed
     }
     rebuild_report.append("]"); rebuild_report.append(pages::report(chunk));
     rebuild_report.append(prefetch::report(prepared_stats));
+    rebuild_report.append(str(",\"inventory_open\":", bag.opened, ",\"inventory_frames\":", inventory_frames,
+        ",\"camera_yaw\":", state.yaw, ",\"camera_pitch\":", state.pitch,
+        ",\"inventory_opens\":", inventory_opens, ",\"inventory_clicks\":", inventory_clicks,
+        ",\"inventory_pointer_releases\":", inventory_pointer_releases, ",\"selected_slot\":", bag.selected + 1,
+        ",\"selected_material\":", selected, ",\"cursor_material\":", bag.held, ",\"hotbar\":["));
+    for slot in 9 { if slot > 0 { rebuild_report.push(','); } rebuild_report.append(str(bag.slots[slot])); }
+    rebuild_report.append("]");
     rebuild_report.append(str(",\"deferred_respawn\":", options.deferred_respawn, ",\"loading_frames\":", loading_frames,
         ",\"logical_frames\":", drawn - loading_frames, ",\"transfer_starts\":", transition.starts,
         ",\"transfer_completed\":", transition.completed, ",\"transfer_requests\":", transition.requests,

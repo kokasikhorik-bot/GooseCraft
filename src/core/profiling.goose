@@ -43,6 +43,8 @@ struct Context {
     transfer_starts: i64 = 0, transfer_completed: i64 = 0, transfer_requests: i64 = 0,
     transfer_incoming: i64 = 0, transfer_validated: i64 = 0, transfer_admitted: i64 = 0,
     transfer_max_admitted: i64 = 0, transfer_phase: i64 = 0,
+    inventory_frames: i64 = 0, inventory_opens: i64 = 0, inventory_open: bool = false,
+    selected_slot: i64 = 1, selected_material: i64 = 1,
 }
 
 fn value(s: Sample, metric: i64) -> i64 {
@@ -104,7 +106,7 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
     if context.driver != "headless" && context.driver != "vulkan" && context.driver != "metal" &&
        context.driver != "direct3d12" && context.driver != "unknown" { return false; }
     let warmup = min(log.seen, log.warmup);
-    output.append(str("{\"schema\":1,\"client_version\":\"0.12.0\",\"clock\":\"os.clock_ns\",",
+    output.append(str("{\"schema\":1,\"client_version\":\"0.13.0\",\"clock\":\"os.clock_ns\",",
         "\"scope\":\"CPU loop wall time; pump includes previous-frame submission/presentation; not GPU timestamps\",",
         "\"percentiles\":\"nearest-rank on retained samples\",\"driver\":\"", context.driver,
         "\",\"offscreen\":", context.offscreen, ",\"replay\":", context.replay,
@@ -146,6 +148,9 @@ fn encode(log: Log&, context: Context, output: u8[>..]&) -> bool {
         ",\"transfer_phase\":", context.transfer_phase,
         ",\"overlay_buffer_capacity_bytes\":", context.overlay_buffer_capacity_bytes,
         ",\"overlay_buffer_creations\":", context.overlay_buffer_creations, ","));
+    output.append(str("\"inventory_frames\":", context.inventory_frames, ",\"inventory_opens\":", context.inventory_opens,
+        ",\"inventory_open\":", context.inventory_open, ",\"selected_slot\":", context.selected_slot,
+        ",\"selected_material\":", context.selected_material, ","));
     output.append("\"memory_scope\":\"known block storage and requested GPU buffer bytes; excludes allocator, driver, RSS/VRAM totals\",\"summary\":{");
     let names: const u8[:][6] = ["wall_ns", "pump_ns", "game_ns", "mesh_ns", "save_ns", "submit_ns"];
     for metric in 6 {

@@ -1,0 +1,63 @@
+{
+  "stores": {
+    "pages-route": {
+      "format": 3,
+      "radius": 4,
+      "generator": 1,
+      "seed": 12345,
+      "serial": 1,
+      "chunks": 81,
+      "solid_blocks": 144444,
+      "referenced_pages": 1,
+      "index_bytes": 1024,
+      "referenced_page_bytes": 4128,
+      "expected_gcw_checked": true
+    },
+    "pages-route-window": {
+      "format": 3,
+      "radius": 4,
+      "generator": 1,
+      "seed": 12345,
+      "serial": 1,
+      "chunks": 81,
+      "solid_blocks": 144444,
+      "referenced_pages": 1,
+      "index_bytes": 1024,
+      "referenced_page_bytes": 4128,
+      "expected_gcw_checked": true
+    },
+    "pages-route-debug": {
+      "format": 3,
+      "radius": 4,
+      "generator": 1,
+      "seed": 12345,
+      "serial": 1,
+      "chunks": 81,
+      "solid_blocks": 144444,
+      "referenced_pages": 1,
+      "index_bytes": 1024,
+      "referenced_page_bytes": 4128,
+      "expected_gcw_checked": true
+    },
+    "pages-imported": {
+      "format": 3,
+      "radius": 4,
+      "generator": 0,
+      "seed": 0,
+      "serial": 2,
+      "chunks": 81,
+      "solid_blocks": 144444,
+      "referenced_pages": 81,
+      "index_bytes": 1024,
+      "referenced_page_bytes": 334368,
+      "expected_gcw_checked": true
+    }
+  },
+  "same_view_png_and_gameplay_equal": true,
+  "all_exported_gcw_bytes_match_resident_backend": true,
+  "reopen_preserves_all_page_bytes": true,
+  "source_gcw_retained": true,
+  "cpu_pool_bytes": 200704,
+  "cpu_pool_slots": 49,
+  "scope": "Finite 81-chunk world, synchronous bounded CPU paging, software Vulkan/Xvfb"
+}

@@ -177,3 +177,11 @@ producer не застревает на заполненной очереди. �
 suite проверяет stale speculative result, preflight/commit/re-read failure,
 partial cancellation и повторный переход. Расширение metadata встретило лимит
 `str` в 99 аргументов; JSON собирается несколькими append, API не подменялся.
+
+В 0.13 проверены mouse_pos/mouse_relative/set_mouse_relative, cursor_visible,
+key_pressed и inject_mouse в pinned gfx.goose и src/gfx/gfx_device.c. Координаты
+mouse_pos — pixels screen, как и HUD. Смена relative mode сбрасывает delta;
+focus loss освобождает захват и held input. Scene повторно захватывает мышь при
+закрытии E/Escape и resume. В графическом replay проверены три release/recapture,
+запрет look/move/jump/world edits в модальном окне и оба клика при закрытии.
+Новых extern/native API и зависимостей нет. Inventory suite работает JIT/AOT.

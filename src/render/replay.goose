@@ -5,6 +5,48 @@ namespace replay;
 
 fn key(name: u8[:], down: bool) { assert(gfx::inject_key(name, down)); }
 
+fn inventory_input(frame: i64) {
+    if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }
+    if frame == 1 { gfx::inject_mouse(320.0, 440.0, 0, false); }
+    if frame == 2 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_LEFT, true); }
+    if frame == 3 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_LEFT, false); }
+    if frame == 5 { key("9", true); } if frame == 6 { key("9", false); }
+    if frame == 7 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_RIGHT, true); }
+    if frame == 8 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_RIGHT, false); }
+    if frame == 10 { key("E", true); key("W", true); } if frame == 11 { key("E", false); key("Space", true); }
+    if frame == 12 { key("Space", false); gfx::inject_mouse(244.0, 170.0, gfx::MOUSE_LEFT, true); }
+    if frame == 13 { gfx::inject_mouse(244.0, 170.0, gfx::MOUSE_LEFT, false); }
+    if frame == 15 { gfx::inject_mouse(494.0, 388.0, gfx::MOUSE_LEFT, true); }
+    if frame == 16 { gfx::inject_mouse(494.0, 388.0, gfx::MOUSE_LEFT, false); }
+    if frame == 18 { gfx::inject_mouse(142.0, 388.0, gfx::MOUSE_LEFT, true); }
+    if frame == 19 { gfx::inject_mouse(142.0, 388.0, gfx::MOUSE_LEFT, false); }
+    if frame == 20 { gfx::inject_mouse(230.0, 388.0, gfx::MOUSE_LEFT, true); }
+    if frame == 21 { gfx::inject_mouse(230.0, 388.0, gfx::MOUSE_LEFT, false); }
+    if frame == 22 { gfx::inject_mouse(186.0, 388.0, gfx::MOUSE_RIGHT, true); }
+    if frame == 23 { gfx::inject_mouse(186.0, 388.0, gfx::MOUSE_RIGHT, false); }
+    if frame == 24 { gfx::inject_mouse(600.0, 200.0, gfx::MOUSE_LEFT, true); }
+    if frame == 25 { gfx::inject_mouse(600.0, 200.0, gfx::MOUSE_LEFT, false); }
+    if frame == 26 { key("9", true); } if frame == 27 { key("9", false); }
+    if frame == 28 { key("W", false); }
+    if frame == 30 { key("E", true); gfx::inject_mouse(600.0, 200.0, gfx::MOUSE_RIGHT, true); }
+    if frame == 31 { key("E", false); gfx::inject_mouse(600.0, 200.0, gfx::MOUSE_RIGHT, false); }
+    if frame == 33 { gfx::inject_mouse(600.0, 200.0, gfx::MOUSE_RIGHT, true); }
+    if frame == 34 { gfx::inject_mouse(600.0, 200.0, gfx::MOUSE_RIGHT, false); }
+    if frame == 40 { key("E", true); } if frame == 41 { key("E", false); }
+    if frame == 42 { gfx::inject_mouse(140.0, 170.0, gfx::MOUSE_LEFT, true); }
+    if frame == 43 { gfx::inject_mouse(140.0, 170.0, gfx::MOUSE_LEFT, false); }
+    if frame == 44 { key("Escape", true); gfx::inject_mouse(140.0, 170.0, gfx::MOUSE_LEFT, true); }
+    if frame == 45 { key("Escape", false); gfx::inject_mouse(140.0, 170.0, gfx::MOUSE_LEFT, false); }
+    if frame == 50 { key("E", true); } if frame == 51 { key("E", false); }
+    if frame == 52 { gfx::inject_mouse(244.0, 170.0, gfx::MOUSE_LEFT, true); }
+    if frame == 53 { gfx::inject_mouse(244.0, 170.0, gfx::MOUSE_LEFT, false); }
+    if frame == 54 { assert(gfx::inject_focus(false)); key("W", true); }
+    if frame == 55 { gfx::inject_mouse(244.0, 170.0, gfx::MOUSE_LEFT, true); }
+    if frame == 56 { assert(gfx::inject_focus(true)); }
+    if frame == 57 { gfx::inject_mouse(244.0, 170.0, gfx::MOUSE_LEFT, false); }
+    if frame == 58 { key("Return", true); } if frame == 59 { key("Return", false); }
+}
+
 // Terrain path uses normal mouse, movement, jumping, editing and save handlers.
 fn terrain_input(frame: i64) {
     if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }

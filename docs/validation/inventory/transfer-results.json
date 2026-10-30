@@ -1,0 +1,16 @@
+{
+  "pairs": {
+    "transfer-window-reference": "transfer-window",
+    "transfer-offscreen-reference": "transfer-offscreen",
+    "transfer-debug-reference": "transfer-debug",
+    "transfer-latency-reference": "transfer-latency",
+    "transfer-delayed-reference": "transfer-delayed"
+  },
+  "png_gameplay_and_export_equal": true,
+  "same_logical_input_frames_compared": true,
+  "admission_budget": 2,
+  "staging_slots": 8,
+  "one_worker": true,
+  "early_close_saved_and_joined": true,
+  "scope": "Opt-in R transition only; synchronous commit and normal movement fallback remain"
+}

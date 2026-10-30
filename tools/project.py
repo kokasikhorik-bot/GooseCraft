@@ -88,7 +88,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain", "stitch", "profiling", "large", "residency", "paging", "inventory")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/prefetch.goose", ROOT / "tests/transfer.goose", ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -407,6 +407,7 @@ def render_build():
     native_build(ROOT / "src/viewer.goose", VIEWER, timeout=900)
     run([VIEWER, "--help"])
     for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"],
+                 ["--inventory-replay", "--replay"], ["--inventory-replay", "--preview"], ["--inventory-replay", "--empty"],
                  ["--seam-replay", "--single-chunk"], ["--world"], ["--world", "x", "--no-save"], ["--view-away"]):
         run([VIEWER, *args], expected=2)
     for args in (["--seed"], ["--seed", "-1"], ["--seed", "4294967296"], ["--seed", "1.5"],
@@ -601,6 +602,18 @@ def render_test(evidence):
         if label == "latency": control += ["--page-delay-ms", "2"]
         profile_specs.append((reference_name, prefix, [*control, "--paging-replay", "--paged-world", saves / reference_name, "--sync-paging"], 1100, 0))
     profile_specs.append(("transfer-quit", [], ["--offscreen", "--paging-replay", "--paged-world", saves / "transfer-quit", "--deferred-respawn", "--prefetch-delay-ms", "50"], 630, 0))
+    for name, prefix, extra, frames in (("inventory-empty", [], ["--offscreen"], 10),
+                                       ("inventory-held", [], ["--offscreen"], 14),
+                                       ("inventory-open", [], ["--offscreen"], 29),
+                                       ("inventory-final", [], ["--offscreen"], 90),
+                                       ("inventory-window", xvfb, [], 90),
+                                       ("inventory-debug", [], ["--offscreen"], 90),
+                                       ("inventory-save", [], ["--offscreen", "--world", saves / "inventory.gcw"], 90)):
+        profile_specs.append((name, prefix, [*extra, "--inventory-replay", "--demo-world", "--single-chunk"], frames, 0))
+    profile_specs += [
+        ("inventory-paged", [], ["--offscreen", "--inventory-replay", "--paged-world", saves / "inventory-paged", "--radius", "4", "--mesh-radius", "2"], 90, 0),
+        ("inventory-map", [], ["--offscreen", "--inventory-replay", "--world", saves / "inventory-map.gcw", "--radius", "4", "--mesh-radius", "2"], 90, 0),
+    ]
     large_save = saves / "large" / "world.gcw"
     cache_save = saves / "cache" / "world.gcw"
     cache_retained_save = saves / "cache-retained" / "world.gcw"
@@ -624,7 +637,8 @@ def render_test(evidence):
         profile_paths[name].unlink(missing_ok=True)
         cases.append((name, prefix, [*flags, "--profile", profile_paths[name], "--profile-warmup", str(warmup)], frames))
     cases += [("pages-reopen", xvfb, ["--paged-world", saves / "pages-route", "--mesh-radius", "1"], 30),
-              ("pages-reopen-legacy", xvfb, ["--world", saves / "pages-route.gcw", "--mesh-radius", "1"], 30)]
+              ("pages-reopen-legacy", xvfb, ["--world", saves / "pages-route.gcw", "--mesh-radius", "1"], 30),
+              ("inventory-reopen", [], ["--offscreen", "--world", saves / "inventory.gcw"], 3)]
     origin = saves / "pages-origin.gcw"
     run([CLIENT, "--headless", "--generate-world", "12345", origin, "--radius", "4"])
     origin_before = origin.read_bytes()
@@ -651,9 +665,11 @@ def render_test(evidence):
             persisted_large = large_save.read_bytes()
         if name == "cache-load":
             persisted_cache = cache_save.read_bytes()
+        if name == "inventory-reopen":
+            inventory_saved_bytes = (saves / "inventory.gcw").read_bytes()
         if name == "pages-reopen":
             pages_before = {p.name: p.read_bytes() for p in (saves / "pages-route").iterdir() if p.suffix in (".gci", ".gcp")}
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug") else VIEWER
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug", "surface-debug", "timing-debug", "large-debug", "cache-stream-debug", "pages-route-debug", "transfer-debug", "inventory-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         capture = name not in no_capture
@@ -674,7 +690,8 @@ def render_test(evidence):
         if name == "empty" or name.startswith("multi-away"):
             if data["colored_pixels"] != 0 or (name == "empty" and data["indices"] != 0):
                 raise RuntimeError("Empty render is not the clear color")
-        elif not (5000 < data["colored_pixels"] < 640 * 480 and data["indices"] > 0):
+        elif not (5000 < data["colored_pixels"] <= 640 * 480 and
+                  (data["colored_pixels"] < 640 * 480 or name in ("inventory-paged", "inventory-map")) and data["indices"] > 0):
             raise RuntimeError("Scene geometry is missing from GPU readback")
         raw = png.read_bytes()
         if raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR" or struct.unpack(">II", raw[16:24]) != (640, 480):
@@ -895,6 +912,8 @@ def render_test(evidence):
         for key in ("deferred_respawn", "loading_frames", "logical_frames", "transfer_starts", "transfer_completed", "transfer_requests",
                     "transfer_incoming", "transfer_validated", "transfer_admitted", "transfer_max_admitted", "transfer_phase"):
             if trace[key] != stdout[key]: raise RuntimeError(f"Transfer profile metadata disagrees: {name}: {key}")
+        for key in ("inventory_frames", "inventory_opens", "inventory_open", "selected_slot", "selected_material"):
+            if trace[key] != stdout[key]: raise RuntimeError(f"Inventory profile metadata disagrees: {name}: {key}")
     for name in ("timing-offscreen", "timing-window", "timing-debug"):
         if results[name]["png_sha256"] != results["terrain-replay"]["png_sha256"] or any(results[name][k] != results["terrain-replay"][k] for k in keys):
             raise RuntimeError("Profiling changed terrain replay pixels or gameplay")
@@ -1055,6 +1074,44 @@ def render_test(evidence):
         "admission_budget": 2, "staging_slots": 8, "one_worker": True,
         "early_close_saved_and_joined": True, "scope": "Opt-in R transition only; synchronous commit and normal movement fallback remain",
     }, indent=2) + "\n")
+    empty, held, opened = (results[name] for name in ("inventory-empty", "inventory-held", "inventory-open"))
+    if empty["selected_material"] != 0 or empty["places"] != 0 or empty["revision"] != 1:
+        raise RuntimeError("An empty hotbar slot placed a block")
+    if not held["inventory_open"] or held["cursor_material"] != 2 or held["places"] != 0:
+        raise RuntimeError("Palette selection did not pick an item into the cursor")
+    if not opened["inventory_open"] or opened["hotbar"] != [0,0,1,0,0,0,0,0,2]:
+        raise RuntimeError("Inventory transfer/clear/selection did not update hotbar")
+    for key in ("ticks", "walked", "player_x", "player_y", "player_z", "camera_yaw", "camera_pitch", "revision"):
+        if opened[key] != empty[key]: raise RuntimeError(f"Inventory input leaked into simulation: {key}")
+    for name in ("inventory-final", "inventory-window", "inventory-debug", "inventory-save", "inventory-paged", "inventory-map"):
+        d = results[name]
+        expected = {"ticks":116, "breaks":1, "places":1, "inventory_open":False, "inventory_frames":28,
+                    "inventory_opens":3, "inventory_clicks":7, "cursor_material":0, "selected_slot":9,
+                    "selected_material":2, "jumps":0, "walked":0.0, "paused_frames":4,
+                    "focus_losses":1, "resumes":1, "revision":2}
+        if any(d[key] != value for key, value in expected.items()) or d["hotbar"] != [0,0,1,0,0,0,0,0,2]:
+            raise RuntimeError(f"Inventory replay disagrees: {name}: {d}")
+        if d["inventory_pointer_releases"] != 3: raise RuntimeError("Inventory did not release captured mouse on every open")
+        t=validate_profile(profile_paths[name],90)
+        if sum(row[10] for row in t["rows"]) != 32: raise RuntimeError("Inventory/focus freeze was not profiled")
+    for a,b in (("inventory-final","inventory-window"),("inventory-final","inventory-debug"),
+                ("inventory-paged","inventory-map")):
+        if results[a]["png_sha256"] != results[b]["png_sha256"]: raise RuntimeError(f"Inventory pixels disagree: {a}, {b}")
+    if inventory_saved_bytes != (saves / "inventory.gcw").read_bytes() or results["inventory-reopen"]["save_writes"] != 0:
+        raise RuntimeError("Inventory session changed save bytes on reopen")
+    if results["inventory-reopen"]["hotbar"] != [1,2,0,0,0,0,0,0,0] or results["inventory-reopen"]["selected_slot"] != 1:
+        raise RuntimeError("Session-local inventory state unexpectedly persisted")
+    exported = saves / "inventory-paged-export.gcw"
+    run([CLIENT, "--headless", "--export-pages", saves / "inventory-paged", exported])
+    if exported.read_bytes() != (saves / "inventory-map.gcw").read_bytes(): raise RuntimeError("Inventory changed paged/Map world bytes")
+    (evidence / "inventory-results.json").write_text(json.dumps({
+        "creative":True, "hotbar_slots":9, "materials":2, "session_local":True,
+        "empty_slot_cannot_place":True, "modal_input_does_not_move_look_jump_or_edit":True,
+        "palette_swap_clear_and_hotkeys_checked":True, "escape_and_focus_clear_cursor":True,
+        "pointer_released_and_recaptured":True, "native_debug_release_and_window_pixels_equal":True,
+        "paged_map_pixels_and_export_equal":True, "reopen_preserves_world_bytes":True,
+        "scope":"Linux lavapipe/Xvfb with injected real gfx input; Windows GUI unverified",
+    },indent=2)+"\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
           "frustum culling, terrain, release/debug/reference, saves, opt-in frame profiling, independent percentiles, no unrequested readback, cached overlays")

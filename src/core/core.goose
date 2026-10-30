@@ -4,6 +4,7 @@ import .simulation;
 import .mesh;
 import .player;
 import .interaction;
+import .inventory;
 import .storage;
 import .visibility;
 import .terrain;

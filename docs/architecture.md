@@ -20,6 +20,7 @@ GooseCraft/
 │   │   ├── prepared.goose    # bounded staging, подписи поколений и fallback metrics
 │   │   ├── prefetch.goose    # native Goose worker, очереди limit 1, кеш 8 страниц
 │   │   ├── transfer.goose    # deferred R: preflight, commit, <=2 admissions/frame
+│   │   ├── inventory.goose   # creative hotbar 9, palette/swap/clear и общая hit layout
 │   │   ├── player.goose      # фиксированный шаг, AABB, гравитация и прыжок
 │   │   ├── interaction.goose # DDA-луч, удаление и безопасная установка
 │   │   ├── storage.goose     # GCW v1/v2, транзакционная загрузка и atomic save
@@ -194,6 +195,16 @@ worker при admission. Save до eviction остаётся на main. Посл
 collides и remesh. При ошибке — fail closed/checkpoint, при выходе — drain/join.
 Обычные переходы при ходьбе и автоматический respawn пока используют старый путь.
 Режим явно включается пользователем и не обещает более короткое общее ожидание.
+
+В 0.13 чистый `inventory.goose` хранит девять slot IDs, выбранный slot,
+состояние окна и held item; не импортирует gfx/OS и не владеет блоками мира.
+Rect/hit-test используются HUD и input без двух независимых копий layout.
+Scene обрабатывает E/Escape/focus до физики: открытое окно освобождает relative
+mouse, останавливает look/tick/world edits, обнуляет accumulator/jump и не
+передаёт закрывающий mouse press в мир. Hotbar material 0 отвергается обычным
+`interaction::place`. HUD cache key содержит отображаемую раскладку/курсор;
+при закрытом окне pointer не меняет key. Данные инвентаря сеансовые, storage
+v1/v2/v3 и generator остаются прежними. [Проверки](inventory-results.md).
 
 Сохранение — отдельный версионный кодек на Goose. Проверяет весь ввод до
 замены мира; GPU-данные восстанавливаются из блоков. F5 и штатный выход

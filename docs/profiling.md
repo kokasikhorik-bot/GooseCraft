@@ -174,6 +174,14 @@ game stage. Main-page counters не включают startup. Ring summaries п�
 по retained rows; накопленные remesh/upload totals сопоставимы с суммой rows
 только если ни warmup, ни overwrite не отбросили samples. Schema/columns прежние.
 
+В 0.13 `inventory_frames`, `inventory_opens`, `inventory_open`, `selected_slot`
+(1..9) и `selected_material` (0..2) добавлены к metadata. `paused=1` также
+помечает кадры открытого инвентаря, поскольку player tick остановлен.
+Input replay продолжает идти во время UI; logical_frames исключает только
+loading, как прежде. Полный replay на 90 кадров даёт 28 inventory и четыре
+focus-paused кадра, 116 fixed ticks. Видимая панель использует прежний HUD
+buffer 512 KiB, inventory state входит в cache key; idle HUD остаётся одним upload.
+
 `tools/profile_readback.py` независимо проверяет схему, порядок, разложение
 времени, rollover и все процентили/среднее по сырым rows; используется в CI.
 
