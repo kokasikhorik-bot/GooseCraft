@@ -1,6 +1,52 @@
-# GitHub: успешный CI GooseCraft 0.6.1 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.7 — 2026-10-30
 
-## Согласование рёбер 0.6.1
+## Профилирование 0.7
+
+[Run 41059622515](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515)
+для `f8e6576a07c191fcaa61dfe9960c6bdcb3282d56` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графики, UTF-8 PE manifests, девять suites TinyCC/native release/debug, profile ring/summary/I/O, независимые процентили, world vectors, CLI/cmd.exe, два benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | Девять suites, profiling JSON/percentiles, сохранения, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 84 сценария: прежние проверки плюс девять профилей, PNG/gameplay equivalence при profiling, rollover/warmup/F5/pause, отсутствие незапрошенного readback, сохранение мира перед ошибкой profile export |
+
+**[Windows ZIP 0.7](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978751839)**:
+`goosecraft-windows-2022-x64-f8e6576a07c191fcaa61dfe9960c6bdcb3282d56`,
+3 194 317 байт. Workflow упаковал release графического/headless клиента,
+`.cmd`-лаунчер, лицензии, документацию и BUILD-INFO с profiling schema 1.
+Сохранения и debug EXE не предусмотрены упаковкой. [Первый запуск](first-play.md),
+[как собрать профиль](profiling.md), [замеры и ограничения](profiling-results.md).
+
+SHA-256 ZIP по GitHub API:
+`0ce89bc8ec355666b0c2391ef07daf885bb056ee87ecb1d1740ff9e6ee0fcd0c`.
+Хранение по API до `2027-01-28T13:00:05Z`, если артефакт не удалят раньше.
+Windows ZIP локально не скачивался и не хешировался. PE manifests извлекались
+SDK mt.exe внутри Windows job. Для Actions artifact в браузере может
+потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12979215374): 5 444 байта, CPU mesh/stitch, без GUI.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978033990): 5 699 байт.
+- [Graphics/profile evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12977254212): 625 895 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978068997): 1 955 749 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41059622515.json)
+сохранены без credentials. На Windows проверены кодек/статистика профиля и
+файловое I/O; окно **не открывалось**, кадровые измерения Windows GPU отсутствуют.
+Графические samples относятся к Linux lavapipe/Xvfb. `wall_ns` — время
+CPU-цикла с ожиданиями, не GPU timestamp или доказанный FPS; offscreen
+может долго завершать очередь при tail flush. Полная RAM/VRAM не измерена.
+
+Пользовательская Windows 10/физический GPU ещё не проверены. UTF-8 argv
+использует Windows 10 1903+ manifest. Пользователю не нужны локальные
+инструменты разработки. GCW v1, размер мира и отсутствие сети Java Edition
+сохранены. Проверенный source — `f8e6576`; итоговый docs-only commit с
+`[skip ci]` обновляет только документы/evidence. Документы внутри ZIP
+отражают момент сборки, актуальный итог CI находится в этом файле.
+
+## Согласование рёбер 0.6.1 (предыдущая версия)
 
 [Run 41053468183](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183)
 для `91889884ff1a90242bcb10158b115f8be57f853e` завершился **success**.

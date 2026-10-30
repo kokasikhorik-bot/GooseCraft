@@ -86,3 +86,25 @@ mesh 0.00005 ms, save check 0.00002 ms, submit 0.01596 ms. Большинств�
 бюджетом миллисекунд. Сравнение с Minecraft потребует равных условий и мира.
 Windows 10 GUI и физическая видеокарта ещё не проверены; итог Windows CI
 фиксируется в [github-ci.md](github-ci.md).
+
+## Доставка и CI
+
+[Run 41059622515](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515)
+для `f8e6576a07c191fcaa61dfe9960c6bdcb3282d56` завершился success, все три jobs
+успешны. На Windows Server 2022 собраны release/debug графики, встроены и
+извлечены UTF-8 PE manifests, прошли девять suites TinyCC/native release/debug,
+Unicode profile/world I/O, независимый пересчёт summary, CLI/launcher, оба
+meshing benchmark и упаковка. Ubuntu job успешен, Linux graphics CI повторил
+84 сценария с профилями. Кадровые ns из таблицы выше — локальный прогон,
+а не скачанные результаты второго CI-прогона.
+
+[Windows ZIP 0.7](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978751839),
+[API run/jobs/artifacts](validation/github-actions-41059622515.json).
+ZIP Windows локально не скачивался; размер/digest API не являются локальным
+пересчётом хеша. Windows GUI и GPU timings на Windows ещё не проверены.
+
+Linux-поставка 0.7 проверена из `/tmp`: обе CLI запускаются, профилирование
+присутствует в help/BUILD-INFO (schema 1), 12 лицензий совпадают побайтно;
+debug-бинарников и пользовательских миров нет. [Результат](validation/profiling/package-results.json).
+Source SHA передан явно; `source_dirty=null`, `ci_url=null` для локального
+Docker без `.git`. Пользователю локальные инструменты разработки не нужны.

@@ -1,7 +1,7 @@
 # Первый запуск GooseCraft 0.7 на Windows 10 x64
 
-Предыдущая опубликованная [Windows x64 ZIP 0.6.1](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41053468183/artifacts/12976740022),
-успешный CI #41053468183, source `9188988`.
+[Скачать Windows x64 ZIP 0.7](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41059622515/artifacts/12978751839),
+успешный CI #41059622515, source `f8e6576`.
 [Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md). В 0.5 мир расширен до девяти чанков и появился файл
 сохранения. В 0.6 новые миры получают рельеф по seed; старые сохранения
 сохраняют свои блоки. Старые 0.3/0.4 имели только временный одночанковый мир.
