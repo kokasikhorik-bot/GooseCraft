@@ -1,0 +1,96 @@
++ /work/.cache/toolchain/build/goose check /work/src/client.goose --offline
++ /work/.cache/toolchain/build/goose build /work/src/client.goose --offline -o /work/build/goosecraft-headless
+built /work/build/goosecraft-headless
++ /work/.cache/toolchain/build/goose format --check /work/src /work/tests/headless.goose /work/tests/mesh.goose /work/tests/player.goose
++ /work/.cache/toolchain/build/goose check /work/tests/headless.goose --offline
++ /work/.cache/toolchain/build/goose check /work/tests/fixtures/type_error.goose --offline
++ /work/.cache/toolchain/build/goose run /work/tests/headless.goose --offline
+/work/tests/fixtures/type_error.goose:3: error: expected a value of type i64, got const u8[:]
+    let bad: i64 = "not an integer";
+  in fn main() instantiated from /work/tests/fixtures/type_error.goose:2
+headless core: ok
++ /work/.cache/toolchain/build/goose build /work/tests/headless.goose --offline -o /work/build/core-tests
+built /work/build/core-tests
++ /work/build/core-tests
+headless core: ok
++ /work/.cache/toolchain/build/goose run /work/tests/headless.goose --offline --debug
+headless core: ok
++ /work/.cache/toolchain/build/goose build /work/tests/headless.goose --offline --debug -o /work/build/core-tests-debug
+built /work/build/core-tests-debug
++ /work/build/core-tests-debug
+headless core: ok
++ /work/.cache/toolchain/build/goose run /work/tests/mesh.goose --offline
+headless mesh: ok
++ /work/.cache/toolchain/build/goose build /work/tests/mesh.goose --offline -o /work/build/mesh-tests
+built /work/build/mesh-tests
++ /work/build/mesh-tests
+headless mesh: ok
++ /work/.cache/toolchain/build/goose run /work/tests/mesh.goose --offline --debug
+headless mesh: ok
++ /work/.cache/toolchain/build/goose build /work/tests/mesh.goose --offline --debug -o /work/build/mesh-tests-debug
+built /work/build/mesh-tests-debug
++ /work/build/mesh-tests-debug
+headless mesh: ok
++ /work/.cache/toolchain/build/goose run /work/tests/player.goose --offline
+headless player: ok
++ /work/.cache/toolchain/build/goose build /work/tests/player.goose --offline -o /work/build/player-tests
+built /work/build/player-tests
++ /work/build/player-tests
+headless player: ok
++ /work/.cache/toolchain/build/goose run /work/tests/player.goose --offline --debug
+headless player: ok
++ /work/.cache/toolchain/build/goose build /work/tests/player.goose --offline --debug -o /work/build/player-tests-debug
+built /work/build/player-tests-debug
++ /work/build/player-tests-debug
+headless player: ok
++ /work/build/goosecraft-headless --headless --ticks 0
+{"mode":"headless","ticks":0,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 0
+{"mode":"headless","ticks":0,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 1
+{"mode":"headless","ticks":1,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 1
+{"mode":"headless","ticks":1,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 20
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 20
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 1000
+{"mode":"headless","ticks":1000,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 1000
+{"mode":"headless","ticks":1000,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless --ticks 1000000
+{"mode":"headless","ticks":1000000,"solid_blocks":256}
++ /work/.cache/toolchain/build/goose run /work/src/client.goose --offline -- --headless --ticks 1000000
+{"mode":"headless","ticks":1000000,"solid_blocks":256}
++ /work/build/goosecraft-headless --headless
+{"mode":"headless","ticks":20,"solid_blocks":256}
++ /work/build/goosecraft-headless
+GooseCraft 0.3.0-stage3 (headless harness)
+usage: goosecraft-headless --headless [--ticks N] | --version | --help
+Graphical client: goosecraft-client.
++ /work/build/goosecraft-headless --help
+GooseCraft 0.3.0-stage3 (headless harness)
+usage: goosecraft-headless --headless [--ticks N] | --version | --help
+Graphical client: goosecraft-client.
++ /work/build/goosecraft-headless --version
+GooseCraft 0.3.0-stage3
++ /work/build/goosecraft-headless --unknown
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
++ /work/build/goosecraft-headless --headless --ticks
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
++ /work/build/goosecraft-headless --headless extra
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
++ /work/build/goosecraft-headless --headless --ticks 1 extra
++ /work/build/goosecraft-headless --headless --ticks -1
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
++ /work/build/goosecraft-headless --headless --ticks 1000001
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
++ /work/build/goosecraft-headless --headless --ticks abc
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
++ /work/build/goosecraft-headless --headless --ticks 1.5
++ /work/build/goosecraft-headless --headless --ticks 9999999999999999999999999999
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
+invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
+PASS: compiler probes, Goose core/mesh/player (JIT/native, release/debug), CLI; Windows launcher not run on Linux

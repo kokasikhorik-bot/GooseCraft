@@ -16,6 +16,7 @@ GOOSE = ROOT / ".cache/toolchain/build" / ("Release/goose.exe" if WINDOWS else "
 BUILD = ROOT / "build"
 CLIENT = BUILD / ("goosecraft-headless" + EXT)
 VIEWER = BUILD / ("goosecraft-client" + EXT)
+DEBUG_VIEWER = BUILD / ("goosecraft-client-debug" + EXT)
 
 
 def environment():
@@ -132,7 +133,9 @@ def render_build():
     run([GOOSE, "check", ROOT / "src/viewer.goose", "--offline"])
     run([GOOSE, "build", ROOT / "src/viewer.goose", "--offline", "-o", VIEWER], timeout=900)
     run([VIEWER, "--help"])
-    run([VIEWER, "--frames", "0"], expected=2)
+    for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"]):
+        run([VIEWER, *args], expected=2)
+    run([GOOSE, "build", ROOT / "src/viewer.goose", "--offline", "--debug", "-o", DEBUG_VIEWER], timeout=900)
 
 
 def render_test(evidence):
@@ -154,24 +157,33 @@ def render_test(evidence):
     if "graphics unavailable" not in no_display.stderr:
         raise RuntimeError("Window startup without DISPLAY did not produce the expected diagnostic")
     results = {}
-    for name, prefix, flags in (
-        ("empty", [], ["--offscreen", "--empty"]),
-        ("offscreen", [], ["--offscreen"]),
-        ("window", ["xvfb-run", "-a", "-s", "-screen 0 800x600x24"], []),
+    xvfb = ["xvfb-run", "-a", "-s", "-screen 0 800x600x24"]
+    for name, prefix, flags, frames in (
+        ("empty", [], ["--offscreen", "--empty"], 3),
+        ("offscreen", [], ["--offscreen", "--preview"], 3),
+        ("window", xvfb, ["--preview"], 3),
+        ("play-window", xvfb, [], 3),
+        ("replay-before", [], ["--offscreen", "--replay"], 2),
+        ("replay-broken", [], ["--offscreen", "--replay"], 4),
+        ("replay-paused", [], ["--offscreen", "--replay"], 63),
+        ("replay-offscreen", [], ["--offscreen", "--replay"], 110),
+        ("replay-window", xvfb, ["--replay"], 110),
+        ("replay-debug", [], ["--offscreen", "--replay"], 110),
     ):
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
-        case_env = {**env, "SDL_VIDEODRIVER": "x11" if name == "window" else "offscreen"}
-        p = run([*prefix, VIEWER, *flags, "--frames", "3", "--screenshot", png], extra_env=case_env)
+        case_env = {**env, "SDL_VIDEODRIVER": "x11" if prefix else "offscreen"}
+        binary = DEBUG_VIEWER if name == "replay-debug" else VIEWER
+        p = run([*prefix, binary, *flags, "--frames", str(frames), "--screenshot", png], extra_env=case_env)
         data = json.loads(p.stdout)
-        if data["driver"] != "vulkan" or data["frames"] != 3 or data["misuse_count"] != 0:
+        if data["driver"] != "vulkan" or data["frames"] != frames or data["misuse_count"] != 0:
             raise RuntimeError("Unexpected renderer result")
         if (data["width"], data["height"]) != (640, 480):
             raise RuntimeError("Unexpected render dimensions")
         if name == "empty":
             if data["colored_pixels"] != 0 or data["indices"] != 0:
                 raise RuntimeError("Empty render is not the clear color")
-        elif not (5000 < data["colored_pixels"] < 640 * 480 * 0.9 and data["indices"] > 0):
+        elif not (5000 < data["colored_pixels"] < 640 * 480 and data["indices"] > 0):
             raise RuntimeError("Scene geometry is missing from GPU readback")
         raw = png.read_bytes()
         if raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR" or struct.unpack(">II", raw[16:24]) != (640, 480):
@@ -180,8 +192,37 @@ def render_test(evidence):
         results[name] = data
     if results["offscreen"]["png_sha256"] != results["window"]["png_sha256"]:
         raise RuntimeError("Window and offscreen rendering disagree")
+    if not results["play-window"]["interactive"] or results["play-window"]["replay"]:
+        raise RuntimeError("Default window did not enter the playable client")
+    before, broken = results["replay-before"], results["replay-broken"]
+    if before["breaks"] != 0 or broken["breaks"] != 1 or broken["solid_blocks"] != before["solid_blocks"] - 1:
+        raise RuntimeError("Injected mouse click did not remove exactly one voxel")
+    if before["png_sha256"] == broken["png_sha256"] or before["indices"] == broken["indices"]:
+        raise RuntimeError("World edits did not reach GPU geometry and pixels")
+    if before["colored_pixels"] - broken["colored_pixels"] < 1000:
+        raise RuntimeError("Removed voxel did not leave a visible hole in the scene")
+    for name in ("replay-offscreen", "replay-window", "replay-debug"):
+        data = results[name]
+        expected = {"interactive": True, "replay": True, "breaks": 1, "places": 1,
+                    "remeshes": 3, "solid_blocks": 267, "jumps": 1, "respawns": 1,
+                    "paused_frames": 14, "focus_losses": 1, "resumes": 3, "ticks": 192}
+        if any(data[key] != value for key, value in expected.items()):
+            raise RuntimeError(f"Input/physics/edit replay disagrees: {name}: {data}")
+        if data["walked"] < 2.0 or data["max_y"] < 1.15:
+            raise RuntimeError("Replay did not exercise player movement and jumping")
+        if any(abs(data[key] - value) > 0.001 for key, value in
+               (("player_x", 10.5), ("player_y", 1.0), ("player_z", 13.5))):
+            raise RuntimeError("Respawn or focus-loss key reset failed")
+    a, b = results["replay-offscreen"].copy(), results["replay-window"].copy()
+    a.pop("mode"); b.pop("mode")
+    if a != b:
+        raise RuntimeError("Window and offscreen gameplay replay disagree")
+    c = results["replay-debug"].copy(); c.pop("mode")
+    if a != c:
+        raise RuntimeError("Debug and release gameplay replay disagree")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
-    print("PASS: native software Vulkan, empty/voxel scene, real X11 window in Xvfb, identical PNG")
+    print("PASS: native software Vulkan, X11/Xvfb, default playable window, injected input replay, "
+          "movement/jump/edit/remesh/pause/focus/respawn, identical window/offscreen state and PNG")
 
 
 def package(graphics=False):

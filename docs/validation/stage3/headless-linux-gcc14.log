@@ -66,15 +66,15 @@ headless player: ok
 + /workspace/GooseCraft/build/goosecraft-headless --headless
 {"mode":"headless","ticks":20,"solid_blocks":256}
 + /workspace/GooseCraft/build/goosecraft-headless
-GooseCraft 0.2.0-stage2 (headless harness)
+GooseCraft 0.3.0-stage3 (headless harness)
 usage: goosecraft-headless --headless [--ticks N] | --version | --help
 Graphical client: goosecraft-client.
 + /workspace/GooseCraft/build/goosecraft-headless --help
-GooseCraft 0.2.0-stage2 (headless harness)
+GooseCraft 0.3.0-stage3 (headless harness)
 usage: goosecraft-headless --headless [--ticks N] | --version | --help
 Graphical client: goosecraft-client.
 + /workspace/GooseCraft/build/goosecraft-headless --version
-GooseCraft 0.2.0-stage2
+GooseCraft 0.3.0-stage3
 + /workspace/GooseCraft/build/goosecraft-headless --unknown
 invalid arguments: use --headless [--ticks N], 0 <= N <= 1000000
 + /workspace/GooseCraft/build/goosecraft-headless --headless --ticks

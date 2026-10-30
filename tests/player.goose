@@ -128,7 +128,33 @@ fn editing() {
     assert(inside.found && !interaction::place(chunk, inside, origin, 2));
 }
 
+fn obstacle_course() {
+    var chunk = world::flat_fixture();
+    for z in 2..14 {
+        for x in 2..14 {
+            if (x * 7 + z * 11) % 13 == 0 && (x != 10 || z != 13) {
+                for y in 1..4 { world::set(chunk, x, y, z, 2); }
+            }
+        }
+    }
+    var state = player::State {};
+    // Changing headings, both signs of every horizontal axis, corners and
+    // jumps against a field of obstacles. Check safety after every tick.
+    for i in 8000 {
+        player::look(state, 7.0, 0.0);
+        player::tick(chunk, state, player::Input {
+            forward: if (i / 240) % 2 == 0 { 1.0 } else { -1.0 },
+            strafe: if (i / 90) % 3 == 0 { 1.0 } else { -1.0 },
+            jump: i % 83 == 0,
+        });
+        assert(!player::collides(chunk, state.position));
+        assert(state.position.x >= player::RADIUS && state.position.x <= 16.0 - player::RADIUS);
+        assert(state.position.z >= player::RADIUS && state.position.z <= 16.0 - player::RADIUS);
+        assert(is_finite(state.position.y));
+    }
+}
+
 fn main() {
-    movement(); collisions(); selection(); editing();
+    movement(); collisions(); selection(); editing(); obstacle_course();
     print("headless player: ok");
 }

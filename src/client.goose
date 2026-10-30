@@ -3,7 +3,7 @@ import os;
 import core.core;
 
 fn usage() {
-    print("GooseCraft 0.2.0-stage2 (headless harness)");
+    print("GooseCraft 0.3.0-stage3 (headless harness)");
     print("usage: goosecraft-headless --headless [--ticks N] | --version | --help");
     print("Graphical client: goosecraft-client.");
 }
@@ -18,7 +18,7 @@ fn main() {
     if argv.len == 1 { usage(); return; }
     if argv.len == 2 && argv[1] == "--help" { usage(); return; }
     if argv.len == 2 && argv[1] == "--version" {
-        print("GooseCraft 0.2.0-stage2");
+        print("GooseCraft 0.3.0-stage3");
         return;
     }
     if argv[1] != "--headless" { invalid_args(); }

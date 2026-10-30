@@ -38,7 +38,7 @@ GitHub API `/repos/aardappel/goose/releases/latest` на момент иссле
 | Потоки | `thread_fn`, отдельные data stacks, typed queues; нужен native build | Изучено, не тестировалось |
 | Графика | goose_gfx, SDL3 GPU, шейдеры через `embed_shader`; Windows D3D12, Vulkan, macOS Metal | Этап 2: нативный собственный рендерер проверен на software Vulkan, offscreen и X11 в Xvfb |
 | UI/звук/физика | Отдельные goose_gfx/goose_physics packages | UI/audio archives строятся в составе gfx, API не используется; physics не подключён |
-| Windows x64 | Есть upstream CI, MSVC и готовые compiler releases | Создан наш workflow; его реального запуска пока нет |
+| Windows x64 | Есть upstream CI, MSVC и готовые compiler releases | Наш CI этапа 2 собрал и запустил native CLI и лаунчер; актуальные результаты в github-ci.md |
 
 ## Модель памяти и архитектурные следствия
 
