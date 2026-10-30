@@ -1,0 +1,30 @@
+{
+  "generator": 1,
+  "provenance": "Fixed integer-generator vectors independently calculated with Python arbitrary-precision integers and explicit 32-bit masks; full GCW v1 SHA-256 includes checksum.",
+  "seeds": {
+    "0": {
+      "sha256": "c93b946ca2119dfedc1082beedf7f4b5dfa9fba2c18be7b380f164743f8e1571",
+      "solid_blocks": 14109,
+      "min_height": 4,
+      "max_height": 9
+    },
+    "1": {
+      "sha256": "04758846aea2a21e3d9cb258abd81e78808922004d47f65677d2b7c8110f25ef",
+      "solid_blocks": 16243,
+      "min_height": 3,
+      "max_height": 11
+    },
+    "12345": {
+      "sha256": "47d0b6beb7cd75c537c6e77abd6f16df04f7a75f5ae2ce32c3903471921d6a70",
+      "solid_blocks": 19196,
+      "min_height": 4,
+      "max_height": 11
+    },
+    "4294967295": {
+      "sha256": "3c7feba3c2143cce118d772e9355307679b76a390da80cc31e687155e0ed3ffa",
+      "solid_blocks": 16387,
+      "min_height": 3,
+      "max_height": 10
+    }
+  }
+}

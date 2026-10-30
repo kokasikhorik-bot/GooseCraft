@@ -5,6 +5,23 @@ namespace replay;
 
 fn key(name: u8[:], down: bool) { assert(gfx::inject_key(name, down)); }
 
+// Terrain path uses normal mouse, movement, jumping, editing and save handlers.
+fn terrain_input(frame: i64) {
+    if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }
+    if frame == 1 { gfx::inject_mouse(320.0, 440.0, 0, false); }
+    if frame == 2 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_LEFT, true); }
+    if frame == 3 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_LEFT, false); }
+    if frame == 6 { key("2", true); }
+    if frame == 7 { key("2", false); gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_RIGHT, true); }
+    if frame == 8 { gfx::inject_mouse(320.0, 440.0, gfx::MOUSE_RIGHT, false); }
+    if frame == 10 { gfx::inject_mouse(320.0, 300.0, 0, false); key("D", true); }
+    if frame == 20 || frame == 75 { key("Space", true); }
+    if frame == 21 || frame == 76 { key("Space", false); }
+    if frame == 95 { key("D", false); }
+    if frame == 110 { key("F5", true); }
+    if frame == 111 { key("F5", false); }
+}
+
 fn inject(frame: i64, seam: bool) {
     if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }
     if frame == 2 { gfx::inject_mouse(320.0, 240.0, gfx::MOUSE_LEFT, true); }

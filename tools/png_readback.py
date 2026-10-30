@@ -51,6 +51,14 @@ def rgba(path):
     return bytes(pixels)
 
 
+def differences(optimized, reference):
+    """Record raw GPU differences; this makes no image-equivalence assertion."""
+    a, b = rgba(optimized), rgba(reference)
+    return [{"x": (i // 4) % 640, "y": (i // 4) // 640,
+             "optimized": list(a[i:i + 4]), "reference": list(b[i:i + 4])}
+            for i in range(0, len(a), 4) if a[i:i + 4] != b[i:i + 4]]
+
+
 def compare_boundary_pixels(optimized, reference):
     a, b = rgba(optimized), rgba(reference)
     changed = [i for i in range(0, len(a), 4) if a[i:i + 4] != b[i:i + 4]]

@@ -1,0 +1,103 @@
+{
+  "equivalence_verified": false,
+  "changed_pixels": 6,
+  "pixels": [
+    {
+      "x": 379,
+      "y": 112,
+      "optimized": [
+        15,
+        23,
+        35,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 433,
+      "y": 160,
+      "optimized": [
+        15,
+        23,
+        35,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 103,
+      "y": 185,
+      "optimized": [
+        72,
+        165,
+        102,
+        255
+      ],
+      "reference": [
+        56,
+        128,
+        79,
+        255
+      ]
+    },
+    {
+      "x": 127,
+      "y": 258,
+      "optimized": [
+        50,
+        115,
+        71,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 327,
+      "y": 312,
+      "optimized": [
+        15,
+        23,
+        35,
+        255
+      ],
+      "reference": [
+        72,
+        165,
+        102,
+        255
+      ]
+    },
+    {
+      "x": 424,
+      "y": 351,
+      "optimized": [
+        186,
+        135,
+        52,
+        255
+      ],
+      "reference": [
+        56,
+        128,
+        79,
+        255
+      ]
+    }
+  ],
+  "limitation": "Terrain overview rasterization differs; includes internal clear pixels. Suspected greedy T-junctions; unresolved."
+}

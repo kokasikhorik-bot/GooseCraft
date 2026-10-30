@@ -13,7 +13,7 @@ import sys
 import zlib
 import traceback
 import xml.etree.ElementTree as ET
-from png_readback import compare_boundary_pixels
+from png_readback import compare_boundary_pixels, differences
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS = sys.platform == "win32"
@@ -86,7 +86,7 @@ def build():
 
 
 def test():
-    sources = ("headless", "mesh", "player", "region", "storage", "visibility")
+    sources = ("headless", "mesh", "player", "region", "storage", "visibility", "terrain")
     run([GOOSE, "format", "--check", ROOT / "src", *(ROOT / f"tests/{s}.goose" for s in sources),
          ROOT / "tests/support", ROOT / "benchmarks"])
     run([GOOSE, "check", ROOT / "tests/headless.goose", "--offline"])
@@ -128,6 +128,24 @@ def test():
     run([CLIENT, "--headless", "--inspect-world", invalid_world], expected=5)
     if invalid_world.read_bytes() != b"corrupt world":
         raise RuntimeError("Inspection overwrote corrupt input")
+    vectors = json.loads((ROOT / "tests/fixtures/terrain-v1.json").read_text())["seeds"]
+    for seed, vector in vectors.items():
+        generated = []
+        for label, command in (("native", [CLIENT]), ("jit", [GOOSE, "run", ROOT / "src/client.goose", "--offline", "--"])):
+            path = save_folder / f"terrain-{seed}-{label}.gcw"
+            path.unlink(missing_ok=True)
+            data = json.loads(run([*command, "--headless", "--generate-world", seed, path]).stdout)
+            raw = path.read_bytes()
+            if (data["seed"], data["generator"], data["solid_blocks"]) != (int(seed), 1, vector["solid_blocks"]):
+                raise RuntimeError("Terrain generation report disagrees with fixed vector")
+            if hashlib.sha256(raw).hexdigest() != vector["sha256"]:
+                raise RuntimeError("Terrain file differs from independent integer generator vector")
+            generated.append(raw)
+        if generated[0] != generated[1]:
+            raise RuntimeError("Native/JIT terrain bytes differ")
+        run([CLIENT, "--headless", "--generate-world", seed, path], expected=5)
+        if path.read_bytes() != generated[-1]:
+            raise RuntimeError("Generation replaced an existing world")
     # Test the built executable from a different working directory, including spaces.
     scratch = BUILD / "unrelated working directory"
     scratch.mkdir(exist_ok=True)
@@ -149,6 +167,8 @@ def test():
         ["--headless", "--ticks", "-1"], ["--headless", "--ticks", "1000001"],
         ["--headless", "--ticks", "abc"], ["--headless", "--ticks", "1.5"],
         ["--headless", "--ticks", "9999999999999999999999999999"],
+        *(["--headless", "--generate-world", seed, str(save_folder / "invalid-seed.gcw")]
+          for seed in ("-1", "4294967296", "abc", "1.5")),
     ]
     for args in invalid:
         if "invalid arguments" not in run([CLIENT, *args], expected=2).stderr:
@@ -174,7 +194,8 @@ def test():
             if "graphical scene" not in help_result.stdout:
                 raise RuntimeError("Launcher did not select the graphical client")
             run('cmd.exe /d /s /c ""' + str(launcher) + '" --invalid"', expected=2, cwd=scratch)
-    print("PASS: compiler probes, core/mesh/player/region/storage/visibility (JIT/native, release/debug), "
+    print("PASS: compiler probes, core/mesh/player/region/storage/visibility/terrain (JIT/native, release/debug), "
+          "four fixed terrain SHA-256 vectors and refusal to replace existing worlds, "
           "independent save checksum and world inspection, CLI" +
           (", Windows launcher" if WINDOWS else "; Windows launcher not run on Linux"))
 
@@ -243,11 +264,18 @@ def render_build():
     for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"],
                  ["--seam-replay", "--single-chunk"], ["--world"], ["--world", "x", "--no-save"], ["--view-away"]):
         run([VIEWER, *args], expected=2)
+    for args in (["--seed"], ["--seed", "-1"], ["--seed", "4294967296"], ["--seed", "1.5"],
+                 ["--seed", "1", "--seed", "2"], ["--seed", "1", "--demo-world"],
+                 ["--seed", "1", "--empty"], ["--terrain-replay", "--demo-world"]):
+        run([VIEWER, *args], expected=2)
     corrupt = BUILD / "invalid load.gcw"
     corrupt.write_bytes(b"corrupt world")
     run([VIEWER, "--world", corrupt, "--frames", "1"], expected=5)
     if corrupt.read_bytes() != b"corrupt world":
         raise RuntimeError("Graphical startup overwrote corrupt input before opening the GPU")
+    run([VIEWER, "--world", corrupt, "--seed", "1"], expected=2)
+    if corrupt.read_bytes() != b"corrupt world":
+        raise RuntimeError("Explicit seed replaced an existing file")
     native_build(ROOT / "src/viewer.goose", DEBUG_VIEWER, ["--debug"], timeout=900)
 
 
@@ -287,7 +315,7 @@ def render_test(evidence):
         ("reference-paused", [], ["--offscreen", "--replay", "--reference-renderer"], 63),
         ("reference-replay", [], ["--offscreen", "--replay", "--reference-renderer"], 110),
     )
-    cases = [(name, prefix, ["--single-chunk", "--no-save", *flags], frames)
+    cases = [(name, prefix, ["--demo-world", "--single-chunk", "--no-save", *flags], frames)
              for name, prefix, flags, frames in legacy_cases]
     saves = BUILD / "persistence smoke with spaces" / "миры"
     if saves.exists(): shutil.rmtree(saves)
@@ -295,7 +323,7 @@ def render_test(evidence):
     single_save = saves / "single" / "world.gcw"
     multi_save = saves / "region" / "world.gcw"
     profile_root = saves / "profile"
-    cases += [
+    multi_cases = [
         ("multi-preview", [], ["--offscreen", "--preview", "--no-save"], 3),
         ("multi-window", xvfb, ["--preview", "--no-save"], 3),
         ("multi-replay", [], ["--offscreen", "--replay", "--no-save"], 110),
@@ -310,8 +338,23 @@ def render_test(evidence):
         ("single-load", [], ["--offscreen", "--single-chunk", "--world", single_save], 3),
         ("region-save", [], ["--offscreen", "--seam-replay", "--world", multi_save], 110),
         ("region-load", [], ["--offscreen", "--world", multi_save], 3),
+    ]
+    cases += [(name, prefix, ([] if name.endswith("-load") else ["--demo-world"]) + flags, frames)
+              for name, prefix, flags, frames in multi_cases]
+    terrain_save = saves / "terrain" / "world.gcw"
+    cases += [
         ("profile-save", xvfb, [], 2),
         ("profile-load", xvfb, [], 2),
+        ("terrain-preview", [], ["--offscreen", "--preview"], 3),
+        ("terrain-window", xvfb, ["--preview", "--no-save"], 3),
+        ("terrain-debug", [], ["--offscreen", "--preview"], 3),
+        ("terrain-other-seed", [], ["--offscreen", "--preview", "--seed", "1"], 3),
+        ("terrain-reference", [], ["--offscreen", "--preview", "--reference-renderer"], 3),
+        ("terrain-replay", [], ["--offscreen", "--terrain-replay"], 120),
+        ("terrain-replay-window", xvfb, ["--terrain-replay", "--no-save"], 120),
+        ("terrain-replay-debug", [], ["--offscreen", "--terrain-replay"], 120),
+        ("terrain-save", [], ["--offscreen", "--terrain-replay", "--seed", "12345", "--world", terrain_save], 120),
+        ("terrain-load", [], ["--offscreen", "--world", terrain_save], 3),
     ]
     for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
@@ -321,7 +364,9 @@ def render_test(evidence):
             persisted_single = single_save.read_bytes()
         if name == "region-load":
             persisted_region = multi_save.read_bytes()
-        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug") else VIEWER
+        if name == "terrain-load":
+            persisted_terrain = terrain_save.read_bytes()
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug", "terrain-debug", "terrain-replay-debug") else VIEWER
         if name.startswith("profile-"):
             case_env["LOCALAPPDATA"] = str(profile_root)
         p = run([*prefix, binary, *flags, "--frames", str(frames), "--screenshot", png], extra_env=case_env)
@@ -340,7 +385,7 @@ def render_test(evidence):
             raise RuntimeError("Invalid screenshot")
         data["png_sha256"] = hashlib.sha256(raw).hexdigest()
         results[name] = data
-    if single_save.read_bytes() != persisted_single or multi_save.read_bytes() != persisted_region:
+    if single_save.read_bytes() != persisted_single or multi_save.read_bytes() != persisted_region or terrain_save.read_bytes() != persisted_terrain:
         raise RuntimeError("Loading a save rewrote its bytes without edits")
     if results["offscreen"]["png_sha256"] != results["window"]["png_sha256"]:
         raise RuntimeError("Window and offscreen rendering disagree")
@@ -418,10 +463,36 @@ def render_test(evidence):
         raise RuntimeError("Unculled reference did not submit all nine chunks")
     if results["multi-replay"]["culled_chunks"] < 1 or results["multi-reference"]["drawn_chunks"] != 9:
         raise RuntimeError("Playable camera did not exercise culling")
+    vectors = json.loads((ROOT / "tests/fixtures/terrain-v1.json").read_text())["seeds"]
+    if results["terrain-preview"]["solid_blocks"] != vectors["12345"]["solid_blocks"]:
+        raise RuntimeError("Renderer did not use the default terrain generator")
+    if results["terrain-other-seed"]["solid_blocks"] != vectors["1"]["solid_blocks"] or results["terrain-preview"]["png_sha256"] == results["terrain-other-seed"]["png_sha256"]:
+        raise RuntimeError("Changing seed did not reach world geometry and pixels")
+    for a_name, b_name in (("terrain-preview", "terrain-window"), ("terrain-preview", "terrain-debug"),
+                           ("terrain-replay", "terrain-replay-window"), ("terrain-replay", "terrain-replay-debug")):
+        if results[a_name]["png_sha256"] != results[b_name]["png_sha256"]:
+            raise RuntimeError(f"Terrain PNG differs: {a_name} / {b_name}")
+    # Diagnostic only: CPU unit-face equality is checked in terrain.goose, but
+    # the overview exposes rasterization differences/T-junction pinholes.
+    # Do not weaken the existing strict image checks or claim GPU equivalence.
+    terrain_pixels = differences(evidence / "terrain-preview.png", evidence / "terrain-reference.png")
+    (evidence / "terrain-reference-differences.json").write_text(json.dumps({
+        "equivalence_verified": False, "changed_pixels": len(terrain_pixels), "pixels": terrain_pixels,
+        "limitation": "Terrain overview rasterization differs; includes internal clear pixels. Suspected greedy T-junctions; unresolved.",
+    }, indent=2) + "\n")
+    for name in ("terrain-replay", "terrain-replay-window", "terrain-replay-debug", "terrain-save"):
+        data = results[name]
+        if (data["breaks"], data["places"], data["jumps"], data["dirty_remaining"]) != (1, 1, 2, 0):
+            raise RuntimeError(f"Terrain input replay did not edit/jump/remesh: {name}: {data}")
+        if data["walked"] < 4.0 or data["max_x"] <= 16.1 or data["max_y"] < 10.0 or data["respawns"] != 0:
+            raise RuntimeError(f"Terrain traversal did not cross a seam and jump above the surface: {data}")
+        if any(data[key] != results["terrain-replay"][key] for key in keys):
+            raise RuntimeError("Terrain gameplay differs between build/render modes")
     for name, expected_chunks, expected_size, expected_count in (
-        ("single", 1, 4112, 267), ("region", 9, 36880, 2332), ("profile", 9, 36880, 2332)):
+        ("single", 1, 4112, 267), ("region", 9, 36880, 2332),
+        ("profile", 9, 36880, vectors["12345"]["solid_blocks"]), ("terrain", 9, 36880, vectors["12345"]["solid_blocks"])):
         path = {"single": single_save, "region": multi_save,
-                "profile": profile_root / "GooseCraft/worlds/default-v1.gcw"}[name]
+                "profile": profile_root / "GooseCraft/worlds/default-v1.gcw", "terrain": terrain_save}[name]
         data = path.read_bytes()
         if len(data) != expected_size or struct.unpack("<I", data[12:16])[0] != zlib.adler32(data[:12] + data[16:]):
             raise RuntimeError("Native world bytes fail independent checksum validation")
@@ -431,6 +502,11 @@ def render_test(evidence):
         first, second = results[name + "-save"], results[name + "-load"]
         if first["loaded"] or first["save_writes"] != 1 or not second["loaded"] or second["save_writes"] != 0:
             raise RuntimeError("Manual/default save and reopen behavior disagrees")
+    if hashlib.sha256((profile_root / "GooseCraft/worlds/default-v1.gcw").read_bytes()).hexdigest() != vectors["12345"]["sha256"]:
+        raise RuntimeError("Default GUI world bytes differ from headless golden terrain")
+    refused = run([VIEWER, "--world", terrain_save, "--seed", "1"], expected=2, extra_env=env)
+    if "requires a new world" not in refused.stderr or terrain_save.read_bytes() != persisted_terrain:
+        raise RuntimeError("Seed replaced a saved terrain world")
     if single_save.read_bytes()[16 + 10 + 16 * (9 + 16 * 2)] != 0 or single_save.read_bytes()[16 + 10 + 16 * (10 + 16 * 3)] != 2:
         raise RuntimeError("Saved voxel edits were not preserved")
     blocked = saves / "blocked"
@@ -442,11 +518,13 @@ def render_test(evidence):
     (evidence / "save-results.json").write_text(json.dumps({"single_bytes": len(persisted_single),
         "region_bytes": len(persisted_region), "reopen_preserved_bytes": True,
         "independent_adler32": True, "default_profile_saved": True,
+        "terrain_reopen_preserved_bytes": True, "default_profile_matches_golden_seed": 12345,
+        "existing_world_seed_refused": True,
         "failed_save_exit": 6, "blocked_file_preserved": True}, indent=2) + "\n")
     (evidence / "pixel-comparisons.json").write_text(json.dumps(comparisons, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
-          "frustum culling, release/debug/reference, manual/exit saves and reopen, error preservation, cached overlays")
+          "frustum culling, seeded terrain and terrain traversal, release/debug/reference, manual/exit saves and reopen, error preservation, cached overlays")
 
 
 def package(graphics=False):
@@ -477,6 +555,7 @@ def package(graphics=False):
         "ci_url": ci_url,
         "target": "windows-x64" if WINDOWS else "linux-x64", "graphics": graphics,
         "world_format": 1,
+        "terrain_generator": 1,
     }, indent=2) + "\n")
     print("Packaged", destination)
 

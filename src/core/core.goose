@@ -5,3 +5,4 @@ import .player;
 import .interaction;
 import .storage;
 import .visibility;
+import .terrain;

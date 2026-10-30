@@ -10,6 +10,7 @@ struct Options {
     offscreen: bool = false, empty: bool = false, preview: bool = false,
     replay_input: bool = false, seam_replay: bool = false, reference: bool = false,
     single: bool = false, persistent: bool = false, away: bool = false, frames: i64 = -1,
+    demo: bool = false, terrain_replay: bool = false, seed_explicit: bool = false, seed: u32 = terrain::DEFAULT_SEED,
     output: const u8[:] = "", world_path: const u8[:] = "",
 }
 
@@ -20,22 +21,31 @@ fn run(options: Options) {
     let reference = options.reference;
     let frames = options.frames;
     let output = options.output;
-    var chunk = world::region(options.single, options.empty);
+    var chunk = world::Map {};
     var loaded = false;
     if options.persistent {
         if is_dir(options.world_path) { write_stderr("world path is a directory\n"); exit(5); }
         if file_exists(options.world_path) {
+            if options.seed_explicit {
+                write_stderr("--seed requires a new world path; existing save was not changed\n"); exit(2);
+            }
             if !storage::load(options.world_path, chunk) || (options.single && chunk.radius != 0) {
                 write_stderr("invalid or unreadable world file; original file was not changed\n"); exit(5);
             }
             loaded = true;
         }
     }
+    if !loaded {
+        chunk = if options.demo || options.empty { world::region(options.single, options.empty) }
+                else { terrain::generate(options.seed, options.single) };
+    }
+    let generated = !loaded && !options.demo && !options.empty;
+    let seed_report: i64 = if generated { options.seed } else { -1 };
     var saved_revision: i64 = if loaded { chunk.revision } else { -1 };
     var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
     var save_writes: i64 = 0;
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.5.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.6.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
     var vertices: mesh::Vertex[>..] = [];
@@ -101,7 +111,10 @@ fn run(options: Options) {
     var drawn_vertices: i64 = 0;
     var drawn: i64 = 0;
     while true {
-        if replay_input { replay::inject(drawn, options.seam_replay); }
+        if replay_input {
+            if options.terrain_replay { replay::terrain_input(drawn); }
+            else { replay::inject(drawn, options.seam_replay); }
+        }
         if !gfx::frame() { break; }
         if gfx::key_pressed("F10") || (preview && gfx::key_pressed("Escape")) { break; }
         var hit = interaction::Hit {};
@@ -260,7 +273,9 @@ fn run(options: Options) {
         ",\"mesh_capacity_bytes\":", totals.capacity,
         ",\"mesh_allocations\":", totals.allocations, ",\"mesh_uploaded_bytes\":", totals.uploaded_bytes,
         ",\"hud_uploads\":", hud_uploads, ",\"hud_uploaded_bytes\":", hud_uploaded_bytes,
-        ",\"outline_uploads\":", outline_uploads);
+        ",\"outline_uploads\":", outline_uploads,
+        ",\"terrain_generated\":", generated,
+        ",\"terrain_seed\":", seed_report, ",\"terrain_generator\":", if generated { 1 } else { 0 });
     let gameplay_report = str(",\"interactive\":", !preview, ",\"replay\":", replay_input,
         ",\"ticks\":", state.ticks, ",\"breaks\":", broken, ",\"places\":", placed,
         ",\"remeshes\":", remeshes, ",\"solid_blocks\":", world::solid_count(chunk),

@@ -1,0 +1,65 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "architecture": "x86_64",
+  "lock": {
+    "schema": 1,
+    "goose": {
+      "repository": "https://github.com/aardappel/goose.git",
+      "commit": "cce94b919d27458856ae2685974049eac78debcf",
+      "builtin_libs": ""
+    },
+    "cmake": "3.31.6",
+    "reference_only": {
+      "horizon": {
+        "repository": "https://github.com/horizon-rust/horizon.git",
+        "commit": "7ebf7d26cbe58d65ef873767c639f144dc403554"
+      }
+    },
+    "graphics": {
+      "repository": "https://github.com/aardappel/goose_gfx.git",
+      "commit": "6cfa3dec2ef2a6cb19ee71548b38151094e947bd",
+      "submodules": {
+        "third_party/SDL": "fa2c02bb6e21974a89ea9824bc53c9932abe5f9c",
+        "third_party/nuklear": "9f7750296f176e506c2b24ff55bc24495e2db750"
+      }
+    }
+  },
+  "toolchain": "C compiler:   gcc 14.2.0, found on PATH\n              /usr/bin/cc\nC++ compiler: /usr/bin/g++\nstyle:        cc\nid:           gcc-14.2.0-a920ca84\ncmake:       /home/agent/.local/bin/cmake (3.31.6)\ngit:         /usr/local/bin/git (2.52.0)\nbuilt in:     no packages\nGOOSE_HOME:   /workspace/GooseCraft/.cache/goose-home\n",
+  "sources": {
+    "src/client.goose": "e5dff6c74daaa103a12c70a2c9e85ac416c012974ca6779a80f0fe3e8b3379e1",
+    "src/core/core.goose": "5d1b4ddaec886d33aca4ce480da51f604e183d0a5b431ce52f064e51047922f7",
+    "src/core/interaction.goose": "9bdef3676ac7a62fbc3ce67060c8cd3065c0200b9d2507ee65292647f4adf7a3",
+    "src/core/mesh.goose": "24cf710be9448681cafaac8a34612ae8077ac7bf3d3de5e53128e107adf69f73",
+    "src/core/player.goose": "7c56983ffff849fea4d6075cdf56162eea7d230f50d5bfe0415af8c4c66878c8",
+    "src/core/simulation.goose": "d888031b35613184a1efd1232742a92abd66af4fbd298a4ea1854aa1e1142073",
+    "src/core/storage.goose": "3b1c15cca66e605370ab036ea96c4bfbbe7fe39f741254f15d9655df30d8c2a7",
+    "src/core/terrain.goose": "58a83bea1987cd272f4ef33fcb1f4c8af89c81c49e7fe30cd5d939c928165ce8",
+    "src/core/visibility.goose": "c9dbbd952d7d9abeb445a829430694e5e7f1c15a467d51351b47db0b0a7a7e57",
+    "src/core/world.goose": "618458792bdcbb2a72f1a155defb1fca487dba4e14821cc19f3c37776eb17c47",
+    "src/render/chunks.goose": "ce962c39aaa86a9d5d4aece63287975e4efd0e7bfc8c75011d05bbe32bc9e74c",
+    "src/render/hud.goose": "c18b280fda4138e9975b41d008245a62cae789737456d9de2ef7825fbc1e0bfc",
+    "src/render/replay.goose": "2ed20e68a63b7c034c55a3df43c149d97c23bae10db04a0fee57ad29d911ead2",
+    "src/render/scene.goose": "ff12258de7a2e61485bd5c27423c1b0f83795e18c15edcfd2f5696b87caa129f",
+    "src/viewer.goose": "97b5acbe4b3ea7a71a54415ce2ce5d3cdba173b2c754d44a37a2f09f35ab18e3",
+    "tests/fixtures/terrain-v1.json": "641a12894ae5a5229277819fe14382e5be62da154c5b98146145b7db4ef80021",
+    "tests/terrain.goose": "53e4891fcdae9da912b8ab65ad5844bca5ce3037c20230d10678082e0f8eb5ce",
+    "tools/png_readback.py": "4521ba980fba12a7a45f065e7b41bb1fa57981d822ad6258889126e74ad0f5c7",
+    "tools/project.py": "0f5c58ba77a0c9948f81a8578a984bff3e685b8d4588c9901fc85d5573d38c8a"
+  },
+  "headless_modes": [
+    "TinyCC JIT release",
+    "TinyCC JIT debug",
+    "native AOT release",
+    "native AOT debug"
+  ],
+  "local_native_compilers": [
+    "GCC 14.2 (host)",
+    "GCC 12.2 (pinned graphics image)"
+  ],
+  "graphics_scenarios": 40,
+  "boundaries": [
+    "Linux graphics use CPU lavapipe and Xvfb; no physical GPU or Windows GUI verified",
+    "Terrain greedy/reference rasterization differs at 6 pixels; not asserted equivalent",
+    "Windows results reported separately by GitHub Actions"
+  ]
+}
