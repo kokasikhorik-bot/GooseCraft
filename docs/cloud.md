@@ -150,7 +150,23 @@ Render-test расширен до 14 сценариев и сравнивает 
 успешно прошёл Windows/Linux native tests и benchmarks, а также Linux graphics.
 Наличие Windows benchmark artifact не считается проверкой Windows GUI.
 
-### Доступность Python на Windows runner
+### Несколько чанков 0.5
+
+Headless-команда включает шесть suites: core, mesh, player, region, storage,
+visibility, каждую в TinyCC/native и release/debug. Storage-suite выполняет
+настоящее файловое I/O в `build/`, с пробелами и кириллицей; Python/zlib
+независимо сверяет checksum. `--headless --inspect-world FILE` проверяет
+сохранение без SDL/GPU. Повреждённый файл отвергается с exit 5 и не меняется.
+
+Render-test включает 30 сценариев. Сохраняет одночанковые regression cases
+с `--single-chunk --no-save`, добавляет девять чанков, переход и редактирование
+стыка, culling, F5, запись при выходе и загрузку в новом процессе. Тестовые
+профиль/миры находятся в `build/`, не затрагивают обычное сохранение пользователя.
+Для `render-test` собирается также headless-инспектор. Все прогоны graphics
+контейнера сохраняют `--network=none`. `BUILD-INFO.json` поставки содержит
+версию, source SHA и CI URL; миры и инструменты сборки в поставку не включаются.
+
+### Доступность Python на Windows runner (история)
 
 Реальный повторный CI 2026-10-30 показал, что setup-python не предоставляет
 3.12.14 для Windows 2022. Проверен официальный versions-manifest.json проекта

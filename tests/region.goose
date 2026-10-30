@@ -116,6 +116,18 @@ fn walking() {
     assert(interaction::place(map, hit, float3 { 10.5, 1.0, 10.5 }, 1));
     assert(world::get(map, 15, 2, 5) == 1);
     assert(interaction::remove(map, hit) && world::get(map, 16, 2, 5) == 0);
+    for y in 1..4 { world::set(map, -1, y, 5, 2); }
+    p = player::State { position: float3 { 0.5, 1.0, 5.5 }, yaw: -1.5707963 };
+    for i in 60 { player::tick(map, p, player::Input { forward: 1.0 }); }
+    assert(abs(p.position.x - player::RADIUS) < 0.001 && !player::collides(map, p.position));
+    let negative = interaction::raycast(map, float3 { 1.5, 2.5, 5.5 }, float3 { -1.0, 0.0, 0.0 }, 6.0);
+    assert(negative.found && negative.cell == int3 { -1, 2, 5 } && abs(negative.distance - 1.5) < 0.001);
+    p = player::State { position: float3 { 31.5, 1.0, 5.5 }, yaw: 1.5707963 };
+    for i in 120 { player::tick(map, p, player::Input { forward: 1.0 }); }
+    assert(abs(p.position.x - (32.0 - player::RADIUS)) < 0.001 && p.grounded);
+    p = player::State { position: float3 { -15.5, 1.0, 5.5 }, yaw: -1.5707963 };
+    for i in 120 { player::tick(map, p, player::Input { forward: 1.0 }); }
+    assert(abs(p.position.x - (-16.0 + player::RADIUS)) < 0.001 && p.grounded);
 }
 
 fn main() {

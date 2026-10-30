@@ -77,3 +77,18 @@ Goose — не Go. Это whole-program компилятор в C, без обы
 Собственные шейдеры прошли compile-time `embed_shader`; выполнен Vulkan-рендеринг.
 Проверка платформ и ограничения описаны в [stage-2-results.md](stage-2-results.md).
 GUI на Windows из успешного Linux-теста не выводится.
+
+## Дополнение этапа 0.5
+
+Реальные `os.read_file`, `write_file_atomic`, `make_dir`, `env`, `resource_dir`
+проверены по pinned `stdlib/os.goose` и реализации `runtime_os.h`, файловое I/O
+выполнено TinyCC/native в release/debug на Linux. Windows CI проверяется
+отдельно. Неподдерживаемый bounded-stream API не придумывался: текущий
+`read_file` читает целый файл, ограничение явно описано в world-format.md.
+
+Для деления координат использован реальный `std.div_euclid`: у Goose `/`
+отбрасывает дробь, а `%` всегда неотрицателен. Ошибка C-подобного предположения
+поймана тестом -17/-16/-1 до публикации кода. Generic-функции player/mesh/
+interaction инстанцируются для Chunk/Map/Halo там, где это нужно; мировая
+логика не перенесена в другой язык. `gfx.row`, `translate`, `mul` взяты из
+действительного math API gfx; CPU frustum-тесты не зависят от него.

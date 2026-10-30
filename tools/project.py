@@ -214,8 +214,14 @@ def render_build():
     run([GOOSE, "check", ROOT / "src/viewer.goose", "--offline"])
     run([GOOSE, "build", ROOT / "src/viewer.goose", "--offline", "-o", VIEWER], timeout=900)
     run([VIEWER, "--help"])
-    for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"]):
+    for args in (["--frames", "0"], ["--replay", "--empty"], ["--preview", "--replay"],
+                 ["--seam-replay", "--single-chunk"], ["--world"], ["--world", "x", "--no-save"], ["--view-away"]):
         run([VIEWER, *args], expected=2)
+    corrupt = BUILD / "invalid load.gcw"
+    corrupt.write_bytes(b"corrupt world")
+    run([VIEWER, "--world", corrupt, "--frames", "1"], expected=5)
+    if corrupt.read_bytes() != b"corrupt world":
+        raise RuntimeError("Graphical startup overwrote corrupt input before opening the GPU")
     run([GOOSE, "build", ROOT / "src/viewer.goose", "--offline", "--debug", "-o", DEBUG_VIEWER], timeout=900)
 
 
@@ -234,12 +240,12 @@ def render_test(evidence):
     if "llvmpipe" not in info.stdout.lower():
         raise RuntimeError("Expected Mesa's software Vulkan device")
     (evidence / "vulkan.txt").write_text(info.stdout + info.stderr)
-    no_display = run([VIEWER, "--frames", "1"], expected=3, extra_env={**env, "SDL_VIDEODRIVER": "x11"})
+    no_display = run([VIEWER, "--no-save", "--frames", "1"], expected=3, extra_env={**env, "SDL_VIDEODRIVER": "x11"})
     if "graphics unavailable" not in no_display.stderr:
         raise RuntimeError("Window startup without DISPLAY did not produce the expected diagnostic")
     results = {}
     xvfb = ["xvfb-run", "-a", "-s", "-screen 0 800x600x24"]
-    for name, prefix, flags, frames in (
+    legacy_cases = (
         ("empty", [], ["--offscreen", "--empty"], 3),
         ("offscreen", [], ["--offscreen", "--preview"], 3),
         ("window", xvfb, ["--preview"], 3),
@@ -254,19 +260,52 @@ def render_test(evidence):
         ("reference-idle", xvfb, ["--reference-renderer"], 60),
         ("reference-paused", [], ["--offscreen", "--replay", "--reference-renderer"], 63),
         ("reference-replay", [], ["--offscreen", "--replay", "--reference-renderer"], 110),
-    ):
+    )
+    cases = [(name, prefix, ["--single-chunk", "--no-save", *flags], frames)
+             for name, prefix, flags, frames in legacy_cases]
+    saves = BUILD / "persistence smoke with spaces" / "миры"
+    if saves.exists(): shutil.rmtree(saves)
+    saves.mkdir(parents=True)
+    single_save = saves / "single" / "world.gcw"
+    multi_save = saves / "region" / "world.gcw"
+    profile_root = saves / "profile"
+    cases += [
+        ("multi-preview", [], ["--offscreen", "--preview", "--no-save"], 3),
+        ("multi-window", xvfb, ["--preview", "--no-save"], 3),
+        ("multi-replay", [], ["--offscreen", "--replay", "--no-save"], 110),
+        ("multi-replay-window", xvfb, ["--replay", "--no-save"], 110),
+        ("multi-reference", [], ["--offscreen", "--replay", "--reference-renderer", "--no-save"], 110),
+        ("multi-away", [], ["--offscreen", "--preview", "--view-away", "--no-save"], 3),
+        ("multi-away-reference", [], ["--offscreen", "--preview", "--view-away", "--reference-renderer", "--no-save"], 3),
+        ("seam-replay", [], ["--offscreen", "--seam-replay", "--no-save"], 110),
+        ("seam-window", xvfb, ["--seam-replay", "--no-save"], 110),
+        ("seam-debug", [], ["--offscreen", "--seam-replay", "--no-save"], 110),
+        ("single-save", [], ["--offscreen", "--replay", "--single-chunk", "--world", single_save], 110),
+        ("single-load", [], ["--offscreen", "--single-chunk", "--world", single_save], 3),
+        ("region-save", [], ["--offscreen", "--seam-replay", "--world", multi_save], 110),
+        ("region-load", [], ["--offscreen", "--world", multi_save], 3),
+        ("profile-save", xvfb, [], 2),
+        ("profile-load", xvfb, [], 2),
+    ]
+    for name, prefix, flags, frames in cases:
         png = evidence / f"{name}.png"
         png.unlink(missing_ok=True)
         case_env = {**env, "SDL_VIDEODRIVER": "x11" if prefix else "offscreen"}
-        binary = DEBUG_VIEWER if name == "replay-debug" else VIEWER
+        if name == "single-load":
+            persisted_single = single_save.read_bytes()
+        if name == "region-load":
+            persisted_region = multi_save.read_bytes()
+        binary = DEBUG_VIEWER if name in ("replay-debug", "seam-debug") else VIEWER
+        if name.startswith("profile-"):
+            case_env["LOCALAPPDATA"] = str(profile_root)
         p = run([*prefix, binary, *flags, "--frames", str(frames), "--screenshot", png], extra_env=case_env)
         data = json.loads(p.stdout)
         if data["driver"] != "vulkan" or data["frames"] != frames or data["misuse_count"] != 0:
             raise RuntimeError("Unexpected renderer result")
         if (data["width"], data["height"]) != (640, 480):
             raise RuntimeError("Unexpected render dimensions")
-        if name == "empty":
-            if data["colored_pixels"] != 0 or data["indices"] != 0:
+        if name == "empty" or name.startswith("multi-away"):
+            if data["colored_pixels"] != 0 or (name == "empty" and data["indices"] != 0):
                 raise RuntimeError("Empty render is not the clear color")
         elif not (5000 < data["colored_pixels"] < 640 * 480 and data["indices"] > 0):
             raise RuntimeError("Scene geometry is missing from GPU readback")
@@ -275,6 +314,8 @@ def render_test(evidence):
             raise RuntimeError("Invalid screenshot")
         data["png_sha256"] = hashlib.sha256(raw).hexdigest()
         results[name] = data
+    if single_save.read_bytes() != persisted_single or multi_save.read_bytes() != persisted_region:
+        raise RuntimeError("Loading a save rewrote its bytes without edits")
     if results["offscreen"]["png_sha256"] != results["window"]["png_sha256"]:
         raise RuntimeError("Window and offscreen rendering disagree")
     if not results["play-window"]["interactive"] or results["play-window"]["replay"]:
@@ -328,10 +369,58 @@ def render_test(evidence):
         raise RuntimeError("Replay did not reuse GPU buffers and overlay geometry")
     if optimized["mesh_uploaded_bytes"] * 10 >= reference["mesh_uploaded_bytes"]:
         raise RuntimeError("Greedy meshing did not reduce world upload traffic")
+    for name, remeshes, rebuilds in (("multi-replay", 11, [1,1,1,1,3,1,1,1,1]),
+                                    ("seam-replay", 13, [1,1,1,1,3,3,1,1,1])):
+        data = results[name]
+        if (data["chunks"], data["solid_blocks"], data["remeshes"], data["dirty_remaining"]) != (9, 2332, remeshes, 0):
+            raise RuntimeError(f"Multi-chunk world/dirty schedule disagrees: {name}: {data}")
+        if data["chunk_rebuilds"] != rebuilds or data["revision"] != 2:
+            raise RuntimeError("An unchanged chunk was rebuilt or a seam neighbor was omitted")
+    if results["seam-replay"]["max_x"] <= 16.1 or results["seam-replay"]["breaks"] != 1 or results["seam-replay"]["places"] != 1:
+        raise RuntimeError("Seam replay failed to cross and edit a chunk boundary")
+    for a_name, b_name in (("multi-preview", "multi-window"), ("multi-replay", "multi-replay-window"),
+                           ("seam-replay", "seam-window"), ("seam-replay", "seam-debug"),
+                           ("multi-away", "multi-away-reference")):
+        if results[a_name]["png_sha256"] != results[b_name]["png_sha256"]:
+            raise RuntimeError(f"Multi-chunk PNG differs: {a_name} / {b_name}")
+    if any(results["multi-replay"][key] != results["multi-reference"][key] for key in keys):
+        raise RuntimeError("Multi-chunk reference gameplay differs")
+    comparisons["multi-replay"] = compare_boundary_pixels(evidence / "multi-replay.png", evidence / "multi-reference.png")
+    if results["multi-away"]["drawn_chunks"] != 0 or results["multi-away"]["culled_chunks"] != 9:
+        raise RuntimeError("Frustum culling did not reject chunks behind the camera")
+    if results["multi-away-reference"]["drawn_chunks"] != 9:
+        raise RuntimeError("Unculled reference did not submit all nine chunks")
+    if results["multi-replay"]["culled_chunks"] < 1 or results["multi-reference"]["drawn_chunks"] != 9:
+        raise RuntimeError("Playable camera did not exercise culling")
+    for name, expected_chunks, expected_size, expected_count in (
+        ("single", 1, 4112, 267), ("region", 9, 36880, 2332), ("profile", 9, 36880, 2332)):
+        path = {"single": single_save, "region": multi_save,
+                "profile": profile_root / "GooseCraft/worlds/default-v1.gcw"}[name]
+        data = path.read_bytes()
+        if len(data) != expected_size or struct.unpack("<I", data[12:16])[0] != zlib.adler32(data[:12] + data[16:]):
+            raise RuntimeError("Native world bytes fail independent checksum validation")
+        checked = json.loads(run([CLIENT, "--headless", "--inspect-world", path]).stdout)
+        if (checked["chunks"], checked["solid_blocks"]) != (expected_chunks, expected_count):
+            raise RuntimeError("Reopened graphical save lost chunks/blocks")
+        first, second = results[name + "-save"], results[name + "-load"]
+        if first["loaded"] or first["save_writes"] != 1 or not second["loaded"] or second["save_writes"] != 0:
+            raise RuntimeError("Manual/default save and reopen behavior disagrees")
+    if single_save.read_bytes()[16 + 10 + 16 * (9 + 16 * 2)] != 0 or single_save.read_bytes()[16 + 10 + 16 * (10 + 16 * 3)] != 2:
+        raise RuntimeError("Saved voxel edits were not preserved")
+    blocked = saves / "blocked"
+    blocked.write_bytes(b"retain")
+    failed = run([VIEWER, "--offscreen", "--frames", "1", "--world", blocked / "world.gcw"],
+                 expected=6, extra_env={**env, "SDL_VIDEODRIVER": "offscreen"})
+    if b"retain" != blocked.read_bytes() or "world save failed" not in failed.stderr:
+        raise RuntimeError("Save error damaged an unrelated file or missed the diagnostic")
+    (evidence / "save-results.json").write_text(json.dumps({"single_bytes": len(persisted_single),
+        "region_bytes": len(persisted_region), "reopen_preserved_bytes": True,
+        "independent_adler32": True, "default_profile_saved": True,
+        "failed_save_exit": 6, "blocked_file_preserved": True}, indent=2) + "\n")
     (evidence / "pixel-comparisons.json").write_text(json.dumps(comparisons, indent=2) + "\n")
     (evidence / "render-results.json").write_text(json.dumps(results, indent=2) + "\n")
-    print("PASS: Vulkan/Xvfb gameplay, release/debug, reference state and bounded geometry-edge pixels, greedy meshing, "
-          "GPU capacity reuse and cached HUD/outline; no per-frame uploads for stationary overlays")
+    print(f"PASS: {len(results)} Vulkan/Xvfb scenarios; single/multi-chunk and seam replay, dirty neighbors, "
+          "frustum culling, release/debug/reference, manual/exit saves and reopen, error preservation, cached overlays")
 
 
 def package(graphics=False):
@@ -348,6 +437,21 @@ def package(graphics=False):
         shutil.copy2(ROOT / name, destination)
     shutil.copytree(ROOT / "licenses", destination / "licenses")
     shutil.copytree(ROOT / "docs", destination / "docs")
+    revision = os.environ.get("GITHUB_SHA")
+    if not revision:
+        git = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True)
+        revision = git.stdout.strip() if git.returncode == 0 else None
+    status = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, text=True, capture_output=True)
+    ci_url = None
+    if os.environ.get("GITHUB_REPOSITORY") and os.environ.get("GITHUB_RUN_ID"):
+        ci_url = f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+    (destination / "BUILD-INFO.json").write_text(json.dumps({
+        "client_version": run([CLIENT, "--version"]).stdout.strip(),
+        "source_commit": revision, "source_dirty": bool(status.stdout) if status.returncode == 0 else None,
+        "ci_url": ci_url,
+        "target": "windows-x64" if WINDOWS else "linux-x64", "graphics": graphics,
+        "world_format": 1,
+    }, indent=2) + "\n")
     print("Packaged", destination)
 
 
@@ -365,6 +469,8 @@ def main():
         benchmark(opts.evidence.resolve())
         return
     if opts.command in ("render-build", "render-test"):
+        if opts.command == "render-test":
+            build() # Native saved-world validator used by the graphics integration tests.
         render_build()
         if opts.command == "render-test":
             render_test(opts.evidence.resolve())

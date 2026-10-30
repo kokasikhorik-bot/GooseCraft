@@ -1,64 +1,48 @@
 import core.core;
 import .hud;
 import .replay;
+import .chunks;
 namespace scene;
 
 struct Camera { view_projection: gfx::mat4 }
 
-struct MeshBuffers {
-    vertex: gfx::Buffer = gfx::Buffer { 0 },
-    index: gfx::Buffer = gfx::Buffer { 0 },
-    vertex_capacity: i64 = 0,
-    index_capacity: i64 = 0,
-    allocations: i64 = 0,
-    uploaded_bytes: i64 = 0,
+struct Options {
+    offscreen: bool = false, empty: bool = false, preview: bool = false,
+    replay_input: bool = false, seam_replay: bool = false, reference: bool = false,
+    single: bool = false, persistent: bool = false, away: bool = false, frames: i64 = -1,
+    output: const u8[:] = "", world_path: const u8[:] = "",
 }
 
-fn reserve(buffer: gfx::Buffer&, capacity: i64&, required: i64, usage: i64, reference: bool) -> bool {
-    if reference && buffer.id != 0 {
-        gfx::release(buffer); buffer = gfx::Buffer { 0 }; capacity = 0;
+fn run(options: Options) {
+    let offscreen = options.offscreen;
+    let preview = options.preview;
+    let replay_input = options.replay_input;
+    let reference = options.reference;
+    let frames = options.frames;
+    let output = options.output;
+    var chunk = world::region(options.single, options.empty);
+    var loaded = false;
+    if options.persistent {
+        if is_dir(options.world_path) { write_stderr("world path is a directory\n"); exit(5); }
+        if file_exists(options.world_path) {
+            if !storage::load(options.world_path, chunk) || (options.single && chunk.radius != 0) {
+                write_stderr("invalid or unreadable world file; original file was not changed\n"); exit(5);
+            }
+            loaded = true;
+        }
     }
-    if required <= capacity { return false; }
-    if buffer.id != 0 { gfx::release(buffer); }
-    capacity = if reference { required } else { 256 };
-    while capacity < required { capacity *= 2; }
-    buffer = gfx::buffer(usage, capacity, []);
-    if buffer.id == 0 { abort(str("GPU allocation: ", gfx::error())); }
-    return true;
-}
-
-fn rebuild(chunk: world::Chunk&, vertices: mesh::Vertex[>..]&, indices: u32[>..]&,
-           buffers: MeshBuffers&, reference: bool) {
-    vertices.clear(); indices.clear();
-    if reference { mesh::build_reference(chunk, vertices, indices); }
-    else { mesh::build(chunk, vertices, indices); }
-    let vertex_bytes = bytes_of(vertices);
-    let index_bytes = bytes_of(indices);
-    if reserve(buffers.vertex, buffers.vertex_capacity, vertex_bytes.len, gfx::BUFFER_VERTEX, reference) {
-        buffers.allocations++;
-    }
-    if reserve(buffers.index, buffers.index_capacity, index_bytes.len, gfx::BUFFER_INDEX, reference) {
-        buffers.allocations++;
-    }
-    if vertex_bytes.len > 0 && !gfx::update_buffer(buffers.vertex, vertex_bytes) {
-        abort(str("GPU vertex upload: ", gfx::error()));
-    }
-    if index_bytes.len > 0 && !gfx::update_buffer(buffers.index, index_bytes) {
-        abort(str("GPU index upload: ", gfx::error()));
-    }
-    buffers.uploaded_bytes += vertex_bytes.len + index_bytes.len;
-}
-
-fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, replay_input: bool, reference: bool) {
+    var saved_revision: i64 = if loaded { chunk.revision } else { -1 };
+    var save_status: i64 = if !options.persistent { 0 } else if loaded { 2 } else { 1 };
+    var save_writes: i64 = 0;
     let opened = if offscreen { gfx::open_headless(640, 480) }
-                 else { gfx::open("GooseCraft 0.4.0", 640, 480) };
+                 else { gfx::open("GooseCraft 0.5.0", 640, 480) };
     if !opened { write_stderr(str("graphics unavailable: ", gfx::error(), "\n")); exit(3); }
     defer gfx::close();
-    var chunk = if empty { world::Chunk {} } else { world::demo_fixture() };
     var vertices: mesh::Vertex[>..] = [];
     var indices: u32[>..] = [];
-    var buffers = MeshBuffers {};
-    rebuild(chunk, vertices, indices, buffers, reference);
+    var buffers: chunks::Cache[9] = [chunks::Cache {}; 9];
+    // Complete startup meshes once; subsequent frames have a two-chunk budget.
+    var remeshes = chunks::rebuild_dirty(chunk, buffers, vertices, indices, 9, reference);
     let vs = embed_shader("vert", """
         layout(location = 0) in vec3 position;
         layout(location = 1) in vec4 color;
@@ -97,6 +81,8 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
     var hud_uploaded_bytes: i64 = 0;
     var outline_uploads: i64 = 0;
     var state = player::State {};
+    if options.seam_replay { state.position.x = 15.5; }
+    while player::collides(chunk, state.position) { state.position.y += 1.0; }
     var active = true;
     var was_focused = true;
     var accumulator: f32 = 0.0;
@@ -104,15 +90,18 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
     var selected: u8 = 1;
     var broken: i64 = 0;
     var placed: i64 = 0;
-    var remeshes: i64 = 1;
     var paused_frames: i64 = 0;
     var focus_losses: i64 = 0;
     var resumes: i64 = 0;
     var walked: f32 = 0.0;
     var max_y: f32 = state.position.y;
+    var max_x: f32 = state.position.x;
+    var drawn_chunks: i64 = 0;
+    var culled_chunks: i64 = 0;
+    var drawn_vertices: i64 = 0;
     var drawn: i64 = 0;
     while true {
-        if replay_input { replay::inject(drawn); }
+        if replay_input { replay::inject(drawn, options.seam_replay); }
         if !gfx::frame() { break; }
         if gfx::key_pressed("F10") || (preview && gfx::key_pressed("Escape")) { break; }
         var hit = interaction::Hit {};
@@ -165,6 +154,7 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
                     player::tick(chunk, state, input);
                     walked += length(float2 { state.position.x - before.x, state.position.z - before.z });
                     max_y = max(max_y, state.position.y);
+                    max_x = max(max_x, state.position.x);
                     accumulator -= player::STEP;
                 }
                 hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
@@ -174,21 +164,30 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
                 } else if gfx::mouse_pressed(gfx::MOUSE_RIGHT) && interaction::place(chunk, hit, state.position, selected) {
                     placed++; dirty = true;
                 }
-                if dirty { rebuild(chunk, vertices, indices, buffers, reference); remeshes++; }
+                if dirty && options.persistent { save_status = 1; }
             }
             hit = interaction::raycast(chunk, player::eye(state), player::direction(state), 6.0);
             assert(!player::collides(chunk, state.position));
         }
+        remeshes += chunks::rebuild_dirty(chunk, buffers, vertices, indices, 2, reference);
+        if options.persistent && gfx::key_pressed("F5") {
+            if storage::save(options.world_path, chunk) {
+                saved_revision = chunk.revision; save_status = 2; save_writes++;
+            } else { save_status = 3; write_stderr("world save failed; previous file retained\n"); }
+        }
         let size = gfx::screen_size();
-        let eye = if preview { float3 { 25.0, 23.0, 29.0 } } else { player::eye(state) };
-        let target = if preview { float3 { 8.0, 0.0, 8.0 } } else { eye + player::direction(state) };
+        let eye = if options.away { float3 { 80.0, 40.0, 80.0 } } else if preview {
+            if chunk.radius == 0 { float3 { 25.0, 23.0, 29.0 } } else { float3 { 52.0, 43.0, 55.0 } }
+        } else { player::eye(state) };
+        let target = if options.away { float3 { 96.0, 40.0, 96.0 } }
+                     else if preview { float3 { 8.0, 0.0, 8.0 } } else { eye + player::direction(state) };
         let camera = Camera { view_projection: gfx::mul(
-            gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, 128.0),
+            gfx::perspective(if preview { 0.8 } else { 1.05 }, size.x as f32 / size.y, 0.05, 192.0),
             gfx::look_at(eye, target, float3 { 0.0, 1.0, 0.0 })) };
         if !preview {
-            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed };
+            let key = hud::Key { size, active, selected, hit.found, hit.cell, broken, placed, save_status };
             if reference || key != hud_key {
-                hud::build(hud_vertices, size, active, selected, hit, broken, placed);
+                hud::build(hud_vertices, size, active, selected, hit, broken, placed, save_status);
                 let bytes = bytes_of(hud_vertices);
                 if !gfx::update_buffer(hud_buffer, bytes) { abort(str("HUD upload: ", gfx::error())); }
                 hud_uploads++; hud_uploaded_bytes += bytes.len; hud_key = key;
@@ -202,12 +201,21 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
             }
         }
         gfx::begin_screen(float4 { 15.0 / 255.0, 23.0 / 255.0, 35.0 / 255.0, 1.0 });
-        if indices.len > 0 {
+        drawn_chunks = 0; culled_chunks = 0; drawn_vertices = 0;
+        let rows: float4[4] = [gfx::row(camera.view_projection, 0), gfx::row(camera.view_projection, 1),
+                                gfx::row(camera.view_projection, 2), gfx::row(camera.view_projection, 3)];
+        for at in 9 {
+            if !world::active(chunk, at) || buffers[at].indices == 0 { continue; }
+            let origin = chunks::origin(at);
+            if !reference && !visibility::intersects(rows, origin, origin + float3 { 16.0, 16.0, 16.0 }) {
+                culled_chunks++; continue;
+            }
             gfx::bind(pipeline);
-            gfx::bind_vertex_buffer(buffers.vertex);
-            gfx::bind_index_buffer(buffers.index, 4);
-            gfx::uniforms(gfx::VERTEX, 0, camera);
-            gfx::draw_indexed(indices.len);
+            gfx::bind_vertex_buffer(buffers[at].vertex);
+            gfx::bind_index_buffer(buffers[at].index, 4);
+            gfx::uniforms(gfx::VERTEX, 0, Camera { gfx::mul(camera.view_projection, gfx::translate(origin)) });
+            gfx::draw_indexed(buffers[at].indices);
+            drawn_chunks++; drawn_vertices += buffers[at].vertices;
         }
         if !preview {
             if hit.found {
@@ -235,23 +243,39 @@ fn run(offscreen: bool, empty: bool, frames: i64, output: u8[:], preview: bool, 
         write_stderr(str("screenshot failed: ", gfx::error(), "\n")); exit(4);
     }
     gfx::check();
-    print("{\"mode\":\"", if offscreen { "offscreen" } else { "window" },
+    if options.persistent && saved_revision != chunk.revision {
+        if !storage::save(options.world_path, chunk) {
+            write_stderr("world save failed on exit; previous file retained\n"); exit(6);
+        }
+        saved_revision = chunk.revision; save_writes++;
+    }
+    let totals = chunks::stats(buffers);
+    let rendering_report = str("{\"mode\":\"", if offscreen { "offscreen" } else { "window" },
         "\",\"driver\":\"", gfx::driver(), "\",\"frames\":", drawn,
         ",\"width\":", size.x, ",\"height\":", size.y,
-        ",\"vertices\":", vertices.len, ",\"indices\":", indices.len,
+        ",\"vertices\":", totals.vertices, ",\"indices\":", totals.indices,
         ",\"colored_pixels\":", colored, ",\"misuse_count\":", gfx::misuse_count(),
         ",\"reference_renderer\":", reference,
-        ",\"mesh_bytes\":", bytes_of(vertices).len + bytes_of(indices).len,
-        ",\"mesh_capacity_bytes\":", buffers.vertex_capacity + buffers.index_capacity,
-        ",\"mesh_allocations\":", buffers.allocations, ",\"mesh_uploaded_bytes\":", buffers.uploaded_bytes,
+        ",\"mesh_bytes\":", totals.vertices * 16 + totals.indices * 4,
+        ",\"mesh_capacity_bytes\":", totals.capacity,
+        ",\"mesh_allocations\":", totals.allocations, ",\"mesh_uploaded_bytes\":", totals.uploaded_bytes,
         ",\"hud_uploads\":", hud_uploads, ",\"hud_uploaded_bytes\":", hud_uploaded_bytes,
-        ",\"outline_uploads\":", outline_uploads,
-        ",\"interactive\":", !preview, ",\"replay\":", replay_input,
+        ",\"outline_uploads\":", outline_uploads);
+    let gameplay_report = str(",\"interactive\":", !preview, ",\"replay\":", replay_input,
         ",\"ticks\":", state.ticks, ",\"breaks\":", broken, ",\"places\":", placed,
         ",\"remeshes\":", remeshes, ",\"solid_blocks\":", world::solid_count(chunk),
         ",\"jumps\":", state.jumps, ",\"respawns\":", state.respawns,
         ",\"paused_frames\":", paused_frames, ",\"focus_losses\":", focus_losses,
         ",\"resumes\":", resumes, ",\"walked\":", walked, ",\"max_y\":", max_y,
         ",\"player_x\":", state.position.x, ",\"player_y\":", state.position.y,
-        ",\"player_z\":", state.position.z, "}");
+        ",\"player_z\":", state.position.z, ",\"max_x\":", max_x,
+        ",\"chunks\":", if chunk.radius == 0 { 1 } else { 9 },
+        ",\"drawn_chunks\":", drawn_chunks, ",\"culled_chunks\":", culled_chunks,
+        ",\"drawn_vertices\":", drawn_vertices, ",\"dirty_remaining\":", world::pending(chunk),
+        ",\"revision\":", chunk.revision, ",\"save_enabled\":", options.persistent,
+        ",\"loaded\":", loaded, ",\"save_writes\":", save_writes,
+        ",\"chunk_rebuilds\":[", buffers[0].rebuilds, ",", buffers[1].rebuilds, ",", buffers[2].rebuilds,
+        ",", buffers[3].rebuilds, ",", buffers[4].rebuilds, ",", buffers[5].rebuilds,
+        ",", buffers[6].rebuilds, ",", buffers[7].rebuilds, ",", buffers[8].rebuilds, "]}");
+    print(rendering_report, gameplay_report);
 }

@@ -5,7 +5,7 @@ namespace replay;
 
 fn key(name: u8[:], down: bool) { assert(gfx::inject_key(name, down)); }
 
-fn inject(frame: i64) {
+fn inject(frame: i64, seam: bool) {
     if frame == 0 { gfx::inject_mouse(320.0, 240.0, 0, false); }
     if frame == 2 { gfx::inject_mouse(320.0, 240.0, gfx::MOUSE_LEFT, true); }
     if frame == 3 { gfx::inject_mouse(320.0, 240.0, gfx::MOUSE_LEFT, false); }
@@ -18,10 +18,10 @@ fn inject(frame: i64) {
     if frame == 15 { key("W", true); }
     if frame == 25 { key("Space", true); }
     if frame == 26 { key("Space", false); }
-    if frame == 50 { key("W", false); }
-    if frame == 52 { key("D", true); }
-    if frame == 57 { key("D", false); }
-    if frame == 60 { key("Escape", true); }
+    if frame == 50 { key("W", false); if seam { key("D", true); } }
+    if frame == 52 && !seam { key("D", true); }
+    if frame == 57 && !seam { key("D", false); }
+    if frame == 60 { key("Escape", true); if seam { key("D", false); } }
     if frame == 61 { key("Escape", false); key("W", true); }
     if frame == 64 { key("Return", true); }
     if frame == 65 { key("Return", false); }
@@ -37,4 +37,6 @@ fn inject(frame: i64) {
     if frame == 91 { key("Escape", false); }
     if frame == 95 { key("Return", true); }
     if frame == 96 { key("Return", false); }
+    if frame == 100 { key("F5", true); }
+    if frame == 101 { key("F5", false); }
 }

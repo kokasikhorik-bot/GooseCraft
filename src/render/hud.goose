@@ -10,6 +10,7 @@ struct Key {
     cell: int3 = int3 { 0, 0, 0 },
     broken: i64 = 0,
     placed: i64 = 0,
+    save_status: i64 = 0,
 }
 
 fn glyph(c: u8) -> u8[7] {
@@ -69,12 +70,16 @@ fn text(vertices: mesh::Vertex[>..]&, value: u8[:], x: f32, y: f32, size: int2, 
 }
 
 fn build(vertices: mesh::Vertex[>..]&, size: int2, active: bool, selected: u8,
-         hit: interaction::Hit, broken: i64, placed: i64) {
+         hit: interaction::Hit, broken: i64, placed: i64, save_status: i64) {
     vertices.clear();
     let ink: u8[4] = [232, 239, 245, 255];
     let muted: u8[4] = [161, 182, 202, 255];
+    let warning: u8[4] = [255, 128, 112, 255];
     rect(vertices, 0.0, 0.0, size.x, 52.0, size, [16, 24, 33, 255]);
-    text(vertices, "GOOSECRAFT 0.4", 12.0, 10.0, size, ink);
+    text(vertices, "GOOSECRAFT 0.5", 12.0, 10.0, size, ink);
+    text(vertices, if save_status == 0 { "TEMP" } else if save_status == 1 { "UNSAVED" }
+                  else if save_status == 2 { "SAVED" } else { "SAVE ERROR" }, 224.0, 10.0, size,
+         if save_status == 3 { warning } else { muted });
     text(vertices, str("BREAK ", broken, "  PLACE ", placed), 12.0, 30.0, size, muted);
     text(vertices, if selected == 1 { "1 GREEN" } else { "2 AMBER" }, size.x - 112.0, 10.0, size,
          if selected == 1 { [108, 211, 134, 255] } else { [239, 174, 67, 255] });
@@ -85,7 +90,7 @@ fn build(vertices: mesh::Vertex[>..]&, size: int2, active: bool, selected: u8,
     rect(vertices, 0.0, size.y - 64.0, size.x, 64.0, size, [16, 24, 33, 255]);
     text(vertices, "WASD MOVE  SPACE JUMP  MOUSE LOOK", 12.0, size.y - 54.0, size, ink);
     text(vertices, "LMB BREAK  RMB PLACE  1/2 BLOCK", 12.0, size.y - 36.0, size, ink);
-    text(vertices, "ESC PAUSE  ENTER RESUME  F10 QUIT  R SPAWN", 12.0, size.y - 18.0, size, muted);
+    text(vertices, "ESC PAUSE  ENTER RESUME  F10 QUIT  R SPAWN  F5 SAVE", 12.0, size.y - 18.0, size, muted);
     let x = size.x * 0.5;
     let y = size.y * 0.5;
     rect(vertices, x - 7.0, y - 2.0, 15.0, 5.0, size, [16, 24, 33, 255]);

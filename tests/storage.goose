@@ -60,6 +60,9 @@ fn disk(path: u8[:], blocked: u8[:]) {
 }
 
 fn main() {
+    let profile_path = storage::default_path();
+    let suffix = "/GooseCraft/worlds/default-v1.gcw";
+    assert(profile_path.len > suffix.len && profile_path[profile_path.len - suffix.len..] == suffix);
     codec(false); codec(true);
     let argv = args();
     assert(argv.len == 3);

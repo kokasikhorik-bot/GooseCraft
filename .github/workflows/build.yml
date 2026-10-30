@@ -34,7 +34,7 @@ jobs:
       - name: Compile release and debug graphical Windows clients without opening a window
         if: runner.os == 'Windows'
         run: python tools/project.py render-build
-      - name: Build and test without a display
+      - name: Test core, chunk seams and saved worlds without a display
         run: python tools/project.py test
       - name: Measure native meshing without a display
         run: python tools/project.py benchmark --evidence build/benchmarks
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Build pinned graphics environment
         run: docker build --target graphics -f .devcontainer/Dockerfile -t goosecraft-graphics .
-      - name: Check optimized and reference rendering with gameplay input in Vulkan and Xvfb
+      - name: Check multi-chunk rendering, culling and persistence in Vulkan and Xvfb
         run: |
           mkdir -p graphics-results
           docker run --rm --network=none --mount "type=bind,src=$PWD/graphics-results,dst=/results" goosecraft-graphics python tools/project.py render-test --evidence /results
