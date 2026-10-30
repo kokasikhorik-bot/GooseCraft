@@ -84,9 +84,11 @@ Goose, Python, Java или локальная среда разработки. �
 `goosecraft.cmd` для окна, `goosecraft.cmd --headless --ticks 20` для консольной проверки.
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
-Предыдущий [CI игрового прототипа 0.3](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41015539670)
-прошёл все три jobs. Оптимизации 0.4 проверены на Linux; результат нового
-Windows CI и артефакт будут добавлены в [отчёт](docs/github-ci.md) после запуска.
+[CI версии 0.4 — #41022704811](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811)
+прошёл все три jobs: Windows x64, Linux headless и Vulkan/Xvfb.
+Оба headless jobs выполнили native benchmark, графический — 14 сценариев.
+[Скачать Windows ZIP 0.4](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962646663),
+распаковать и запустить `goosecraft.cmd`. [Отчёт CI](docs/github-ci.md).
 Windows GUI и пользовательская Windows 10 ещё не проверены.
 
 ## Документация

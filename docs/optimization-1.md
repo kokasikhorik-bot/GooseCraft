@@ -129,6 +129,12 @@ validation layer не установлен, полная Vulkan validation не 
 ## Платформы и дальнейшая работа
 
 Headless core/mesh/player прошли TinyCC/native и release/debug на Linux.
-Новый Windows CI будет записан в github-ci.md после выполнения; прошлый CI
-0.3 не считается проверкой новых исходников. Windows GUI/Windows 10 пока
-не проверены. [План дальнейшей оптимизации и серверов](roadmap.md).
+[CI #41022704811](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811)
+для `e4c49678cc65f014425ba2fc8923ce08dacea703` прошёл все три jobs.
+Windows действительно собрал release/debug графического клиента, выполнил
+TinyCC/native core/mesh/player в release/debug, CLI, cmd.exe-лаунчер и native
+benchmark. Linux отдельно прошёл headless/benchmark и 14 графических сценариев.
+[Windows ZIP 0.4](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962646663)
+готов. [Метаданные API](validation/github-actions-41022704811.json).
+Windows GUI/пользовательская Windows 10 пока не проверены.
+[План дальнейшей оптимизации и серверов](roadmap.md).

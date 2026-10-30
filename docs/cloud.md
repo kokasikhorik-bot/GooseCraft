@@ -146,6 +146,10 @@ Render-test расширен до 14 сценариев и сравнивает 
 фон/геометрия, без изменения HUD. Наблюдалось 2; подробности и границы
 утверждений в [optimization-1.md](optimization-1.md).
 
+Итоговый [CI 0.4 #41022704811](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811)
+успешно прошёл Windows/Linux native tests и benchmarks, а также Linux graphics.
+Наличие Windows benchmark artifact не считается проверкой Windows GUI.
+
 ### Доступность Python на Windows runner
 
 Реальный повторный CI 2026-10-30 показал, что setup-python не предоставляет

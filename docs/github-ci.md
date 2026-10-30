@@ -1,11 +1,56 @@
-# GitHub: CI GooseCraft
+# GitHub: успешный CI GooseCraft 0.4 — 2026-10-30
 
 ## Оптимизация 0.4
 
-Новый greedy-мешер, кеширование и GPU capacity проверены на Linux;
-новый Windows CI ожидает публикации commit. Benchmark добавлен в оба
-headless jobs, данные публикуются отдельными artifacts.
-Приведённый ниже успешный run относится к версии 0.3, до оптимизации.
+[Run 41022704811](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811)
+для `e4c49678cc65f014425ba2fc8923ce08dacea703` завершился **success**.
+Все три jobs прошли на GitHub-hosted runners:
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графического клиента, TinyCC/native core/mesh/player в release/debug, CLI, реальный cmd.exe-лаунчер, native benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | Headless core/mesh/player, CLI, native benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | Закреплённый Docker, 14 графических сценариев без сети, проверка поверхности/изображения, кеширования и GPU capacity |
+
+**[Windows ZIP 0.4](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962646663)**:
+`goosecraft-windows-2022-x64-e4c49678cc65f014425ba2fc8923ce08dacea703`,
+1 468 368 байт. Содержит release `goosecraft-client.exe`, headless-клиент,
+`goosecraft.cmd`, документацию и лицензии. Debug EXE и benchmark EXE в поставку
+не включаются. [Первый запуск](first-play.md).
+
+GitHub API сообщил digest ZIP:
+`sha256:69d3136d17978e63a15a7602fba6b69f97d808d488c5e472de6b3cf4fd1157df`.
+По API срок хранения — до `2027-01-28T07:51:59Z`, если артефакт не удалят раньше.
+ZIP в этой сессии не скачивался; digest не пересчитан локально. Ранее proxy
+блокировал redirect на Actions storage, это ограничение описано в истории.
+Наличие и размер подтверждены API; `.exe` выполнялись непосредственно в Windows job.
+Для скачивания Actions artifact может потребоваться вход в GitHub.
+
+Отдельные artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962860898): 2 505 байт.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962153282): 2 540 байт.
+- [Graphics evidence PNG/JSON](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962721280): 58 613 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41022704811/artifacts/12962651528): 268 517 байт.
+
+Полные [run/jobs/steps/artifacts](validation/github-actions-41022704811.json)
+сохранены без заголовков авторизации и credentials. Windows benchmark выполнился,
+но его численные результаты здесь не цитируются: artifact внутрь облака не
+скачивался. Таблица CPU-времени в [optimization-1.md](optimization-1.md) относится
+к отдельным локальным облачным Linux GCC 14.2/12.2 замерам.
+
+Границы: Windows job запускал графический EXE для `--help` и ошибочных аргументов;
+окно на Windows и пользовательская Windows 10 не проверены. Linux replay
+использует SDL/gfx-инъекцию ввода, не физические устройства. Между optimized
+window/offscreen/debug проверяется точное совпадение PNG и состояния. Между
+greedy/reference поверхность точна, но растеризация полного replay имеет два
+граничных пикселя разницы; тест допускает максимум четыре, строго вне HUD,
+только на общей границе фон/геометрия. Это не заявление о побайтно одинаковой
+картинке со старым мешером или более высоком полном FPS, чем Minecraft.
+
+Итоговая документация отправляется отдельным docs-only commit с `[skip ci]`;
+исходники и workflow после успешного run не меняются. Документы в ZIP отражают
+состояние на момент сборки, актуальный итог CI находится в этом отчёте.
 
 ## История: успешный игровой прототип 0.3 — 2026-10-30
 
