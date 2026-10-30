@@ -1,4 +1,51 @@
-# GitHub: успешный CI GooseCraft 0.14 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.15 — 2026-10-30
+
+## Локальный vertex AO 0.15
+
+[Run 41117617172](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172)
+для source `2a9afe97840017f823a506ac5a5979b65360292d` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug graphical clients и UTF-8 manifests; 15 suites JIT/native release/debug, два native-only suites, AO truth tables/цвета/геометрия/stitch/XYZ dirty, прежние byte vectors и migration/limits, Unicode/lock, CLI/cmd.exe, benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | 15 JIT/native и два native-only suites, старые world formats/generators, AO corner/color/geometry tests, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 168 сценариев, в том числе 10 AO; 159 PNG и 76 профилей. Window/offscreen/debug, реальный input replay, Tall и Paged, saves, independent raw percentiles |
+
+[Windows x64 ZIP 0.15.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13006622913),
+**15,950,362 байт**. BUILD-INFO содержит source SHA, 0.15.0,
+world formats [1,2,3,4], generators [1,2], profiling schema 1 и optional AO.
+[Первый запуск](first-play.md), [кадры/стоимость/границы AO](occlusion-results.md).
+
+GitHub API сообщает SHA-256 ZIP:
+`fc44891448ddf8fe36eb91f7bcefa6e7f82f32731969ca5b59378cc1b96cacf0`.
+Срок хранения по API: `2027-01-28T19:43:51Z`, если artifact не удалят раньше.
+ZIP локально не скачивался, digest не пересчитывался. Для Actions artifact
+может потребоваться вход в GitHub. Окно на Windows не открывалось;
+builder — Windows Server 2022, пользовательская Windows 10 и физический GPU
+по-прежнему не проверены.
+
+Другие artifacts:
+
+- [graphics-evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13007820015): 1,991,447 байт.
+- [benchmark-ubuntu-22.04-x64](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13007585498): 5,668 байт.
+- [benchmark-windows-2022-x64](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13005434665): 5,468 байт.
+- [goosecraft-ubuntu-22.04-x64](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13005278874): 14,605,814 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41117617172.json)
+сохранены без credentials. Проверенный source `2a9afe9`; последующий docs-only
+commit с `[skip ci]` меняет evidence и ссылки. Документы в ZIP соответствуют
+моменту сборки; текущие ссылки и окончательный CI находятся в этом отчёте.
+
+Вся логика AO — Goose, shader/vertex layout/platform C/toolchain pins прежние.
+AO выключен по умолчанию: `--ambient-occlusion` меняет изображение, но не мир.
+Неоднородные грани остаются единичными; консервативное объединение увеличивает
+геометрию. Старые 149 PNG локально совпали с baseline 0.14. CPU wall и mesh
+payload/capacity — ограниченные замеры, не полный RSS/VRAM или FPS против Minecraft.
+
+Отдельная Linux-поставка проверена без Goose compiler и исходников, UID1000,
+network=none, root read-only: 90 кадров с AO/play/edit/inventory на Y35,
+точное совпадение PNG и GCW v4 bytes с full suite. Бинарники и 12 лицензий
+сохранены побайтно. [Детали](validation/occlusion/package-results.json).
 
 ## Вертикальные секции/GCW v4 0.14
 

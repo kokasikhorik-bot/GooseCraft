@@ -1,7 +1,7 @@
 # Первый запуск GooseCraft на Windows 10 x64
 
-[Windows x64 ZIP 0.14.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13002104394),
-source `b8aa83b`, все три jobs [CI #41109972918](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918) завершились success.
+[Windows x64 ZIP 0.15.0](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13006622913),
+source `2a9afe9`, все три jobs [CI #41117617172](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172) завершились success.
 [Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md).
 В 0.8 новый обычный мир расширен до 81 чанка; старые сохранения сохраняют
 прежние блоки и размер. Генератор рельефа v1 не изменён.
@@ -10,7 +10,7 @@ source `b8aa83b`, все три jobs [CI #41109972918](https://github.com/kokasi
 Проверенный builder — Windows Server 2022; пользовательская Windows 10 GUI
 проверяется отдельно. На более старых сборках Windows 10 Unicode argv не проверен.
 
-В исходниках 0.15 добавлен optional `--ambient-occlusion`: углы рядом с блоками
+В версии 0.15 добавлен optional `--ambient-occlusion`: углы рядом с блоками
 темнее, чем открытая поверхность. Для высокого мира:
 
 ```bat

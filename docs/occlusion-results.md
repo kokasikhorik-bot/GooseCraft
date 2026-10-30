@@ -81,8 +81,26 @@ benchmark мешера, не GPU execution time и не pass/fail-порог п�
 [source/binary hashes и окружение](validation/occlusion/provenance.json).
 Runtime network=none; Linux x86-64, Mesa lavapipe LLVM 15, Xvfb.
 
-Windows Actions запускается после публикации source commit; итоговые
-ссылки на ZIP и полный REST snapshot будут добавлены после завершения CI.
+Source `2a9afe97840017f823a506ac5a5979b65360292d` опубликован;
+[Actions 41117617172](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172)
+завершился **success**: все три jobs прошли. Windows release/debug graphical
+clients и UTF-8 manifests собраны; 15 JIT/native suites release/debug, два
+native-only, CLI/cmd, benchmark и упаковка прошли. Linux CI повторил headless
+и 168 graphics cases. [Windows ZIP 0.15](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41117617172/artifacts/13006622913),
+[полный REST snapshot](validation/github-actions-41117617172.json),
+[отчёт CI](github-ci.md). Окно на Windows не открывалось, builder Server 2022.
+
+Отдельно проверена Linux-поставка: UID 1000, cwd `/tmp`, network=none,
+root filesystem read-only, исходный `/work` и Goose compiler скрыты tmpfs.
+Упакованный native client выполнил 90 кадров inventory/play/edit с AO на Y=35;
+PNG и сохранённые GCW v4 bytes совпали с полным набором. Native headless
+открыл тот же save; 12 лицензий и оба бинарника совпали с проверенными файлами,
+миров и debug binaries в поставке нет. BUILD-INFO 0.15.0 с source `2a9afe9`;
+dirty=true относится к добавленным package evidence/docs, source hashes
+совпадают с commit. Файлы, скопированные Docker от root, приведены к UID1000
+без изменения содержимого. [Итог](validation/occlusion/package-results.json),
+[log](validation/occlusion/package/run.log), [кадр](validation/occlusion/package/frame.png).
+Это проверка Linux-поставки, Windows ZIP локально ещё не скачивался.
 
 ## Границы этапа
 
