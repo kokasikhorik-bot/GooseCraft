@@ -178,6 +178,8 @@ Upstream Goose-компилятор уже имеет такой manifest; сг�
 должны получить его отдельно. SDK требуется только облачному builder,
 в пользовательскую поставку не включается. ActiveCodePage UTF-8 поддерживается
 Windows 10 1903+; старые сборки Windows 10 с Unicode argv не проверены.
+Исправление подтверждено [CI #41034821463](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463):
+все Windows suites, Unicode native/JIT save I/O, benchmark и оба Linux jobs прошли.
 
 ### Доступность Python на Windows runner (история)
 

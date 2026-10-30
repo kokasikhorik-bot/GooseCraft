@@ -99,4 +99,6 @@ interaction инстанцируются для Chunk/Map/Halo там, где э
 `src/goose.manifest` (CMakeLists.txt:85), а команда native build его не добавляет.
 Наш helper встраивает собственный manifest SDK mt.exe в каждый Windows EXE,
 затем извлекает и проверяет ресурс. Это настройка приложения, не придуманный
-Goose API и не изменение pinned upstream. Эффект на целевой Windows проверяется CI.
+Goose API и не изменение pinned upstream. [Наш CI 0.5](github-ci.md) подтвердил
+на Windows Server 2022 native/JIT Unicode I/O после встраивания manifest.
+Это не проверка GUI на пользовательской Windows 10.

@@ -1,6 +1,52 @@
-# GitHub: CI GooseCraft
+# GitHub: успешный CI GooseCraft 0.5 — 2026-10-30
 
 ## Несколько чанков 0.5
+
+[Run 41034821463](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463)
+для `5f4a14cc007e916969cf4db689f05304b7b9a19a` завершился **success**.
+Все три jobs прошли:
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug графики, встраивание/извлечение UTF-8 PE manifest, шесть headless suites в TinyCC/native и release/debug, настоящие Unicode save I/O, CLI/launcher, benchmark, упаковка |
+| ubuntu-22.04 / x64 | success | Шесть suites, сохранение/ошибки/CRC, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 30 сценариев: single/multi/seams, dirty-бюджет, culling, manual/exit save и reopen, default profile, reference/debug |
+
+**[Windows ZIP 0.5](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12967826992)**:
+`goosecraft-windows-2022-x64-5f4a14cc007e916969cf4db689f05304b7b9a19a`,
+1 663 815 байт. Содержит release графического и headless клиентов, `.cmd`,
+лицензии, документацию и `BUILD-INFO.json` (версия, source SHA, CI URL).
+Debug/benchmark EXE и пользовательские миры в поставку не включаются.
+[Инструкция](first-play.md), [результаты 0.5](multichunk-results.md).
+
+API сообщил SHA-256 ZIP:
+`461dbbb075396c5df74f742a971bc9e2109290dfb3b536a5c7f8b6b2774eac72`.
+По API срок хранения — до `2027-01-28T09:37:47Z`, если артефакт не удалят раньше.
+Digest и размер взяты из API; ZIP локально не скачивался и не хешировался.
+PE manifest проверен SDK mt.exe внутри Windows job, не по скачанному архиву
+на Linux. Для Actions artifact через браузер может потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12968241070): 2 513 байт.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12968365537): 2 543 байта.
+- [Graphics PNG/JSON evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12966879850): 123 357 байт.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12968435285): 439 865 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41034821463.json)
+сохранены без credentials. Кириллица проверена на настоящих файлах и в native
+argv после manifest, а не только внутри JIT. F5/закрытие окна и default profile
+проверены на Linux/Xvfb; графический Windows EXE выполнялся только с `--help`,
+неверными аргументами и отказом загрузки повреждённого файла до GPU.
+**Windows GUI и пользовательская Windows 10 ещё не проверены.**
+
+UTF-8 activeCodePage требует Windows 10 1903+; SDK нужен только облачному
+builder, пользователю локальные инструменты не нужны. Мир пока фиксированный
+48×16×48, без сети и совместимости Java Edition. Итоговый docs-only commit
+с `[skip ci]` не меняет проверенные исходники. Документы внутри ZIP отражают
+момент сборки; актуальный итог CI публикуется в этом отчёте.
+
+### История первых Windows-запусков 0.5
 
 Первый [run 41031858534](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41031858534)
 для `5d3536ca4ccf54f3bba7f7f9c542b352908f4ba9` прошёл оба Linux jobs,
@@ -21,8 +67,7 @@ Workflow явно задаёт `PYTHONUTF8=1`/`PYTHONIOENCODING=utf-8`, entry po
 настраивает stdout/stderr в UTF-8. При неожиданном отказе helper публикует
 экранированную аннотацию с traceback и последними сообщениями дочернего процесса.
 Игровой Goose-код, формат сохранения и тесты кириллицы не упрощались.
-Повторный Windows CI будет записан после запуска; ZIP 0.5 пока не подтверждён.
-Ниже — история успешного 0.4, до Map/сохранения.
+Это промежуточное исправление само по себе ещё не давало успешного Windows run.
 
 Повтор [41033278248](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41033278248)
 также прошёл оба Linux jobs. Новая диагностика дала точную Windows-ошибку:
@@ -40,8 +85,8 @@ native `main(argc,char** argv)` получает ANSI argv, из которог�
 Windows SDK mt.exe во все наши AOT EXE до их запуска. Helper извлекает PE
 manifest обратно и проверяет `activeCodePage=UTF-8`. Upstream не патчится,
 запись мира остаётся на Goose и исходные Unicode I/O тесты выполняются полностью.
-Проверка этого исправления выполняется следующим CI; успешная Windows-сборка
-0.5 ещё не заявляется.
+Следующий run 41034821463, приведённый выше, подтвердил manifest и успешные
+native Unicode I/O тесты. Game/format код и сами Unicode tests не упрощались.
 
 ## История: успешный CI 0.4 — 2026-10-30
 

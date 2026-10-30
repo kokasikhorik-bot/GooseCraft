@@ -89,7 +89,15 @@ single-chunk временные, пока не указан `--world`. `--no-sav
 [save-results.json](validation/multichunk/save-results.json),
 [pixel-comparisons.json](validation/multichunk/pixel-comparisons.json).
 
-Windows CI для новых исходников будет записан после запуска; успешный run 0.4
-не считается их проверкой. Windows GUI и пользовательская Windows 10 пока не
-проверены. Мир фиксированного размера, без потоковой загрузки, света,
+[CI #41034821463](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463)
+для `5f4a14cc007e916969cf4db689f05304b7b9a19a` прошёл все три jobs.
+Windows собрал release/debug графики и выполнил шесть suites в TinyCC/native,
+release/debug, реальные Unicode read/write/atomic replace, CLI/launcher и
+benchmark. Все AOT EXE получили SDK-проверенный UTF-8 process manifest:
+без него native CRT терял кириллицу argv. [История исправлений](github-ci.md),
+[метаданные](validation/github-actions-41034821463.json),
+[Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12967826992).
+F5/штатный выход/default profile графически проверены на Linux; Windows GUI
+и пользовательская Windows 10 пока не проверены. Мир фиксированного размера,
+без потоковой загрузки, света,
 инвентаря, крафта и сетевого протокола.

@@ -1,7 +1,8 @@
 # Первый запуск GooseCraft 0.5 на Windows 10 x64
 
-Нужен Windows x64 ZIP версии 0.5 из успешного CI; ссылка публикуется в
-[актуальном отчёте](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md). В 0.5 мир расширен до девяти чанков и появился файл
+[Скачать Windows x64 ZIP 0.5](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41034821463/artifacts/12967826992),
+успешный CI #41034821463, source `5f4a14c`.
+[Актуальный отчёт](https://github.com/kokasikhorik-bot/GooseCraft/blob/main/docs/github-ci.md). В 0.5 мир расширен до девяти чанков и появился файл
 сохранения. Старые 0.3/0.4 имели только временный одночанковый мир.
 Для скачивания Actions artifact может потребоваться вход в GitHub.
 Для UTF-8 аргументов путей используется app manifest Windows 10 1903+.
