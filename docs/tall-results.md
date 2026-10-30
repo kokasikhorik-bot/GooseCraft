@@ -83,3 +83,21 @@ Map/Paged payload и очередь/кеш v3 не увеличивались.
 sparse sections и более высокая модель ещё впереди. Следующая видимая цель —
 оригинальные текстуры/освещение. Windows GUI, физический GPU и FPS-преимущество
 не проверены. Windows delivery отслеживается в [отчёте CI](github-ci.md).
+
+Все три jobs [Actions 41109972918](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918)
+для source `b8aa83b09f128a4b122b27071a477ba0f36ea99a` завершились **success**:
+Windows/Ubuntu native/JIT/CLI, 14 suites и два native-only, Linux graphics
+158 сценариев. [Windows ZIP 0.14](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13002104394)
+создан. Окно на Windows не открывалось; builder — Windows Server 2022.
+
+Дополнительная Linux-поставка запущена как UID 1000 из `/tmp`, network=none,
+root filesystem read-only, исходный `/work`/Goose compiler скрыты tmpfs.
+Упакованные headless/client создали v4 и выполнили 90 кадров play/edit/inventory
+на Y=35; PNG и итоговые save bytes совпали с основным suite. Native inspection
+не изменил SHA-256. Из старого GCW v2 перенесены все 81 колонки/324 секции;
+independent parser подтвердил точное сохранение Y 0..15 и нулевые новые слои,
+исходник сохранил SHA-256. Бинарники совпали с тестовыми, 12 лицензий сохранены
+побайтно, миров/debug binaries в поставке нет. Локальный владелец каталога
+приведён к UID 1000 без изменения содержимого. BUILD-INFO: 0.14.0, source
+`b8aa83b`, formats [1,2,3,4]. Это Linux-проверка, не скачанный Windows ZIP.
+[Итог](validation/tall/package-results.json), [кадр](validation/tall/package/frame.png).

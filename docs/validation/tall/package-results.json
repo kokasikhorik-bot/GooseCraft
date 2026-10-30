@@ -1,0 +1,70 @@
+{
+  "source_commit": "b8aa83b09f128a4b122b27071a477ba0f36ea99a",
+  "build_info": {
+    "client_version": "GooseCraft 0.14.0",
+    "source_commit": "b8aa83b09f128a4b122b27071a477ba0f36ea99a",
+    "source_dirty": null,
+    "ci_url": null,
+    "target": "linux-x64",
+    "graphics": true,
+    "world_format": 4,
+    "world_formats": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "terrain_generators": [
+      1,
+      2
+    ],
+    "terrain_generator": 1,
+    "profiling_schema": 1
+  },
+  "uid": 1000,
+  "execution_cwd": "/tmp",
+  "network": "none",
+  "root_read_only": true,
+  "work_tree_and_goose_compiler_hidden": true,
+  "frames": 90,
+  "player_y": 35.0,
+  "breaks": 1,
+  "places": 1,
+  "misuse_count": 0,
+  "png_equals_full_suite": true,
+  "saved_bytes_equal_full_suite": true,
+  "inspection": {
+    "mode": "tall-inspect",
+    "format": 4,
+    "columns": 9,
+    "sections": 36,
+    "solid_blocks": 112290,
+    "min_y": -16,
+    "max_y_exclusive": 48,
+    "generator": 2,
+    "seed": 12345
+  },
+  "inspection_preserved_sha256": "45f500365c96c198fd2c0bfea40a82c8da0753ed106ef72894728b9485c8deaf",
+  "migrated": {
+    "format": 4,
+    "columns": 81,
+    "sections": 324,
+    "min_y": -16,
+    "max_y_exclusive": 48,
+    "generator": 0,
+    "seed": 0,
+    "solid_blocks": 144444,
+    "bytes": 1327152
+  },
+  "legacy_source_sha256_preserved": "774ffefe091a29ee8a94ada408a8288bac4157349cf645637dd642fa10f36752",
+  "matching_license_files": 12,
+  "release_binaries_match_tested_outputs": true,
+  "binaries": {
+    "goosecraft-client": "4fa625e03500b2fd522c3c7cde123c47900eae0ad8e625a9d3493f3ac6bb39f7",
+    "goosecraft-headless": "a818a2b8cde4f9530b24e318f048a2fcb37c06dd122f77d2e4fae1b14a4ce67b"
+  },
+  "no_world_files": true,
+  "no_debug_binaries": true,
+  "local_package_owner_adjusted_to_uid_1000": true,
+  "scope": "Local Linux package; not downloaded Windows artifact"
+}

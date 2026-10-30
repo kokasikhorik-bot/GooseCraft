@@ -3,7 +3,7 @@
 Самостоятельный нативный клиент на Goose для Windows 10 x64, разрабатываемый
 полностью в Codex Cloud. Цель — реализация поведения Minecraft Java Edition
 с отдельным лаунчером. Текущий этап **0.14.0 — вертикальные секции и высота 64**:
-до 81 чанка, холмы в области 144×144, движение и редактирование через границы,
+до 81 колонки, холмы в области 144×144, движение и редактирование через границы,
 воспроизводимая целочисленная генерация на Goose. Сохранения 0.5–0.7 читаются.
 Блоки сохраняются по F5 и при штатном выходе, загружаются при следующем запуске.
 Greedy meshing, повторное использование GPU-буферов, кеш HUD и прежнее управление
@@ -165,9 +165,9 @@ Goose, Python, Java или локальная среда разработки. �
 
 Публичный репозиторий: [kokasikhorik-bot/GooseCraft](https://github.com/kokasikhorik-bot/GooseCraft).
 Готовые ZIP публикуются в [GitHub Actions](https://github.com/kokasikhorik-bot/GooseCraft/actions/workflows/build.yml).
-Версия 0.13.0: [CI #41103646909](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41103646909),
-[Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41103646909/artifacts/12998514724),
-проверенный source `57d2249`.
+Версия 0.14.0: [успешный CI #41109972918](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918),
+[Windows ZIP](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13002104394),
+проверенный source `b8aa83b`.
 Выберите успешный run нужной версии и артефакт `goosecraft-windows-2022-x64-...`.
 Поставка содержит `BUILD-INFO.json` с версией, source SHA и ссылкой на её CI.
 Подтверждённые результаты и текущая ссылка на Windows ZIP находятся в

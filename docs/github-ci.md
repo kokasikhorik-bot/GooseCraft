@@ -1,6 +1,59 @@
-# GitHub: успешный CI GooseCraft 0.13 — 2026-10-30
+# GitHub: успешный CI GooseCraft 0.14 — 2026-10-30
 
-## Творческий инвентарь и hotbar 0.13
+## Вертикальные секции/GCW v4 0.14
+
+[Run 41109972918](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918)
+для `b8aa83b09f128a4b122b27071a477ba0f36ea99a` завершился **success**.
+
+| Job | Результат | Проверки |
+| --- | --- | --- |
+| windows-2022 / x64 | success | Release/debug graphical clients и UTF-8 manifests; 14 suites TinyCC/native release/debug, два native worker suites, v4 codec/negative Y/vertical Halo/physics, five v2 byte vectors, source-preserving import, malformed/1 GiB rejection, Unicode/lock, CLI/cmd.exe, benchmark и упаковка |
+| ubuntu-22.04 / x64 | success | 14 JIT/native suites и два native-only release/debug, legacy formats/terrain vectors, v4 migration/limits, profiling, CLI, benchmark и упаковка |
+| Linux / software Vulkan and X11 | success | 158 сценариев: прежние 149 плюс девять tall cases; 66 профилей/149 PNG, 36/324 sections, gameplay/edit на Y35, migration PNG/ticks/bytes equality, window/offscreen/debug, save/reopen и wrong-mode preservation |
+
+**[Windows ZIP 0.14](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13002104394)**:
+`goosecraft-windows-2022-x64-b8aa83b09f128a4b122b27071a477ba0f36ea99a`,
+13 895 735 байт. Release graphical/headless клиенты, `.cmd`-лаунчер, лицензии,
+документы и BUILD-INFO: 0.14.0, source SHA, formats [1,2,3,4], generators [1,2],
+profiling schema 1. [Первый запуск](first-play.md), [проверки](tall-results.md),
+[формат/перенос](tall-world-format.md).
+
+SHA-256 ZIP по GitHub API:
+`e3900cacf7092d42284bc1a5d3b8ad9f8c48cb4a173ace56c8424d33af3bf360`.
+Хранение по API до `2027-01-28T18:48:02Z`, если артефакт не удалят раньше.
+ZIP локально не скачивался и не хешировался. Для Actions artifact в браузере
+может потребоваться вход в GitHub.
+
+Другие artifacts:
+
+- [Windows benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13002414277): 5 459 байт.
+- [Linux benchmark](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13004085551): 5 664 байта.
+- [Graphics/profile evidence](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13001749612): 1 762 703 байта.
+- [Linux headless](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41109972918/artifacts/13001709345): 12 559 307 байт.
+
+[Полные run/jobs/steps/artifacts](validation/github-actions-41109972918.json)
+сохранены без credentials. Проверенный source `b8aa83b`; итоговый docs-only
+commit с `[skip ci]` меняет отчёты/evidence и ссылки. Документы в ZIP отражают
+момент сборки; актуальная ссылка и итог CI — здесь.
+
+`--tall-world FILE` — отдельный fully resident backend Y −16..47, до 81
+колонки/324 секций. `--import-tall` требует новый файл, сохраняет старый Y 0..15
+и заполняет новые уровни воздухом. Старые GCW v1/v2/v3 и generator 1 не менялись.
+В C изменён только generic bounded-read ceiling 1→2 MiB. Tall payload не
+передаётся worker; вертикальный paging и modern Minecraft height ещё впереди.
+RAM/FPS-преимущество не заявляется: block payload в четыре раза больше старого
+full Map того же radius, GPU window может содержать до 100 ready sections.
+
+Локальная Linux-поставка на UID 1000 из /tmp, network=none, root read-only,
+исходный work tree/Goose compiler скрыты: native create/load/play/edit на Y35,
+exact PNG/save bytes, перенос всех 81 старых колонок, inspection без изменения
+данных и 12 лицензий проверены. Это не проверка скачанного Windows ZIP.
+
+Windows job не открывал окно. Builder — Windows Server 2022; пользовательская
+Windows 10/физический GPU не проверены. UTF-8 argv использует manifest Windows 10
+1903+. Графический CI — Linux Mesa/lavapipe/Xvfb. Сети Java Edition пока нет.
+
+## Творческий инвентарь и hotbar 0.13 (предыдущая версия)
 
 [Run 41103646909](https://github.com/kokasikhorik-bot/GooseCraft/actions/runs/41103646909)
 для `57d22499cca708bc6b8934260106e36188d05486` завершился **success**.

@@ -1,0 +1,3 @@
+{"mode":"tall-generate","format":4,"generator":2,"seed":12345,"columns":9,"sections":36,"solid_blocks":112290}
+{"mode":"world-generate","seed":12345,"generator":1,"chunks":81,"solid_blocks":144444}
+{"mode":"tall-import","format":4}
